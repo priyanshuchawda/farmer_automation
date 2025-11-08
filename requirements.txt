@@ -1,0 +1,11 @@
+streamlit
+pandas
+python-dotenv
+google-genai
+requests
+numpy
+scikit-learn
+xgboost
+joblib
+plotly
+pydantic
