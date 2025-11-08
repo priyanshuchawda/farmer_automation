@@ -155,11 +155,6 @@ Features:
 
 ## 🔑 Environment Variables
 
-```env
-OPENWEATHER_API_KEY=c07041ef55c7d3a3bb10f589abd00f6e
-GEMINI_API_KEY=AIzaSyCxZqLQ_oz65bJVRrJyvmT3sgkOmKJ2uPo
-```
-
 ## 📦 Dependencies
 
 ```
