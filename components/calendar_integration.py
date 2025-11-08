@@ -2,12 +2,14 @@
 
 import streamlit as st
 from datetime import datetime, timedelta
-from database.db_functions import get_farmer_profile, add_data, get_farmer_events, delete_event
+from database.db_functions import get_farmer_profile, add_data, get_farmer_events, delete_event, update_event
 from weather.weather_assistant import get_weather_forecast_for_query
 from weather.combined_forecast import get_weather_forecast
 from calender.ai_service import AIService
 from calender.config import TRANSLATIONS as CAL_TRANSLATIONS
 from calender.calendar_component import render_calendar
+from calender.day_view import render_day_view
+from calender.week_view import render_week_view
 
 def get_weather_for_event(farmer_profile, event_date):
     """Get weather forecast for a specific date and farmer location"""
@@ -104,6 +106,10 @@ def render_integrated_calendar(farmer_name):
         st.session_state.current_month = datetime.now().month
     if "current_year" not in st.session_state:
         st.session_state.current_year = datetime.now().year
+    if "current_day" not in st.session_state:
+        st.session_state.current_day = datetime.now().day
+    if "calendar_view" not in st.session_state:
+        st.session_state.calendar_view = "month"
     
     # AI-Powered Plan Generation
     ai_service = AIService()
@@ -135,24 +141,56 @@ def render_integrated_calendar(farmer_name):
                         else:
                             st.error(f"❌ {error}")
     
-    # Display and save AI-generated plan
+    # Display and save AI-generated plan with editable dates and times
     if 'ai_plan' in st.session_state:
         plan = st.session_state.ai_plan
         
         st.subheader(f"📋 {plan['heading']}")
+        st.info("✏️ Edit dates and times before saving to calendar")
         
-        for step in plan['plan']:
-            st.markdown(f"**{step['step_number']}. {step['title']}**")
-            st.write(step['description'])
+        # Initialize editable plan if not exists
+        if 'editable_plan' not in st.session_state:
+            base_date = datetime.now()
+            st.session_state.editable_plan = []
+            for idx, step in enumerate(plan['plan']):
+                st.session_state.editable_plan.append({
+                    'step_number': step['step_number'],
+                    'title': step['title'],
+                    'description': step['description'],
+                    'date': base_date + timedelta(days=idx),
+                    'time': '09:00'
+                })
+        
+        # Display editable plan
+        for idx, step in enumerate(st.session_state.editable_plan):
+            with st.expander(f"**{step['step_number']}. {step['title']}**", expanded=True):
+                st.write(step['description'])
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    new_date = st.date_input(
+                        "📅 Date",
+                        value=step['date'],
+                        key=f"date_{idx}"
+                    )
+                    st.session_state.editable_plan[idx]['date'] = new_date
+                
+                with col2:
+                    new_time = st.time_input(
+                        "🕐 Time",
+                        value=datetime.strptime(step['time'], '%H:%M').time(),
+                        key=f"time_{idx}"
+                    )
+                    st.session_state.editable_plan[idx]['time'] = new_time.strftime('%H:%M')
         
         col1, col2 = st.columns(2)
         with col1:
             if st.button("📅 Add All to Calendar with Weather Alerts", type="primary", use_container_width=True):
-                base_date = datetime.now()
                 added = 0
                 
-                for idx, step in enumerate(plan['plan']):
-                    event_date = (base_date + timedelta(days=idx)).strftime('%Y-%m-%d')
+                for step in st.session_state.editable_plan:
+                    event_date = step['date'].strftime('%Y-%m-%d')
+                    event_time = step['time']
                     
                     # Get weather for this date
                     weather_data = get_weather_for_event(farmer_profile, event_date)
@@ -162,6 +200,7 @@ def render_integrated_calendar(farmer_name):
                     event_data = (
                         farmer_name,
                         event_date,
+                        event_time,
                         step['title'],
                         step['description'],
                         weather_alert,
@@ -172,11 +211,14 @@ def render_integrated_calendar(farmer_name):
                 
                 st.success(f"✅ Added {added} events with weather alerts!")
                 del st.session_state.ai_plan
+                del st.session_state.editable_plan
                 st.rerun()
         
         with col2:
             if st.button("❌ Cancel", use_container_width=True):
                 del st.session_state.ai_plan
+                if 'editable_plan' in st.session_state:
+                    del st.session_state.editable_plan
                 st.rerun()
     
     st.divider()
@@ -187,13 +229,18 @@ def render_integrated_calendar(farmer_name):
     # Convert to calendar format
     calendar_events = []
     for _, row in events_df.iterrows():
+        event_time = row.get('event_time', '09:00')
+        if not event_time:
+            event_time = '09:00'
+        
         calendar_events.append({
             "id": row['id'],
-            "start": f"{row['event_date']}T09:00:00",
+            "start": f"{row['event_date']}T{event_time}:00",
             "extendedProps": {
                 "heading": row['event_title'],
                 "description": row['event_description'],
-                "weather_alert": row.get('weather_alert', '')
+                "weather_alert": row.get('weather_alert', ''),
+                "time": event_time
             }
         })
     
@@ -222,36 +269,201 @@ def render_integrated_calendar(farmer_name):
     
     st.divider()
     
-    # Render calendar
-    render_calendar(
-        st.session_state.current_year,
-        st.session_state.current_month,
-        calendar_events,
-        lang
-    )
+    # View selector dropdown - positioned above navigation
+    st.markdown("""
+    <style>
+    /* Style the selectbox to be green */
+    div[data-baseweb="select"] > div {
+        background-color: #4CAF50 !important;
+        border: 2px solid #2E7D32 !important;
+        border-radius: 8px !important;
+    }
     
-    # Show selected event details with weather
+    div[data-baseweb="select"] > div:hover {
+        background-color: #45a049 !important;
+        border-color: #1B5E20 !important;
+    }
+    
+    div[data-baseweb="select"] span {
+        color: white !important;
+        font-weight: bold !important;
+    }
+    
+    div[data-baseweb="select"] svg {
+        fill: white !important;
+    }
+    
+    /* Style the dropdown options */
+    [role="listbox"] {
+        background-color: #E8F5E9 !important;
+    }
+    
+    [role="option"] {
+        color: #1B5E20 !important;
+    }
+    
+    [role="option"]:hover {
+        background-color: #C8E6C9 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Get current view
+    current_view = st.session_state.get('calendar_view', 'month')
+    
+    # View options with icons
+    view_options = {
+        "📅 Month View": "month",
+        "📆 Week View": "week",
+        "📋 Day View": "day"
+    }
+    
+    # Find current selection
+    current_label = [k for k, v in view_options.items() if v == current_view][0]
+    
+    # Dropdown positioned above navigation
+    col1, col2, col3 = st.columns([2, 1, 2])
+    
+    with col3:
+        selected_view = st.selectbox(
+            "Calendar View",
+            options=list(view_options.keys()),
+            index=list(view_options.keys()).index(current_label),
+            key="view_selector",
+            label_visibility="collapsed"
+        )
+        
+        # Update view if changed
+        new_view = view_options[selected_view]
+        if new_view != current_view:
+            st.session_state.calendar_view = new_view
+            st.rerun()
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Render appropriate calendar view
+    if st.session_state.calendar_view == "day":
+        render_day_view(
+            st.session_state.current_year,
+            st.session_state.current_month,
+            st.session_state.current_day,
+            calendar_events,
+            lang
+        )
+    elif st.session_state.calendar_view == "week":
+        render_week_view(
+            st.session_state.current_year,
+            st.session_state.current_month,
+            st.session_state.current_day,
+            calendar_events,
+            lang
+        )
+    else:  # month view
+        render_calendar(
+            st.session_state.current_year,
+            st.session_state.current_month,
+            calendar_events,
+            lang
+        )
+    
+    # Show selected event details with weather and edit functionality
     if st.session_state.get('selected_event'):
         event = st.session_state.selected_event
         
         st.divider()
         st.subheader("📝 Event Details")
         
-        col1, col2 = st.columns([2, 1])
+        # Edit mode toggle
+        if 'edit_mode' not in st.session_state:
+            st.session_state.edit_mode = False
+        
+        col1, col2, col3 = st.columns([2, 1, 1])
         
         with col1:
             st.markdown(f"### {event['extendedProps']['heading']}")
-            st.write(event['extendedProps'].get('description', 'No description'))
-            
-            if event['extendedProps'].get('weather_alert'):
-                st.info(f"🌦️ {event['extendedProps']['weather_alert']}")
         
         with col2:
-            event_date = event['start'].split('T')[0]
-            st.metric("📅 Date", event_date)
-            
-            if st.button("🗑️ Delete Event", use_container_width=True, type="secondary"):
+            if not st.session_state.edit_mode:
+                if st.button("✏️ Edit", use_container_width=True, type="primary"):
+                    st.session_state.edit_mode = True
+                    st.rerun()
+        
+        with col3:
+            if st.button("🗑️ Delete", use_container_width=True, type="secondary"):
                 delete_event(event['id'])
                 st.session_state.selected_event = None
                 st.success("✅ Event deleted!")
                 st.rerun()
+        
+        st.divider()
+        
+        if st.session_state.edit_mode:
+            # Edit mode
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                event_date_str = event['start'].split('T')[0]
+                event_date = datetime.strptime(event_date_str, '%Y-%m-%d').date()
+                new_date = st.date_input("📅 Event Date", value=event_date, key="edit_date")
+            
+            with col2:
+                event_time = event['extendedProps'].get('time', '09:00')
+                time_obj = datetime.strptime(event_time, '%H:%M').time()
+                new_time = st.time_input("🕐 Event Time", value=time_obj, key="edit_time")
+            
+            new_title = st.text_input("Title", value=event['extendedProps']['heading'], key="edit_title")
+            new_description = st.text_area("Description", value=event['extendedProps'].get('description', ''), key="edit_desc", height=100)
+            
+            # Show current weather alert
+            current_weather_alert = event['extendedProps'].get('weather_alert', '')
+            if current_weather_alert:
+                st.info(f"🌦️ Weather Alert: {current_weather_alert}")
+            
+            # Option to refresh weather
+            if st.button("🔄 Refresh Weather Forecast", use_container_width=True):
+                new_weather_data = get_weather_for_event(farmer_profile, new_date.strftime('%Y-%m-%d'))
+                new_weather_alert = create_weather_alert(new_weather_data)
+                st.session_state.temp_weather_alert = new_weather_alert
+                st.rerun()
+            
+            weather_alert_to_save = st.session_state.get('temp_weather_alert', current_weather_alert)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("💾 Save Changes", use_container_width=True, type="primary"):
+                    update_event(
+                        event['id'],
+                        new_date.strftime('%Y-%m-%d'),
+                        new_time.strftime('%H:%M'),
+                        new_title,
+                        new_description,
+                        weather_alert_to_save
+                    )
+                    st.session_state.edit_mode = False
+                    st.session_state.selected_event = None
+                    if 'temp_weather_alert' in st.session_state:
+                        del st.session_state.temp_weather_alert
+                    st.success("✅ Event updated!")
+                    st.rerun()
+            
+            with col2:
+                if st.button("❌ Cancel", use_container_width=True):
+                    st.session_state.edit_mode = False
+                    if 'temp_weather_alert' in st.session_state:
+                        del st.session_state.temp_weather_alert
+                    st.rerun()
+        else:
+            # View mode
+            col1, col2 = st.columns([2, 1])
+            
+            with col1:
+                st.write(event['extendedProps'].get('description', 'No description'))
+                
+                if event['extendedProps'].get('weather_alert'):
+                    st.info(f"🌦️ {event['extendedProps']['weather_alert']}")
+            
+            with col2:
+                event_date = event['start'].split('T')[0]
+                event_time = event['extendedProps'].get('time', '09:00')
+                st.metric("📅 Date", event_date)
+                st.metric("🕐 Time", event_time)
