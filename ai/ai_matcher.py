@@ -84,7 +84,7 @@ Generate 2-3 concise and practical recommendations for the farmer. The recommend
 
     try:
         response = client.models.generate_content(
-            model='AI-2.5-flash', contents=prompt
+            model='gemini-2.5-flash', contents=prompt
         )
         return response.text
     except Exception as e:

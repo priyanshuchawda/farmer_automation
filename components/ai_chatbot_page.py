@@ -143,7 +143,7 @@ def render_ai_chatbot_page():
                 })
                 
                 # Create model
-                model = genai.GenerativeModel('AI-pro')
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 
                 # Build conversation history for context
                 conversation = system_context + "\n\n"

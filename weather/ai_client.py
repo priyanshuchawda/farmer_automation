@@ -77,7 +77,7 @@ class AIClient:
         Focus on actionable advice that helps farmers make decisions.
         """
         
-        models_to_try = ["gemini-2.0-flash-exp", "gemini-2.5-flash", "gemini-2.0-flash"]
+        models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
         
         for model in models_to_try:
             try:

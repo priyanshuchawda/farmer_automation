@@ -132,7 +132,7 @@ Keep advice practical, specific to Indian agricultural markets, and focused on m
 """
         
         response = ai_client.models.generate_content(
-            model='AI-2.0-flash-exp',
+            model='gemini-2.5-flash',
             contents=prompt
         )
         return response.text
@@ -165,7 +165,7 @@ You are an expert agricultural market advisor for Indian farmers. Answer the far
 """
         
         response = ai_client.models.generate_content(
-            model='AI-2.0-flash-exp',
+            model='gemini-2.5-flash',
             contents=prompt
         )
         return response.text

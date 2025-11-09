@@ -29,9 +29,9 @@ class PricePredictor:
             # Try to use environment variable
             self.client = genai.Client()
         
-        # Use AI 2.5 Flash with Google Search capability
-        self.model = 'AI-2.5-flash'
-        self.model_with_search = 'AI-2.5-flash'
+        # Use Gemini 2.5 Flash with Google Search capability
+        self.model = 'gemini-2.5-flash'
+        self.model_with_search = 'gemini-2.5-flash'
         
         # Get weather API key
         self.weather_api_key = os.getenv("OPENWEATHER_API_KEY")

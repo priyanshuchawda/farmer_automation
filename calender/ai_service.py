@@ -11,7 +11,7 @@ load_dotenv()
 class AIService:
     def __init__(self):
         self.client = genai.Client()
-        self.model_name = 'AI-2.5-flash'
+        self.model_name = 'gemini-2.5-flash'
     
     def generate_farming_plan(self, user_prompt, language):
         """Generate a farming plan using AI AI"""

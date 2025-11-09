@@ -95,7 +95,7 @@ class FinanceAI:
             self.model = 'gemini-2.5-flash'
             print("✅ Using Gemini 2.5 Flash")
         except:
-            self.model = 'gemini-2.0-flash-exp'
+            self.model = 'gemini-2.0-flash'
             print("⚠️ Fallback to Gemini 2.0 Flash")
     
     def get_language_instruction(self):
