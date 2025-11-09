@@ -265,11 +265,11 @@ if 'logged_in' not in st.session_state or not st.session_state.logged_in:
 # ----------------------------------------
 # --- MAIN APPLICATION (After Login) ---
 # ----------------------------------------
-st.title("Smart Farmer Marketplace")
+st.title(t("Smart Farmer Marketplace"))
 
-st.markdown("""
+st.markdown(f"""
 <div style='background-color:#E8F5E9;padding:12px;border-radius:10px;text-align:center;margin-bottom:20px;border: 1px dashed #3CB371;'>
-    <h4>Empowering Farmers, Connecting Communities</h4>
+    <h4>{t("Empowering Farmers, Connecting Communities")}</h4>
 </div>
 """, unsafe_allow_html=True)
 
@@ -600,10 +600,10 @@ elif menu == "🔔 Notifications & Alerts":
 # ----------------------------------------
 # --- FOOTER ---
 # ----------------------------------------
-st.markdown("""
+st.markdown(f"""
 <hr style='border-top: 2px solid #3CB371; margin-top: 30px;'>
 <div style='text-align:center;color:#696969;padding:10px;'>
-    <small>© 2025 Smart Farmer Marketplace | Prototype by Team AgroLink</small>
+    <small>© 2025 {t("Smart Farmer Marketplace")} | {t("Prototype by Team AgroLink")}</small>
 </div>
 """, unsafe_allow_html=True)
 

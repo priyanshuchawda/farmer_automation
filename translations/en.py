@@ -449,4 +449,11 @@ TRANSLATIONS = {
     "Your contact number for marketplace communications": "Your contact number for marketplace communications",
     "Enter your village, city, district, and state for best results": "Enter your village, city, district, and state for best results",
     "Step 1: Basic Information": "Step 1: Basic Information",
+    
+    # Header and Footer
+    "Smart Farmer Marketplace": "Smart Farmer Marketplace",
+    "Empowering Farmers, Connecting Communities": "Empowering Farmers, Connecting Communities",
+    "Prototype by Team AgroLink": "Prototype by Team AgroLink",
+    "You are now part of the": "You're now part of the",
+    "family": "family",
 }

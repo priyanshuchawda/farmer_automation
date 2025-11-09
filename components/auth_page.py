@@ -321,7 +321,7 @@ def render_auth_page():
     """, unsafe_allow_html=True)
     
     # Hero Section - Using Streamlit native components
-    st.markdown("# 🌾 Smart Farmer Marketplace")
+    st.markdown(f"# 🌾 {t('Smart Farmer Marketplace')}")
     st.markdown(f"### {t('Empowering Farmers, Connecting Communities')}")
     st.markdown("---")
     

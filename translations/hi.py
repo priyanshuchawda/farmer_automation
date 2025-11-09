@@ -472,4 +472,11 @@ TRANSLATIONS = {
     "Your contact number for marketplace communications": "बाजार संचार के लिए आपका संपर्क नंबर",
     "Enter your village, city, district, and state for best results": "सर्वोत्तम परिणामों के लिए अपना गाँव, शहर, जिला और राज्य दर्ज करें",
     "Step 1: Basic Information": "चरण 1: मूल जानकारी",
+    
+    # Header and Footer
+    "Smart Farmer Marketplace": "स्मार्ट किसान बाजार",
+    "Empowering Farmers, Connecting Communities": "किसानों को सशक्त बनाना, समुदायों को जोड़ना",
+    "Prototype by Team AgroLink": "टीम एग्रोलिंक द्वारा प्रोटोटाइप",
+    "You are now part of the": "अब आप",
+    "family": "परिवार का हिस्सा हैं",
 }

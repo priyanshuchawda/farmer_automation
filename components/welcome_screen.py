@@ -133,7 +133,7 @@ def render_welcome_screen():
     farmer_name = st.session_state.get('farmer_name', 'Farmer')
     
     st.title(f"🎉 Welcome, {farmer_name}!")
-    st.subheader("You're now part of the Smart Farmer Marketplace family")
+    st.subheader(f"{t('You are now part of the')} {t('Smart Farmer Marketplace')} {t('family')}")
     st.markdown("---")
     
     st.markdown("### 🌟 What You Can Do Here")
