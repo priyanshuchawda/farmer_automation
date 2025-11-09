@@ -506,4 +506,11 @@ TRANSLATIONS = {
     "Ground Floor": "तळमजला",
     "S No": "सर्वे क्र",
     "India": "भारत",
+    
+    # Place Names (Phonetic Transliteration)
+    "Phoenix Marketcity": "फिनिक्स मार्केटसिटी",
+    "Clover Park": "क्लोव्हर पार्क",
+    "Viman Nagar": "विमान नगर",
+    "Pune": "पुणे",
+    "Maharashtra": "महाराष्ट्र",
 }

@@ -200,13 +200,13 @@ def convert_numbers_to_local(text):
 
 def translate_location(location):
     """
-    Translate only specific location keywords while keeping place names in English
+    Translate location keywords and transliterate place names to local script
     
     Args:
         location: Full address string
     
     Returns:
-        Address with translated keywords but original place names
+        Address with translated keywords and transliterated place names
     """
     lang_code = get_current_language()
     
@@ -214,19 +214,25 @@ def translate_location(location):
     if lang_code == 'en':
         return location
     
-    # Keywords to translate
-    keywords = [
+    # Keywords and place names to translate/transliterate
+    # Order matters - translate longer phrases first
+    items_to_translate = [
+        "Phoenix Marketcity",
+        "Upper Ground Floor",
+        "Ground Floor", 
+        "Clover Park",
+        "Viman Nagar",
+        "Maharashtra",
         "Unit No",
-        "Upper Ground Floor", 
-        "Ground Floor",
         "S No",
-        "India"
+        "India",
+        "Pune",
     ]
     
     translated_location = location
-    for keyword in keywords:
-        translated_keyword = t(keyword)
-        translated_location = translated_location.replace(keyword, translated_keyword)
+    for item in items_to_translate:
+        translated_item = t(item)
+        translated_location = translated_location.replace(item, translated_item)
     
     # Convert numbers to local numerals
     translated_location = convert_numbers_to_local(translated_location)
