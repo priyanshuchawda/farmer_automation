@@ -139,11 +139,11 @@ def render_integrated_calendar(farmer_name):
         st.caption(f"📍 Farm: {farmer_profile.get('location', 'N/A')} | 🌍 Weather: {farmer_profile.get('weather_location', 'N/A')}")
     
     with col2:
-        if st.button("➕ Quick Add Task", use_container_width=True, type="primary"):
+        if st.button("➕ Quick Add Task", width="stretch", type="primary"):
             st.session_state.show_quick_add = True
     
     with col3:
-        if st.button("🔄 Refresh", use_container_width=True):
+        if st.button("🔄 Refresh", width="stretch"):
             st.rerun()
     
     # Quick Add Task Form
@@ -189,9 +189,9 @@ def render_integrated_calendar(farmer_name):
             
             col1, col2 = st.columns(2)
             with col1:
-                submit = st.form_submit_button("✅ Add Task", use_container_width=True, type="primary")
+                submit = st.form_submit_button("✅ Add Task", width="stretch", type="primary")
             with col2:
-                cancel = st.form_submit_button("❌ Cancel", use_container_width=True)
+                cancel = st.form_submit_button("❌ Cancel", width="stretch")
             
             if submit and task_title:
                 # Get weather for this date
@@ -305,7 +305,7 @@ def render_integrated_calendar(farmer_name):
         
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("📅 Add All to Calendar with Weather Alerts", type="primary", use_container_width=True):
+            if st.button("📅 Add All to Calendar with Weather Alerts", type="primary", width="stretch"):
                 added = 0
                 
                 for step in st.session_state.editable_plan:
@@ -335,7 +335,7 @@ def render_integrated_calendar(farmer_name):
                 st.rerun()
         
         with col2:
-            if st.button("❌ Cancel", use_container_width=True):
+            if st.button("❌ Cancel", width="stretch"):
                 del st.session_state.ai_plan
                 if 'editable_plan' in st.session_state:
                     del st.session_state.editable_plan
@@ -349,13 +349,25 @@ def render_integrated_calendar(farmer_name):
     # Convert to calendar format
     calendar_events = []
     for _, row in events_df.iterrows():
-        event_time = row.get('event_time', '09:00')
+        # Parse event_date which might be "2025-11-09" or "2025-11-09 09:00"
+        event_date_str = row['event_date']
+        
+        # Extract date and time
+        if ' ' in event_date_str:
+            # Has time: "2025-11-09 09:00"
+            date_part, time_part = event_date_str.split(' ', 1)
+            event_time = time_part if time_part else row.get('event_time', '09:00')
+        else:
+            # Just date: "2025-11-09"
+            date_part = event_date_str
+            event_time = row.get('event_time', '09:00')
+        
         if not event_time:
             event_time = '09:00'
         
         calendar_events.append({
             "id": row['id'],
-            "start": f"{row['event_date']}T{event_time}:00",
+            "start": f"{date_part}T{event_time}:00",
             "extendedProps": {
                 "heading": row['event_title'],
                 "description": row['event_description'],
@@ -553,12 +565,12 @@ def render_integrated_calendar(farmer_name):
         
         with col2:
             if not st.session_state.edit_mode:
-                if st.button("✏️ Edit", use_container_width=True, type="primary"):
+                if st.button("✏️ Edit", width="stretch", type="primary"):
                     st.session_state.edit_mode = True
                     st.rerun()
         
         with col3:
-            if st.button("🗑️ Delete", use_container_width=True, type="secondary"):
+            if st.button("🗑️ Delete", width="stretch", type="secondary"):
                 delete_event(event['id'])
                 st.session_state.selected_event = None
                 st.success("✅ Event deleted!")
@@ -589,7 +601,7 @@ def render_integrated_calendar(farmer_name):
                 st.info(f"🌦️ Weather Alert: {current_weather_alert}")
             
             # Option to refresh weather
-            if st.button("🔄 Refresh Weather Forecast", use_container_width=True):
+            if st.button("🔄 Refresh Weather Forecast", width="stretch"):
                 new_weather_data = get_weather_for_event(farmer_profile, new_date.strftime('%Y-%m-%d'))
                 new_weather_alert = create_weather_alert(new_weather_data)
                 st.session_state.temp_weather_alert = new_weather_alert
