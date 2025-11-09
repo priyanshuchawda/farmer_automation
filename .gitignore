@@ -98,3 +98,6 @@ venv.bak/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Always include __init__.py files
+!**/__init__.py
