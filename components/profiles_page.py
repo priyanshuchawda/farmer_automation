@@ -1,6 +1,6 @@
 # components/profiles_page.py
 import streamlit as st
-from database.db_functions import add_data, get_data
+from database.db_functions import add_data, get_data, update_farmer_profile
 from weather.gemini_client import GeminiClient
 
 def render_profiles_page():
@@ -12,15 +12,12 @@ def render_profiles_page():
     with st.form("new_farmer_form"):
         name = st.text_input("Farmer's Name *", placeholder="e.g., Ramesh Patil")
         
-        col1, col2 = st.columns(2)
-        with col1:
-            location = st.text_input("Farm Location (Village) *", placeholder="e.g., Wadgaon Sheri")
-        with col2:
-            weather_location = st.text_input(
-                "Weather Location *", 
-                placeholder="e.g., Pune or Wadgaon Sheri Pune",
-                help="City or area for weather forecasts"
-            )
+        location = st.text_input(
+            "Farm/Weather Location *", 
+            placeholder="e.g., Wadgaon Sheri Pune",
+            help="Village/City for farm and weather forecasts"
+        )
+        weather_location = location # Assign the same value to weather_location
         
         col3, col4 = st.columns(2)
         with col3:
@@ -33,22 +30,29 @@ def render_profiles_page():
         submitted = st.form_submit_button("💾 Save Farmer Profile", use_container_width=True)
         
         if submitted:
-            if name and location and farm_size > 0 and contact and weather_location:
-                with st.spinner("Getting coordinates for weather location..."):
-                    # Get coordinates for weather location
-                    gemini_client = GeminiClient()
-                    coords = gemini_client.get_coordinates_from_google_search(weather_location)
-                    
-                    if coords:
-                        latitude = coords['lat']
-                        longitude = coords['lon']
-                        farmer_data = (name, location, farm_size, farm_unit, contact, weather_location, latitude, longitude)
-                        add_data("farmers", farmer_data)
-                        st.success(f"✅ Farmer '{name}' profile saved successfully!")
-                        st.info(f"📍 Weather coordinates: {latitude}, {longitude}")
-                        st.rerun()
-                    else:
-                        st.error("❌ Could not find coordinates for weather location. Please check the location name.")
+            if name and location and farm_size > 0 and contact:
+                # Always get coordinates for weather_location
+                latitude = None
+                longitude = None
+                
+                with st.spinner("Getting coordinates for location..."):
+                    try:
+                        gemini_client = GeminiClient()
+                        coords = gemini_client.get_coordinates_from_google_search(weather_location)
+                        
+                        if coords:
+                            latitude = coords['lat']
+                            longitude = coords['lon']
+                            st.info(f"📍 Coordinates for '{weather_location}': {latitude}, {longitude}")
+                        else:
+                            st.warning(f"⚠️ Could not find coordinates for '{weather_location}'. Profile will be saved without coordinates.")
+                    except Exception as e:
+                        st.warning(f"⚠️ Error getting coordinates: {str(e)}. Profile will be saved without coordinates.")
+                
+                # Save the profile with coordinates (or None if not found)
+                farmer_data = (name, location, farm_size, farm_unit, contact, weather_location, latitude, longitude)
+                add_data("farmers", farmer_data)
+                st.success(f"✅ Farmer '{name}' profile saved successfully!")
             else:
                 st.error("⚠️ Please fill in all required fields (marked with *).")
 

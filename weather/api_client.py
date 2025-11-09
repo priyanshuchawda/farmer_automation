@@ -104,3 +104,47 @@ class OpenWeatherAPI:
         except requests.exceptions.RequestException as e:
             print(f"Error fetching OpenWeather data: {e}")
             return None
+    
+    def get_detailed_forecast(self, lat, lon):
+        """Get detailed 3-hourly forecast with all weather parameters"""
+        endpoint = f"{self.base_url}/forecast"
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "appid": self.api_key,
+            "units": "metric",
+        }
+
+        try:
+            response = requests.get(endpoint, params=params)
+            response.raise_for_status()
+            data = response.json()
+
+            forecasts = []
+            for item in data['list']:
+                dt = datetime.fromtimestamp(item['dt'])
+                
+                forecasts.append({
+                    'datetime': dt,
+                    'date': dt.date(),
+                    'time': dt.strftime('%I:%M %p'),
+                    'temp': item['main']['temp'],
+                    'feels_like': item['main']['feels_like'],
+                    'temp_min': item['main']['temp_min'],
+                    'temp_max': item['main']['temp_max'],
+                    'humidity': item['main']['humidity'],
+                    'pressure': item['main']['pressure'],
+                    'rain': item.get('rain', {}).get('3h', 0),
+                    'wind_speed': item['wind']['speed'] * 3.6,
+                    'wind_deg': item['wind'].get('deg', 0),
+                    'clouds': item['clouds']['all'],
+                    'weather_main': item['weather'][0]['main'],
+                    'weather_desc': item['weather'][0]['description'],
+                    'pop': item.get('pop', 0) * 100  # Probability of precipitation
+                })
+            
+            return pd.DataFrame(forecasts)
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching detailed forecast: {e}")
+            return None

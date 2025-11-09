@@ -15,6 +15,7 @@ from components.home_page import render_home_page, render_db_check
 from components.tool_listings import render_tool_listing, render_tool_management
 from components.crop_listings import render_crop_listing, render_crop_management
 from components.profiles_page import render_profiles_page
+from components.view_profile_page import render_view_profile_page
 from components.weather_component import render_weather_component
 from calender.calendar_component import render_calendar
 from calender.config import TRANSLATIONS
@@ -112,11 +113,15 @@ with st.sidebar.expander("User Login", expanded=True):
     if login_as == "Farmer":
         farmer_name = st.text_input("Enter your name", key="login_name").strip()
         if farmer_name:
-            st.session_state.logged_in = True
-            st.session_state.role = "Farmer"
-            st.session_state.farmer_name = farmer_name
-            st.session_state.farmer_profile = get_farmer_profile(farmer_name)
-            st.success(f"Logged in as {farmer_name}")
+            farmer_profile = get_farmer_profile(farmer_name)
+            if farmer_profile:
+                st.session_state.logged_in = True
+                st.session_state.role = "Farmer"
+                st.session_state.farmer_name = farmer_profile['name']  # Use actual name from DB
+                st.session_state.farmer_profile = farmer_profile
+                st.success(f"Logged in as {farmer_profile['name']}")
+            else:
+                st.warning(f"⚠️ Farmer '{farmer_name}' not found. Please check the name or contact admin.")
 
     elif login_as == "Admin":
         password = st.text_input("Enter admin password", type="password", key="password_input")
@@ -139,7 +144,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-menu_options = ["Home", "New Listing", "View Listings", "Calendar", "Weather"]
+menu_options = ["Home", "View Profile", "New Listing", "View Listings", "Calendar", "Weather"]
 if st.session_state.get("role") == "Admin":
     menu_options.append("Profiles")
     menu_options.append("Database Check")
@@ -155,6 +160,8 @@ menu = st.sidebar.radio(
 
 if menu == "Home":
     render_home_page()
+elif menu == "View Profile":
+    render_view_profile_page()
     
 elif menu == "New Listing":
     st.header("Create a New Listing")

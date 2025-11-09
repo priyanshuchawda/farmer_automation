@@ -46,6 +46,7 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         farmer_name TEXT,
         event_date TEXT,
+        event_time TEXT DEFAULT '09:00',
         event_title TEXT,
         event_description TEXT,
         weather_alert TEXT,
@@ -83,20 +84,20 @@ def get_data(table_name):
     return df
 
 def get_farmer_profile(name):
-    """Retrieves a farmer's profile by name."""
+    """Retrieves a farmer's profile by name (case-insensitive)."""
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute("SELECT * FROM farmers WHERE name = ?", (name,))
+    c.execute("SELECT * FROM farmers WHERE LOWER(name) = LOWER(?)", (name,))
     profile = c.fetchone()
     conn.close()
     return dict(profile) if profile else None
 
 def get_farmer_events(farmer_name):
-    """Retrieves all calendar events for a specific farmer."""
+    """Retrieves all calendar events for a specific farmer (case-insensitive)."""
     conn = sqlite3.connect(DB_NAME)
     df = pd.read_sql_query(
-        "SELECT * FROM calendar_events WHERE farmer_name = ? ORDER BY event_date", 
+        "SELECT * FROM calendar_events WHERE LOWER(farmer_name) = LOWER(?) ORDER BY event_date", 
         conn, 
         params=(farmer_name,)
     )
@@ -104,14 +105,14 @@ def get_farmer_events(farmer_name):
     return df
 
 def update_farmer_profile(name, location, farm_size, farm_unit, contact, weather_location, latitude, longitude):
-    """Updates a farmer's profile."""
+    """Updates a farmer's profile (case-insensitive)."""
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("""
         UPDATE farmers 
         SET location = ?, farm_size = ?, farm_unit = ?, contact = ?, 
             weather_location = ?, latitude = ?, longitude = ?
-        WHERE name = ?
+        WHERE LOWER(name) = LOWER(?)
     """, (location, farm_size, farm_unit, contact, weather_location, latitude, longitude, name))
     conn.commit()
     conn.close()
@@ -121,5 +122,17 @@ def delete_event(event_id):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("DELETE FROM calendar_events WHERE id = ?", (event_id,))
+    conn.commit()
+    conn.close()
+
+def update_event(event_id, event_date, event_title, event_description, weather_alert):
+    """Updates a calendar event by ID."""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("""
+        UPDATE calendar_events
+        SET event_date = ?, event_title = ?, event_description = ?, weather_alert = ?
+        WHERE id = ?
+    """, (event_date, event_title, event_description, weather_alert, event_id))
     conn.commit()
     conn.close()

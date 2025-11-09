@@ -94,12 +94,12 @@ def render_calendar(year, month, events, lang):
                     
                     if day_events:
                         has_events = True
-                        # Show event buttons inside the box
-                        for idx, event in enumerate(day_events):
+                        # Show limited event buttons inside the box (max 2)
+                        for idx, event in enumerate(day_events[:2]):
                             event_title = event['extendedProps']['heading']
                             
                             # Compact event display
-                            display_title = event_title if len(event_title) <= 20 else event_title[:20] + "..."
+                            display_title = event_title if len(event_title) <= 18 else event_title[:18] + "..."
                             if st.button(
                                 f"📝 {display_title}", 
                                 key=f"event_{event['id']}_{day}_{idx}",
@@ -108,17 +108,24 @@ def render_calendar(year, month, events, lang):
                             ):
                                 st.session_state.selected_event = event
                                 st.rerun()
-                    else:
-                        # Clickable day button to switch to day view
-                        if st.button(
-                            "View Day",
-                            key=f"day_{day}_{week_num}",
-                            use_container_width=True,
-                            help="Click to view day details"
-                        ):
-                            st.session_state.current_day = day
-                            st.session_state.calendar_view = "day"
-                            st.rerun()
+                        
+                        # Show "more" indicator if there are more than 2 events
+                        if len(day_events) > 2:
+                            st.caption(f"+ {len(day_events) - 2} more")
+                    
+                    # Always show View Day button
+                    view_day_clicked = st.button(
+                        "📅 View Day",
+                        key=f"day_{day}_{week_num}",
+                        type="secondary",
+                        help="Check hourly schedule"
+                    )
+                    if view_day_clicked:
+                        st.session_state.current_day = day
+                        st.session_state.current_month = month
+                        st.session_state.current_year = year
+                        st.session_state.calendar_view = "day"
+                        st.rerun()
                     
                     # Close the divs
                     st.markdown("</div></div>", unsafe_allow_html=True)

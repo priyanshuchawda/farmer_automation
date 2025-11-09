@@ -67,7 +67,7 @@ class GeminiClient:
         """
         Uses Gemini with Google Search to find the latitude and longitude of a given location.
         """
-        prompt = f"What are the latitude and longitude of {location}? Provide only the numerical coordinates (e.g., 19.0760, 72.8777)."
+        prompt = f"What are the latitude and longitude of {location}? Provide only the numerical coordinates in decimal format (e.g., 19.0760, 72.8777)."
         
         models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash"]
         
@@ -82,32 +82,41 @@ class GeminiClient:
                 )
                 
                 text = response.text
-                # Try to find two comma-separated floats
+                print(f"Gemini response for '{location}': {text}")
+                
+                # Try to find two comma-separated floats (e.g., "19.0760, 72.8777")
                 coords_match = re.search(r"(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)", text)
                 if coords_match:
                     lat = float(coords_match.group(1))
                     lon = float(coords_match.group(2))
                     return {"lat": lat, "lon": lon}
                 
-                # Try to find latitude and longitude with labels
-                lat_match = re.search(r"(?:latitude|lat):\s*(-?\d+\.?\d*)", text, re.IGNORECASE)
-                lon_match = re.search(r"(?:longitude|lon):\s*(-?\d+\.?\d*)", text, re.IGNORECASE)
+                # Try to find latitude and longitude with labels (e.g., "latitude: 19.0760, longitude: 72.8777")
+                lat_match = re.search(r"(?:latitude|lat)[\s:]+(-?\d+\.?\d*)", text, re.IGNORECASE)
+                lon_match = re.search(r"(?:longitude|lon|long)[\s:]+(-?\d+\.?\d*)", text, re.IGNORECASE)
                 
                 if lat_match and lon_match:
                     return {"lat": float(lat_match.group(1)), "lon": float(lon_match.group(1))}
                 
-                # Handle degrees, minutes, seconds and directions (e.g., 19° N, 72° E)
-                dms_lat_match = re.search(r"(\d+)°\s*([NS])", text, re.IGNORECASE)
-                dms_lon_match = re.search(r"(\d+)°\s*([EW])", text, re.IGNORECASE)
+                # Try to find coordinates in parentheses (e.g., "(19.0760, 72.8777)")
+                coords_paren = re.search(r"\((-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\)", text)
+                if coords_paren:
+                    lat = float(coords_paren.group(1))
+                    lon = float(coords_paren.group(2))
+                    return {"lat": lat, "lon": lon}
+                
+                # Handle degrees with decimals and directions (e.g., "19.0760° N, 72.8777° E")
+                dms_lat_match = re.search(r"(-?\d+\.?\d*)°?\s*([NS])", text, re.IGNORECASE)
+                dms_lon_match = re.search(r"(-?\d+\.?\d*)°?\s*([EW])", text, re.IGNORECASE)
 
                 if dms_lat_match and dms_lon_match:
-                    lat_deg = float(dms_lat_match.group(1))
+                    lat_val = float(dms_lat_match.group(1))
                     lat_dir = dms_lat_match.group(2).upper()
-                    lon_deg = float(dms_lon_match.group(1))
+                    lon_val = float(dms_lon_match.group(1))
                     lon_dir = dms_lon_match.group(2).upper()
 
-                    lat = lat_deg if lat_dir == 'N' else -lat_deg
-                    lon = lon_deg if lon_dir == 'E' else -lon_deg
+                    lat = lat_val if lat_dir == 'N' else -lat_val
+                    lon = lon_val if lon_dir == 'E' else -lon_val
                     return {"lat": lat, "lon": lon}
 
                 print(f"Could not extract coordinates from Gemini response for {location}: {text}")

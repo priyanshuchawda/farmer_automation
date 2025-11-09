@@ -90,14 +90,90 @@ def render_integrated_calendar(farmer_name):
         return
     
     # Display farmer info and weather location
-    col1, col2 = st.columns([2, 1])
+    col1, col2, col3 = st.columns([2, 1, 1])
     with col1:
-        st.markdown(f"### 👨‍🌾 {farmer_name}'s Calendar")
+        st.markdown(f"### 👨‍🌾 {farmer_name}'s Farming Calendar")
         st.caption(f"📍 Farm: {farmer_profile.get('location', 'N/A')} | 🌍 Weather: {farmer_profile.get('weather_location', 'N/A')}")
     
     with col2:
-        if st.button("🔄 Refresh Weather Data", use_container_width=True):
+        if st.button("➕ Quick Add Task", use_container_width=True, type="primary"):
+            st.session_state.show_quick_add = True
+    
+    with col3:
+        if st.button("🔄 Refresh", use_container_width=True):
             st.rerun()
+    
+    # Quick Add Task Form
+    if st.session_state.get('show_quick_add', False):
+        with st.form("quick_add_form"):
+            st.subheader("➕ Add Farming Task")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                task_date = st.date_input("📅 Date", value=datetime.now().date())
+            with col2:
+                task_time = st.time_input("🕐 Time", value=datetime.strptime("09:00", '%H:%M').time())
+            
+            # Common farming tasks dropdown
+            common_tasks = [
+                "Custom Task",
+                "🌱 Planting",
+                "💧 Irrigation",
+                "🌾 Harvesting",
+                "🧪 Fertilizer Application",
+                "🐛 Pest Control",
+                "🚜 Plowing",
+                "🌿 Weeding",
+                "✂️ Pruning",
+                "🔍 Crop Inspection",
+                "📦 Market Delivery",
+                "🌾 Seed Purchase",
+                "🧰 Equipment Maintenance"
+            ]
+            
+            task_type = st.selectbox("Task Type", common_tasks)
+            
+            if task_type == "Custom Task":
+                task_title = st.text_input("Task Title *")
+            else:
+                task_title = st.text_input("Task Title *", value=task_type)
+            
+            task_description = st.text_area(
+                "Description", 
+                placeholder="Add details about this task...",
+                height=100
+            )
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                submit = st.form_submit_button("✅ Add Task", use_container_width=True, type="primary")
+            with col2:
+                cancel = st.form_submit_button("❌ Cancel", use_container_width=True)
+            
+            if submit and task_title:
+                # Get weather for this date
+                event_date_str = task_date.strftime('%Y-%m-%d')
+                weather_data = get_weather_for_event(farmer_profile, event_date_str)
+                weather_alert = create_weather_alert(weather_data)
+                
+                # Save to database
+                event_data = (
+                    farmer_name,
+                    event_date_str,
+                    task_time.strftime('%H:%M'),
+                    task_title,
+                    task_description,
+                    weather_alert,
+                    datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                )
+                add_data("calendar_events", event_data)
+                st.success(f"✅ Task '{task_title}' added successfully!")
+                st.session_state.show_quick_add = False
+                st.rerun()
+            
+            if cancel:
+                st.session_state.show_quick_add = False
+                st.rerun()
     
     st.divider()
     
@@ -244,8 +320,43 @@ def render_integrated_calendar(farmer_name):
             }
         })
     
+    # Task Statistics and Upcoming Tasks
+    st.subheader("📊 Quick Overview")
+    
+    # Get upcoming tasks (next 7 days)
+    today = datetime.now().date()
+    upcoming_tasks = []
+    overdue_tasks = []
+    
+    for _, row in events_df.iterrows():
+        event_date = datetime.strptime(row['event_date'], '%Y-%m-%d').date()
+        if event_date >= today and event_date <= today + timedelta(days=7):
+            upcoming_tasks.append(row)
+        elif event_date < today:
+            overdue_tasks.append(row)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("📅 Total Tasks", len(events_df))
+    with col2:
+        st.metric("⏰ Upcoming (7 days)", len(upcoming_tasks))
+    with col3:
+        st.metric("⚠️ Overdue", len(overdue_tasks))
+    with col4:
+        today_tasks = len([t for t in upcoming_tasks if datetime.strptime(t['event_date'], '%Y-%m-%d').date() == today])
+        st.metric("📌 Today", today_tasks)
+    
+    # Show today's tasks if any
+    if today_tasks > 0:
+        st.info("**Today's Tasks:**")
+        for task in [t for t in upcoming_tasks if datetime.strptime(t['event_date'], '%Y-%m-%d').date() == today]:
+            task_time = task.get('event_time', '09:00')
+            st.markdown(f"- 🕐 **{task_time}** - {task['event_title']}")
+    
+    st.divider()
+    
     # Display current month weather summary
-    st.subheader(f"🌤️ Weather Summary for {farmer_profile.get('weather_location')}")
+    st.subheader(f"🌤️ 7-Day Weather Outlook")
     
     try:
         forecast = get_weather_forecast(
@@ -259,10 +370,23 @@ def render_integrated_calendar(farmer_name):
             for idx, day in enumerate(forecast[:7]):
                 with cols[idx]:
                     date_str = day['date'] if isinstance(day['date'], str) else day['date'].strftime('%Y-%m-%d')
+                    day_name = datetime.strptime(date_str, '%Y-%m-%d').strftime('%a')
+                    
+                    # Weather emoji
+                    if day['rainfall'] > 10:
+                        emoji = "⛈️"
+                    elif day['rainfall'] > 2:
+                        emoji = "🌧️"
+                    elif day['temperature'] > 32:
+                        emoji = "☀️"
+                    else:
+                        emoji = "⛅"
+                    
+                    st.markdown(f"**{day_name}** {emoji}")
                     st.metric(
                         date_str[-5:],
-                        f"{day['temperature']}°C",
-                        f"{day['rainfall']}mm"
+                        f"{day['temperature']:.0f}°C",
+                        f"{day['rainfall']:.0f}mm"
                     )
     except Exception as e:
         st.warning(f"Unable to load weather summary: {str(e)}")

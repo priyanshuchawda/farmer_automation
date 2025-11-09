@@ -1,7 +1,7 @@
 from datetime import datetime
 import joblib
 from weather.api_client import OpenWeatherAPI
-from weather.weather_model_enhanced import forecast_next_7_days
+
 from weather.config import PUNE_COORDINATES
 
 def combine_forecasts(model_forecast, api_forecast):
@@ -54,9 +54,8 @@ def get_weather_forecast(city="Pune", lat=None, lon=None):
             print("Failed to get OpenWeather forecast for Pune!")
             return None
         
-        model_forecast = forecast_next_7_days(datetime.now())
-        combined_forecast = combine_forecasts(model_forecast, api_forecast)
-        return combined_forecast
+        api_forecast = api_forecast.rename(columns={'temp': 'temperature', 'rain': 'rainfall', 'wind': 'wind_speed'})
+        return api_forecast.to_dict('records')
     else:
         print(f"Fetching forecast for {city} from OpenWeather API...")
         if lat is not None and lon is not None:
