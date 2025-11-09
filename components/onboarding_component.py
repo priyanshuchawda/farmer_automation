@@ -38,7 +38,7 @@ def render_onboarding_checklist(farmer_name):
     if percentage == 100:
         st.balloons()
         st.success("🎉 **Congratulations!** You've completed all starter tasks!")
-        if st.button("✅ Dismiss Getting Started Guide", use_container_width=True):
+        if st.button("✅ Dismiss Getting Started Guide", width="stretch"):
             update_onboarding_progress(farmer_name, onboarding_dismissed=1)
             st.rerun()
         return
@@ -142,7 +142,7 @@ def render_onboarding_checklist(farmer_name):
         """, unsafe_allow_html=True)
     with col2:
         if not progress.get('profile_completed', 0):
-            if st.button("View Profile", key="onboard_profile", use_container_width=True):
+            if st.button("View Profile", key="onboard_profile", width="stretch"):
                 st.session_state.selected_menu = "👤 My Profile"
                 # Check if profile is complete
                 farmer_profile = get_farmer_profile(farmer_name)
@@ -167,7 +167,7 @@ def render_onboarding_checklist(farmer_name):
         """, unsafe_allow_html=True)
     with col2:
         if not progress.get('weather_checked', 0):
-            if st.button("View Weather", key="onboard_weather", use_container_width=True):
+            if st.button("View Weather", key="onboard_weather", width="stretch"):
                 update_onboarding_progress(farmer_name, weather_checked=1)
                 st.session_state.selected_menu = "🌤️ Weather Forecast"
                 st.rerun()
@@ -189,7 +189,7 @@ def render_onboarding_checklist(farmer_name):
         """, unsafe_allow_html=True)
     with col2:
         if not progress.get('first_listing_created', 0):
-            if st.button("Create Listing", key="onboard_listing", use_container_width=True):
+            if st.button("Create Listing", key="onboard_listing", width="stretch"):
                 st.session_state.selected_menu = "➕ Create New Listing"
                 st.rerun()
     
@@ -210,7 +210,7 @@ def render_onboarding_checklist(farmer_name):
         """, unsafe_allow_html=True)
     with col2:
         if not progress.get('calendar_event_added', 0):
-            if st.button("Open Calendar", key="onboard_calendar", use_container_width=True):
+            if st.button("Open Calendar", key="onboard_calendar", width="stretch"):
                 st.session_state.selected_menu = "📅 Farming Calendar"
                 st.rerun()
     
@@ -231,7 +231,7 @@ def render_onboarding_checklist(farmer_name):
         """, unsafe_allow_html=True)
     with col2:
         if not progress.get('market_prices_viewed', 0):
-            if st.button("View Prices", key="onboard_market", use_container_width=True):
+            if st.button("View Prices", key="onboard_market", width="stretch"):
                 update_onboarding_progress(farmer_name, market_prices_viewed=1)
                 st.session_state.selected_menu = "💰 Market Prices"
                 st.rerun()
@@ -240,7 +240,7 @@ def render_onboarding_checklist(farmer_name):
     st.markdown("<br>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("❌ I'll do this later", use_container_width=True):
+        if st.button("❌ I'll do this later", width="stretch"):
             update_onboarding_progress(farmer_name, onboarding_dismissed=1)
             st.rerun()
 

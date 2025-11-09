@@ -195,7 +195,7 @@ def render_location_verification_widget():
             manual_gps_lat = st.number_input("GPS Latitude", value=0.0, format="%.6f", key="manual_gps_lat")
             manual_gps_lon = st.number_input("GPS Longitude", value=0.0, format="%.6f", key="manual_gps_lon")
             
-            if st.button("✅ Use These GPS Coordinates", use_container_width=True):
+            if st.button("✅ Use These GPS Coordinates", width="stretch"):
                 if manual_gps_lat != 0.0 and manual_gps_lon != 0.0:
                     st.session_state.gps_latitude = manual_gps_lat
                     st.session_state.gps_longitude = manual_gps_lon
@@ -216,7 +216,7 @@ def render_location_verification_widget():
             key="AI_location_input"
         )
         
-        if st.button("🔍 Verify with AI", use_container_width=True):
+        if st.button("🔍 Verify with AI", width="stretch"):
             if location_text:
                 with st.spinner("🤖 Verifying with AI AI..."):
                     ai_client = AIClient()
@@ -313,7 +313,7 @@ def render_location_verification_widget():
         
         with col2:
             if st.button("💾 Save Verified Location to Profile", 
-                        use_container_width=True, 
+                        width="stretch", 
                         type="primary"):
                 # This will be handled by the parent component
                 st.session_state.save_verified_location = True

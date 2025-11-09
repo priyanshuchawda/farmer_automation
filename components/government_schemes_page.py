@@ -628,7 +628,7 @@ Search for latest official requirements."""
                 help="How many years to repay"
             )
         
-        if st.button("🔍 Search Rates & Calculate EMI", type="primary", use_container_width=True):
+        if st.button("🔍 Search Rates & Calculate EMI", type="primary", width="stretch"):
             with st.spinner(f"🔍 Searching current {loan_type} rates in {farmer_location_for_loan}..."):
                 
                 # Build AI query to search for real loan data
@@ -752,7 +752,7 @@ Calculate and show:
         
         import pandas as pd
         df = pd.DataFrame(comparison_data)
-        st.dataframe(df, use_container_width=True, hide_index=True)
+        st.dataframe(df, width="stretch", hide_index=True)
         
         st.caption("💡 **Tip:** Rates shown are approximate. Click 'Search Rates' above for current rates in your area.")
 

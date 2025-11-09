@@ -39,7 +39,7 @@ def render_profiles_page():
         
         contact = st.text_input(f"{t('Contact Number')} *", placeholder=f"{t('e.g.')}, 9876543210")
         
-        submitted = st.form_submit_button(f"💾 {t('Save Farmer Profile')}", use_container_width=True)
+        submitted = st.form_submit_button(f"💾 {t('Save Farmer Profile')}", width="stretch")
         
         if submitted:
             if name and location and farm_size > 0 and contact and password and confirm_password:
@@ -86,7 +86,7 @@ def render_profiles_page():
                 lambda row: f"({row['latitude']:.4f}, {row['longitude']:.4f})" if pd.notna(row['latitude']) else t("Not set"), 
                 axis=1
             )
-        st.dataframe(display_df, use_container_width=True)
+        st.dataframe(display_df, width="stretch")
     else:
         st.info(t("No farmer profiles found. Add a new profile above."))
 

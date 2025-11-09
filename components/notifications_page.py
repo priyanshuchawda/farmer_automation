@@ -138,7 +138,7 @@ def render_notifications_page():
             )
         
         with col3:
-            if st.button("🗑️ Clear All", use_container_width=True):
+            if st.button("🗑️ Clear All", width="stretch"):
                 conn = get_connection()
                 cursor = conn.cursor()
                 cursor.execute("DELETE FROM notifications WHERE farmer_name = ?", (farmer_name,))
@@ -204,7 +204,7 @@ def render_notifications_page():
                     
                     # Mark as read button
                     if not notif['is_read']:
-                        if st.button(f"✓ Mark as read", key=f"read_{notif['id']}", use_container_width=True):
+                        if st.button(f"✓ Mark as read", key=f"read_{notif['id']}", width="stretch"):
                             mark_notification_read(notif['id'])
                             st.rerun()
                 
@@ -242,7 +242,7 @@ def render_notifications_page():
                     ["Goes Above", "Goes Below", "Equals"]
                 )
                 
-                if st.button("🔔 Create Alert", use_container_width=True, type="primary"):
+                if st.button("🔔 Create Alert", width="stretch", type="primary"):
                     if commodity and target_price > 0:
                         add_price_alert(farmer_name, commodity, target_price, alert_type)
                         st.success(f"✅ Alert created for {commodity} at ₹{target_price}")
@@ -272,7 +272,7 @@ def render_notifications_page():
                     st.metric("Target Price", f"₹{alert['target_price']:.2f}")
                 
                 with col3:
-                    if st.button("🗑️", key=f"del_alert_{alert['id']}", use_container_width=True):
+                    if st.button("🗑️", key=f"del_alert_{alert['id']}", width="stretch"):
                         delete_price_alert(alert['id'])
                         st.rerun()
                 
@@ -325,7 +325,7 @@ def render_notifications_page():
         
         st.markdown("---")
         
-        if st.button("💾 Save Settings", use_container_width=True, type="primary"):
+        if st.button("💾 Save Settings", width="stretch", type="primary"):
             st.success("✅ Settings saved successfully!")
             st.balloons()
         
@@ -337,7 +337,7 @@ def render_notifications_page():
         col1, col2 = st.columns(2)
         
         with col1:
-            if st.button("Clear Old Notifications", use_container_width=True):
+            if st.button("Clear Old Notifications", width="stretch"):
                 conn = get_connection()
                 cursor = conn.cursor()
                 week_ago = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
@@ -350,7 +350,7 @@ def render_notifications_page():
                 st.success("✅ Old notifications cleared!")
         
         with col2:
-            if st.button("Clear All Alerts", use_container_width=True):
+            if st.button("Clear All Alerts", width="stretch"):
                 conn = get_connection()
                 cursor = conn.cursor()
                 cursor.execute("UPDATE price_alerts SET is_active = 0 WHERE farmer_name = ?", (farmer_name,))

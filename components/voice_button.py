@@ -111,7 +111,7 @@ def render_floating_voice_button():
     col1, col2, col3 = st.columns([8, 1, 1])
     
     with col3:
-        if st.button("🎤", key="floating_voice_btn", help=t("Voice Assistant"), use_container_width=True):
+        if st.button("🎤", key="floating_voice_btn", help=t("Voice Assistant"), width="stretch"):
             st.session_state.show_voice_modal = True
             st.rerun()
 
@@ -136,7 +136,7 @@ def render_voice_quick_input():
                 start_prompt="🎙️",
                 stop_prompt="⏹️",
                 just_once=False,
-                use_container_width=True,
+                width="stretch",
                 format="wav",
                 key=f"quick_voice_{st.session_state.get('quick_voice_counter', 0)}"
             )
@@ -164,7 +164,7 @@ def render_voice_quick_input():
                         
                         if command['action'] in action_map:
                             button_text, menu_item = action_map[command['action']]
-                            if st.button(f"➡️ {t('Go to')} {button_text}", use_container_width=True):
+                            if st.button(f"➡️ {t('Go to')} {button_text}", width="stretch"):
                                 st.session_state.nav_history.append(st.session_state.selected_menu)
                                 st.session_state.nav_forward = []
                                 st.session_state.selected_menu = menu_item
@@ -193,7 +193,7 @@ def add_voice_shortcuts():
             ➡️ {t('Or go to')} **{t('Voice Assistant')}** {t('page')}
             """)
             
-            if st.button(f"🎤 {t('Open Voice Assistant')}", use_container_width=True, key="sidebar_voice"):
+            if st.button(f"🎤 {t('Open Voice Assistant')}", width="stretch", key="sidebar_voice"):
                 st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
                 st.session_state.selected_menu = "🎤 Voice Assistant"

@@ -94,7 +94,7 @@ def render_week_view(year, month, day, events, lang):
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col1:
-        if st.button("← Previous Week", key="prev_week", use_container_width=True):
+        if st.button("← Previous Week", key="prev_week", width="stretch"):
             new_date = start_date - timedelta(days=7)
             st.session_state.current_year = new_date.year
             st.session_state.current_month = new_date.month
@@ -117,7 +117,7 @@ def render_week_view(year, month, day, events, lang):
         st.markdown(f"### :green[Week: {week_label}]")
     
     with col3:
-        if st.button("Next Week →", key="next_week", use_container_width=True):
+        if st.button("Next Week →", key="next_week", width="stretch"):
             new_date = end_date + timedelta(days=1)
             st.session_state.current_year = new_date.year
             st.session_state.current_month = new_date.month
@@ -245,7 +245,7 @@ def render_week_view(year, month, day, events, lang):
                     "📅 Day", 
                     key=f"view_day_{date_obj.strftime('%Y%m%d')}", 
                     help="Check hourly schedule",
-                    use_container_width=True
+                    width="stretch"
                 ):
                     # Set all session state variables for day view
                     st.session_state.current_day = date_obj.day
@@ -259,7 +259,7 @@ def render_week_view(year, month, day, events, lang):
                     "➕", 
                     key=f"add_week_{date_obj.strftime('%Y%m%d')}", 
                     help="Add event",
-                    use_container_width=True
+                    width="stretch"
                 ):
                     st.session_state.current_day = date_obj.day
                     st.session_state.current_month = date_obj.month

@@ -92,7 +92,7 @@ def render_tool_management(tools_df, farmer_name):
         if selected_tool_type != t("All"):
             filtered_tools = filtered_tools[filtered_tools["Tool"] == selected_tool_type]
 
-        st.dataframe(filtered_tools, use_container_width=True)
+        st.dataframe(filtered_tools, width="stretch")
     else:
         st.info(t("No tools listed yet."))
 
@@ -107,7 +107,7 @@ def render_tool_management(tools_df, farmer_name):
             updated_tools_df = st.data_editor(
                 editable_for_display,
                 key="tool_editor",
-                use_container_width=True,
+                width="stretch",
                 num_rows="dynamic"
             )
             st.session_state.tools.loc[updated_tools_df.index, updated_tools_df.columns] = updated_tools_df.values

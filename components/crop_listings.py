@@ -99,7 +99,7 @@ def render_crop_management(crops_df, farmer_name):
         if selected_crop_type != t("All"):
             filtered_crops = filtered_crops[filtered_crops["Crop"] == selected_crop_type]
 
-        st.dataframe(filtered_crops, use_container_width=True)
+        st.dataframe(filtered_crops, width="stretch")
     else:
         st.info(t("No crops listed yet."))
 
@@ -115,7 +115,7 @@ def render_crop_management(crops_df, farmer_name):
             updated_crops_df = st.data_editor(
                 editable_for_display,
                 key="crop_editor",
-                use_container_width=True,
+                width="stretch",
                 num_rows="dynamic"
             )
             st.session_state.crops.loc[updated_crops_df.index, updated_crops_df.columns] = updated_crops_df.values

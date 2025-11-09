@@ -16,7 +16,7 @@ def render_welcome_screen():
         st.markdown("---")
         st.info("**🎉 First Time Here?**\n\nWelcome to your farming dashboard! Take a moment to explore the features.")
         
-        if st.button("⏭️ Skip Welcome", use_container_width=True):
+        if st.button("⏭️ Skip Welcome", width="stretch"):
             st.session_state.show_welcome = False
             st.rerun()
     
@@ -207,25 +207,25 @@ def render_welcome_screen():
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("👤 View Profile", use_container_width=True, type="primary"):
+        if st.button("👤 View Profile", width="stretch", type="primary"):
             st.session_state.show_welcome = False
             st.session_state.menu_selection = "View Profile"
             st.rerun()
     
     with col2:
-        if st.button("🌤️ Check Weather", use_container_width=True, type="primary"):
+        if st.button("🌤️ Check Weather", width="stretch", type="primary"):
             st.session_state.show_welcome = False
             st.session_state.menu_selection = "Weather"
             st.rerun()
     
     with col3:
-        if st.button("📝 Create Listing", use_container_width=True, type="primary"):
+        if st.button("📝 Create Listing", width="stretch", type="primary"):
             st.session_state.show_welcome = False
             st.session_state.menu_selection = "New Listing"
             st.rerun()
     
     with col4:
-        if st.button("📅 Open Calendar", use_container_width=True, type="primary"):
+        if st.button("📅 Open Calendar", width="stretch", type="primary"):
             st.session_state.show_welcome = False
             st.session_state.menu_selection = "Calendar"
             st.rerun()
@@ -234,7 +234,7 @@ def render_welcome_screen():
     
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        if st.button("⏭️ Skip Tutorial - Go to Dashboard", use_container_width=True):
+        if st.button("⏭️ Skip Tutorial - Go to Dashboard", width="stretch"):
             st.session_state.show_welcome = False
             st.rerun()
     

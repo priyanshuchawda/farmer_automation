@@ -265,7 +265,7 @@ def render_calendar(year, month, events, lang):
                             if st.button(
                                 f"📝 {display_title}", 
                                 key=f"event_{event['id']}_{day}_{idx}",
-                                use_container_width=True,
+                                width="stretch",
                                 help=event_title
                             ):
                                 st.session_state.selected_event = event

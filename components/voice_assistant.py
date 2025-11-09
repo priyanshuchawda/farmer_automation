@@ -211,7 +211,7 @@ def render_voice_input(placeholder="Speak your question...", language=None):
             start_prompt=t("🎙️ Start Recording"),
             stop_prompt=t("⏹️ Stop Recording"),
             just_once=False,
-            use_container_width=True,
+            width="stretch",
             format="wav",
             callback=None,
             args=(),
@@ -348,7 +348,7 @@ def render_voice_assistant_page():
             response_text = t("Opening weather forecast...")
             speak_text(response_text, language, auto_play=False)
             
-            if st.button(f"🌤️ {t('Go to Weather')}", use_container_width=True, type="primary"):
+            if st.button(f"🌤️ {t('Go to Weather')}", width="stretch", type="primary"):
                 st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
                 st.session_state.selected_menu = "🌤️ Weather Forecast"
@@ -358,7 +358,7 @@ def render_voice_assistant_page():
             response_text = t("Opening market prices...")
             speak_text(response_text, language, auto_play=False)
             
-            if st.button(f"💰 {t('Go to Market Prices')}", use_container_width=True, type="primary"):
+            if st.button(f"💰 {t('Go to Market Prices')}", width="stretch", type="primary"):
                 st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
                 st.session_state.selected_menu = "💰 Market Prices"
@@ -368,7 +368,7 @@ def render_voice_assistant_page():
             response_text = t("Opening farming calendar...")
             speak_text(response_text, language, auto_play=False)
             
-            if st.button(f"📅 {t('Go to Calendar')}", use_container_width=True, type="primary"):
+            if st.button(f"📅 {t('Go to Calendar')}", width="stretch", type="primary"):
                 st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
                 st.session_state.selected_menu = "📅 Farming Calendar"
@@ -378,7 +378,7 @@ def render_voice_assistant_page():
             response_text = t("Opening your profile...")
             speak_text(response_text, language, auto_play=False)
             
-            if st.button(f"👤 {t('Go to Profile')}", use_container_width=True, type="primary"):
+            if st.button(f"👤 {t('Go to Profile')}", width="stretch", type="primary"):
                 st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
                 st.session_state.selected_menu = "👤 My Profile"
@@ -388,7 +388,7 @@ def render_voice_assistant_page():
             response_text = t("Opening tool listing form...")
             speak_text(response_text, language, auto_play=False)
             
-            if st.button(f"🔧 {t('Go to Tool Listing')}", use_container_width=True, type="primary"):
+            if st.button(f"🔧 {t('Go to Tool Listing')}", width="stretch", type="primary"):
                 st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
                 st.session_state.selected_menu = "➕ Create New Listing"
@@ -398,7 +398,7 @@ def render_voice_assistant_page():
             response_text = t("Opening crop listing form...")
             speak_text(response_text, language, auto_play=False)
             
-            if st.button(f"🌾 {t('Go to Crop Listing')}", use_container_width=True, type="primary"):
+            if st.button(f"🌾 {t('Go to Crop Listing')}", width="stretch", type="primary"):
                 st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
                 st.session_state.selected_menu = "➕ Create New Listing"

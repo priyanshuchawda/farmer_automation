@@ -356,15 +356,15 @@ def render_finance_dashboard(farmer_id):
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("➕ Add Income", use_container_width=True):
+        if st.button("➕ Add Income", width="stretch"):
             st.session_state.quick_action = 'add_income'
             st.rerun()
     with col2:
-        if st.button("➖ Add Expense", use_container_width=True):
+        if st.button("➖ Add Expense", width="stretch"):
             st.session_state.quick_action = 'add_expense'
             st.rerun()
     with col3:
-        if st.button("📈 View Analysis", use_container_width=True):
+        if st.button("📈 View Analysis", width="stretch"):
             st.session_state.quick_action = 'analysis'
             st.rerun()
 

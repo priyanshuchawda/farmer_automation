@@ -364,7 +364,7 @@ def render_auth_page():
             
             login_button = st.form_submit_button(
                 f"🌱 {t('Login')}",
-                use_container_width=True,
+                width="stretch",
                 type="primary"
             )
             
@@ -488,7 +488,7 @@ def render_auth_page():
                 
                 col1, col2 = st.columns([3, 1])
                 with col1:
-                    next_button = st.form_submit_button("Next: Farm Details →", use_container_width=True)
+                    next_button = st.form_submit_button("Next: Farm Details →", width="stretch")
                 
                 if next_button:
                     # Validation
@@ -574,7 +574,7 @@ def render_auth_page():
                     key="manual_location_input"
                 )
                 
-                if st.button("🔍 Find My Location", use_container_width=True, type="primary", key="find_coords_btn"):
+                if st.button("🔍 Find My Location", width="stretch", type="primary", key="find_coords_btn"):
                     if location and location.strip():
                         with st.spinner("🔍 Finding your location..."):
                             try:
@@ -637,7 +637,7 @@ def render_auth_page():
                         st.write(f"{st.session_state.temp_location_name}")
                         st.caption(f"🌐 Coordinates: {st.session_state.temp_coordinates['lat']:.6f}, {st.session_state.temp_coordinates['lon']:.6f}")
                     with col2:
-                        if st.button("🔄 Change Location", use_container_width=True):
+                        if st.button("🔄 Change Location", width="stretch"):
                             st.session_state.temp_coordinates = None
                             st.session_state.temp_location_name = None
                             st.session_state.gps_detected_lat = 0.0
@@ -685,7 +685,7 @@ def render_auth_page():
                         with col2:
                             st.metric("📍 Longitude", f"{st.session_state.gps_detected_lon:.6f}")
                         
-                        if st.button("✅ Use These Coordinates to Find My Address", use_container_width=True, type="primary", key="use_gps_btn"):
+                        if st.button("✅ Use These Coordinates to Find My Address", width="stretch", type="primary", key="use_gps_btn"):
                             with st.spinner("🔍 Finding your location address..."):
                                 try:
                                     ai_client = AIClient()
@@ -737,14 +737,14 @@ def render_auth_page():
             st.markdown("---")
             col1, col2 = st.columns(2)
             with col1:
-                if st.button("← Back", use_container_width=True, key="step2_back"):
+                if st.button("← Back", width="stretch", key="step2_back"):
                     st.session_state.reg_step = 1
                     st.session_state.temp_coordinates = None
                     st.session_state.temp_location_name = None
                     st.rerun()
             
             with col2:
-                if st.button(f"{t('Next: Complete Registration')} →", use_container_width=True, type="primary", key="step2_next"):
+                if st.button(f"{t('Next: Complete Registration')} →", width="stretch", type="primary", key="step2_next"):
                     # Validation
                     errors = []
                     
@@ -806,12 +806,12 @@ def render_auth_page():
             
             col1, col2 = st.columns(2)
             with col1:
-                if st.button("← Back to Edit", use_container_width=True, key="step3_back"):
+                if st.button("← Back to Edit", width="stretch", key="step3_back"):
                     st.session_state.reg_step = 2
                     st.rerun()
             
             with col2:
-                if st.button("🎉 Create My Account", use_container_width=True, type="primary", key="create_account_btn"):
+                if st.button("🎉 Create My Account", width="stretch", type="primary", key="create_account_btn"):
                     # Show progress
                     progress_bar = st.progress(0)
                     status_text = st.empty()
@@ -868,7 +868,7 @@ def render_auth_page():
                 st.info(f"**🚜 Farm Size:** {st.session_state.reg_data['farm_size']} {st.session_state.reg_data['farm_unit']}")
                 st.info(f"**📞 Contact:** {st.session_state.reg_data['contact']}")
             
-            if st.button("🌱 Go to Login", use_container_width=True, type="primary"):
+            if st.button("🌱 Go to Login", width="stretch", type="primary"):
                 # Clear registration data and switch to login tab
                 st.session_state.reg_step = 1
                 st.session_state.reg_data = {}
@@ -889,7 +889,7 @@ def render_auth_page():
                 placeholder="Enter admin password"
             )
             
-            admin_login = st.form_submit_button("Login as Admin", use_container_width=True)
+            admin_login = st.form_submit_button("Login as Admin", width="stretch")
             
             if admin_login:
                 if admin_password == "admin":

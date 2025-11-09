@@ -310,7 +310,7 @@ with st.expander(f"### {TRANSLATIONS[lang]['get_plan_header']}", expanded=True):
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button(TRANSLATIONS[lang]["get_plan_button"], use_container_width=True, type="primary"):
+        if st.button(TRANSLATIONS[lang]["get_plan_button"], width="stretch", type="primary"):
             if prompt.strip():
                 with st.spinner(TRANSLATIONS[lang]["loading"]):
                     plan_data, error = ai_service.generate_farming_plan(prompt, lang)
@@ -380,7 +380,7 @@ if 'plan_data' in st.session_state:
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button(TRANSLATIONS[lang]["add_event_button"], use_container_width=True, type="primary"):
+        if st.button(TRANSLATIONS[lang]["add_event_button"], width="stretch", type="primary"):
             event_start = f"{event_date}T{start_time}"
             event_end = f"{event_date}T{end_time}"
             event_id = create_event_id(st.session_state.events)

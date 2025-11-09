@@ -103,7 +103,7 @@ def render_home_page():
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button(f"📝 {t('List Tool')}", use_container_width=True, type="primary"):
+        if st.button(f"📝 {t('List Tool')}", width="stretch", type="primary"):
             if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                 st.session_state.nav_history.append(st.session_state.selected_menu)
             st.session_state.nav_forward = []
@@ -112,7 +112,7 @@ def render_home_page():
         st.caption(t("Add tools for rent"))
     
     with col2:
-        if st.button(f"🌾 {t('List Crop')}", use_container_width=True, type="primary"):
+        if st.button(f"🌾 {t('List Crop')}", width="stretch", type="primary"):
             if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                 st.session_state.nav_history.append(st.session_state.selected_menu)
             st.session_state.nav_forward = []
@@ -121,7 +121,7 @@ def render_home_page():
         st.caption(t("Post crops for sale"))
     
     with col3:
-        if st.button(f"📅 {t('Plan Day')}", use_container_width=True, type="primary"):
+        if st.button(f"📅 {t('Plan Day')}", width="stretch", type="primary"):
             if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                 st.session_state.nav_history.append(st.session_state.selected_menu)
             st.session_state.nav_forward = []
@@ -130,7 +130,7 @@ def render_home_page():
         st.caption(t("Schedule activities"))
     
     with col4:
-        if st.button(f"🛍️ {t('Browse Market')}", use_container_width=True, type="primary"):
+        if st.button(f"🛍️ {t('Browse Market')}", width="stretch", type="primary"):
             if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                 st.session_state.nav_history.append(st.session_state.selected_menu)
             st.session_state.nav_forward = []
@@ -178,7 +178,7 @@ def render_home_page():
                     st.markdown(f"{icon} **{event_time}** - {event_title}")
             else:
                 st.info(f"📅 {t('No tasks scheduled for today.')}\n\n{t('Visit the Calendar to plan your farming activities!')}")
-                if st.button(f"📅 {t('Open Calendar')}", key="add_task_home", use_container_width=True, type="primary"):
+                if st.button(f"📅 {t('Open Calendar')}", key="add_task_home", width="stretch", type="primary"):
                     # Add to navigation history
                     if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                         st.session_state.nav_history.append(st.session_state.selected_menu)
@@ -187,7 +187,7 @@ def render_home_page():
                     st.rerun()
         except Exception as e:
             st.info(f"📅 {t('No tasks scheduled for today.')}\n\n{t('Visit the Calendar to plan your farming activities!')}")
-            if st.button(f"📅 {t('Open Calendar')}", key="add_task_error", use_container_width=True, type="primary"):
+            if st.button(f"📅 {t('Open Calendar')}", key="add_task_error", width="stretch", type="primary"):
                 # Add to navigation history
                 if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                     st.session_state.nav_history.append(st.session_state.selected_menu)
@@ -204,7 +204,7 @@ def render_home_page():
         
         st.info(f"📍 {localized_weather_location}\n\n{t('Visit Weather section for detailed forecast')}")
         
-        if st.button(f"🌤️ {t('View Weather Forecast')}", key="weather_home", use_container_width=True, type="primary"):
+        if st.button(f"🌤️ {t('View Weather Forecast')}", key="weather_home", width="stretch", type="primary"):
             # Add to navigation history
             if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                 st.session_state.nav_history.append(st.session_state.selected_menu)
@@ -269,7 +269,7 @@ def render_home_page():
     
     with col1:
         st.info(f"**📖 {t('How to Use')}**\n\n{t('New to the platform? Check out our guide!')}")
-        if st.button(f"📖 {t('View Profile')}", key="guide_btn", use_container_width=True):
+        if st.button(f"📖 {t('View Profile')}", key="guide_btn", width="stretch"):
             # Add to navigation history
             if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                 st.session_state.nav_history.append(st.session_state.selected_menu)
@@ -279,7 +279,7 @@ def render_home_page():
     
     with col2:
         st.success(f"**🤖 {t('AI Assistant')}**\n\n{t('Get farming tips from our AI calendar!')}")
-        if st.button(f"🤖 {t('Open AI Chat')}", key="ai_btn", use_container_width=True):
+        if st.button(f"🤖 {t('Open AI Chat')}", key="ai_btn", width="stretch"):
             # Add to navigation history
             if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                 st.session_state.nav_history.append(st.session_state.selected_menu)
@@ -289,7 +289,7 @@ def render_home_page():
     
     with col3:
         st.warning(f"**💰 {t('Market Prices')}**\n\n{t('Check current rates before selling!')}")
-        if st.button(f"💰 {t('View Prices')}", key="prices_btn", use_container_width=True):
+        if st.button(f"💰 {t('View Prices')}", key="prices_btn", width="stretch"):
             # Add to navigation history
             if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                 st.session_state.nav_history.append(st.session_state.selected_menu)

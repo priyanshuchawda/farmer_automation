@@ -83,7 +83,7 @@ def render_day_view(year, month, day, events, lang):
     date_str = f"{year:04d}-{month:02d}-{day:02d}"
     
     with col1:
-        if st.button("← Prev Day", key="prev_day", use_container_width=True):
+        if st.button("← Prev Day", key="prev_day", width="stretch"):
             new_date = current_date - timedelta(days=1)
             st.session_state.current_year = new_date.year
             st.session_state.current_month = new_date.month
@@ -91,7 +91,7 @@ def render_day_view(year, month, day, events, lang):
             st.rerun()
     
     with col2:
-        if st.button("📆 Week", key="to_week", use_container_width=True, help="Go to week view"):
+        if st.button("📆 Week", key="to_week", width="stretch", help="Go to week view"):
             st.session_state.calendar_view = "week"
             st.rerun()
     
@@ -106,7 +106,7 @@ def render_day_view(year, month, day, events, lang):
         )
     
     with col4:
-        if st.button("Next Day →", key="next_day", use_container_width=True):
+        if st.button("Next Day →", key="next_day", width="stretch"):
             new_date = current_date + timedelta(days=1)
             st.session_state.current_year = new_date.year
             st.session_state.current_month = new_date.month
@@ -189,7 +189,7 @@ def render_day_view(year, month, day, events, lang):
                             st.info(f"🌦️ {weather_alert}", icon="⚠️")
                         
                         # View button
-                        if st.button("📝 View Details", key=f"view_{event['id']}_{hour}", use_container_width=True):
+                        if st.button("📝 View Details", key=f"view_{event['id']}_{hour}", width="stretch"):
                             st.session_state.selected_event = event
                             st.rerun()
             
@@ -232,7 +232,7 @@ def render_day_view(year, month, day, events, lang):
     st.divider()
     col1, col2, col3 = st.columns([2, 2, 2])
     with col2:
-        if st.button("➕ Add Event for This Day", use_container_width=True, type="primary"):
+        if st.button("➕ Add Event for This Day", width="stretch", type="primary"):
             st.session_state.show_quick_add = True
             st.rerun()
     
@@ -260,12 +260,12 @@ def render_day_view(year, month, day, events, lang):
                 
                 col1, col2 = st.columns(2)
                 with col1:
-                    if st.button("📝 Edit", key=f"edit_summary_{event['id']}", use_container_width=True):
+                    if st.button("📝 Edit", key=f"edit_summary_{event['id']}", width="stretch"):
                         st.session_state.selected_event = event
                         st.session_state.edit_mode = True
                         st.rerun()
                 with col2:
-                    if st.button("🗑️ Delete", key=f"delete_summary_{event['id']}", use_container_width=True):
+                    if st.button("🗑️ Delete", key=f"delete_summary_{event['id']}", width="stretch"):
                         st.session_state.delete_event_id = event['id']
                         st.rerun()
     else:

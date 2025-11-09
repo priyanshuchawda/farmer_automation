@@ -36,7 +36,7 @@ def render_event_details(event, lang, editing=False):
         # Action buttons
         col1, col2, col3 = st.columns(3)
         with col1:
-            if st.button(TRANSLATIONS[lang]["save_changes"], use_container_width=True, type="primary"):
+            if st.button(TRANSLATIONS[lang]["save_changes"], width="stretch", type="primary"):
                 event["extendedProps"]["heading"] = new_heading
                 event["title"] = f"{new_heading} 📝"
                 st.session_state.editing = False
@@ -44,12 +44,12 @@ def render_event_details(event, lang, editing=False):
                 st.rerun()
         
         with col2:
-            if st.button(TRANSLATIONS[lang]["cancel"], use_container_width=True):
+            if st.button(TRANSLATIONS[lang]["cancel"], width="stretch"):
                 st.session_state.editing = False
                 st.rerun()
         
         with col3:
-            if st.button(TRANSLATIONS[lang]["delete"], use_container_width=True, type="secondary"):
+            if st.button(TRANSLATIONS[lang]["delete"], width="stretch", type="secondary"):
                 st.session_state.events = [
                     e for e in st.session_state.events if e["id"] != event["id"]
                 ]
@@ -83,12 +83,12 @@ def render_event_details(event, lang, editing=False):
         # Action buttons
         col1, col2 = st.columns(2)
         with col1:
-            if st.button(TRANSLATIONS[lang]["edit"], use_container_width=True, type="primary"):
+            if st.button(TRANSLATIONS[lang]["edit"], width="stretch", type="primary"):
                 st.session_state.editing = True
                 st.rerun()
         
         with col2:
-            if st.button(TRANSLATIONS[lang]["close"], use_container_width=True):
+            if st.button(TRANSLATIONS[lang]["close"], width="stretch"):
                 st.session_state.selected_event = None
                 st.rerun()
 

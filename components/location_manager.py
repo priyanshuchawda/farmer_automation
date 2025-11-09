@@ -250,7 +250,7 @@ def render_location_setup(farmer_name: str, current_location: Optional[str] = No
         st.success(f"✅ Current Location: {current_location or 'Set'}")
         st.info(f"📍 Coordinates: {current_lat:.6f}, {current_lon:.6f}")
         
-        if st.button("🔄 Update Location", use_container_width=True):
+        if st.button("🔄 Update Location", width="stretch"):
             st.session_state['update_location'] = True
     
     if not current_lat or not current_lon or st.session_state.get('update_location', False):
@@ -269,7 +269,7 @@ def render_location_setup(farmer_name: str, current_location: Optional[str] = No
                 help="Enter your village, city, or detailed address"
             )
             
-            if st.button("🔍 Find Coordinates", use_container_width=True):
+            if st.button("🔍 Find Coordinates", width="stretch"):
                 if location_input:
                     with st.spinner("🔍 Finding coordinates..."):
                         location_manager = LocationManager()
@@ -292,7 +292,7 @@ def render_location_setup(farmer_name: str, current_location: Optional[str] = No
                                         for source in address_info['sources']:
                                             st.markdown(f"- [{source['title']}]({source['uri']})")
                             
-                            if st.button("💾 Save This Location", use_container_width=True):
+                            if st.button("💾 Save This Location", width="stretch"):
                                 update_farmer_location(
                                     farmer_name, 
                                     location_input, 
@@ -314,7 +314,7 @@ def render_location_setup(farmer_name: str, current_location: Optional[str] = No
             with col2:
                 lon_input = st.number_input("Longitude", format="%.6f", step=0.000001)
             
-            if st.button("📍 Verify & Get Address", use_container_width=True):
+            if st.button("📍 Verify & Get Address", width="stretch"):
                 if lat_input and lon_input:
                     with st.spinner("📍 Getting address information..."):
                         location_manager = LocationManager()
@@ -333,7 +333,7 @@ def render_location_setup(farmer_name: str, current_location: Optional[str] = No
                                 placeholder="e.g., My Farm, Home"
                             )
                             
-                            if st.button("💾 Save Location", use_container_width=True):
+                            if st.button("💾 Save Location", width="stretch"):
                                 if location_name:
                                     update_farmer_location(
                                         farmer_name,

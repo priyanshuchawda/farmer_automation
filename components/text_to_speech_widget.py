@@ -75,7 +75,7 @@ def speak_button(text, button_text="🔊 Listen", language=None, key_suffix=""):
     if language is None:
         language = get_current_language()
     
-    if st.button(button_text, key=f"speak_btn_{key_suffix}", use_container_width=False):
+    if st.button(button_text, key=f"speak_btn_{key_suffix}", width="content"):
         with st.spinner("🎵 Generating audio..."):
             audio_bytes = text_to_audio(text, language)
         
@@ -244,7 +244,7 @@ def add_page_narrator():
     col1, col2, col3 = st.columns([2, 6, 2])
     
     with col2:
-        if st.button(f"🔊 Listen to this page", key="read_page_btn", use_container_width=True, type="secondary"):
+        if st.button(f"🔊 Listen to this page", key="read_page_btn", width="stretch", type="secondary"):
             # Create descriptive text based on page
             descriptions = {
                 "🏠 Home": f"Welcome to your home dashboard. You can see today's tasks, weather updates, and quick actions here.",

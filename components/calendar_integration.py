@@ -249,7 +249,7 @@ def render_integrated_calendar(farmer_name):
     
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🌱 Generate", use_container_width=True, type="primary"):
+        if st.button("🌱 Generate", width="stretch", type="primary"):
             if prompt.strip():
                 with st.spinner("🔄 Creating plan..."):
                     plan_data, error = ai_service.generate_farming_plan(prompt, lang)

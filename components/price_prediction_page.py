@@ -131,7 +131,7 @@ def render_price_prediction_page():
             key="pred_location"
         )
         
-        predict_button = st.button("🔮 Predict Future Prices", use_container_width=True, type="primary")
+        predict_button = st.button("🔮 Predict Future Prices", width="stretch", type="primary")
         
         if predict_button:
             if current_price <= 0:
@@ -325,7 +325,7 @@ def render_price_prediction_page():
             key="harvest_date"
         )
         
-        analyze_button = st.button("📊 Analyze Best Selling Time", use_container_width=True, type="primary")
+        analyze_button = st.button("📊 Analyze Best Selling Time", width="stretch", type="primary")
         
         if analyze_button:
             if current_price_sell <= 0:
@@ -486,7 +486,7 @@ def render_price_prediction_page():
                 key="actual_price"
             )
         
-        calculate_button = st.button("🧮 Calculate Profit/Loss", use_container_width=True, type="primary")
+        calculate_button = st.button("🧮 Calculate Profit/Loss", width="stretch", type="primary")
         
         if calculate_button:
             if expected_price <= 0 or actual_price <= 0 or quantity <= 0:

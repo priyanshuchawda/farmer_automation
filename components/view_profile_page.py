@@ -120,7 +120,7 @@ def render_view_profile_page():
                     elif verification_method == t("AI Only"):
                         update_coords = st.checkbox(f"🌍 {t('Fetch coordinates using AI')}", value=True)
                     
-                    if st.form_submit_button(f"💾 {t('Save Changes')}", use_container_width=True):
+                    if st.form_submit_button(f"💾 {t('Save Changes')}", width="stretch"):
                         new_latitude = farmer_profile['latitude']
                         new_longitude = farmer_profile['longitude']
                         

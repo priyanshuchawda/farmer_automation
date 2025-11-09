@@ -335,7 +335,7 @@ def render_market_price():
             key="live_location"
         )
     
-    if st.button("🔍 Search Prices", use_container_width=True, type="primary"):
+    if st.button("🔍 Search Prices", width="stretch", type="primary"):
         if live_commodity and live_location:
             with st.spinner(f"🔍 AI is searching for {live_commodity} prices in {live_location}... Please wait..."):
                 if ai_client:
@@ -371,9 +371,9 @@ def render_market_price():
     
     col_ask, col_clear = st.columns([4, 1])
     with col_ask:
-        ask_button = st.button("💬 Ask AI", use_container_width=True, type="secondary")
+        ask_button = st.button("💬 Ask AI", width="stretch", type="secondary")
     with col_clear:
-        if st.button("🗑️ Clear", use_container_width=True):
+        if st.button("🗑️ Clear", width="stretch"):
             st.session_state.market_chat_history = []
             st.rerun()
     

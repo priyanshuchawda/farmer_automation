@@ -108,7 +108,7 @@ def render_cache_admin_page():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🧹 Clear Expired Cache", use_container_width=True):
+        if st.button("🧹 Clear Expired Cache", width="stretch"):
             result = cache.clear_expired_cache()
             if result['total_deleted'] > 0:
                 st.success(f"✅ Cleared {result['total_deleted']} expired entries!")
@@ -118,13 +118,13 @@ def render_cache_admin_page():
             st.rerun()
     
     with col2:
-        if st.button("🌤️ Clear Weather Cache", use_container_width=True):
+        if st.button("🌤️ Clear Weather Cache", width="stretch"):
             cache.clear_weather_cache()
             st.success("✅ Weather cache cleared!")
             st.rerun()
     
     with col3:
-        if st.button("💰 Clear Price Cache", use_container_width=True):
+        if st.button("💰 Clear Price Cache", width="stretch"):
             cache.clear_market_price_cache()
             st.success("✅ Market price cache cleared!")
             st.rerun()
@@ -134,13 +134,13 @@ def render_cache_admin_page():
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        if st.button("🤖 Clear Prediction Cache", use_container_width=True):
+        if st.button("🤖 Clear Prediction Cache", width="stretch"):
             cache.clear_prediction_cache()
             st.success("✅ Prediction cache cleared!")
             st.rerun()
     
     with col2:
-        if st.button("⚠️ Clear ALL Cache", use_container_width=True, type="secondary"):
+        if st.button("⚠️ Clear ALL Cache", width="stretch", type="secondary"):
             if st.checkbox("I confirm clearing all cache data"):
                 cache.clear_all_cache()
                 st.success("✅ All cache data cleared!")

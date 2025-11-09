@@ -258,7 +258,7 @@ def render_weather_component():
         key="weather_query_input"
     )
 
-    if st.button("🔍 Get Forecast", use_container_width=True, type="primary"):
+    if st.button("🔍 Get Forecast", width="stretch", type="primary"):
         if query:
             with st.spinner("🌤️ Fetching weather forecast and farming advice..."):
                 response = get_weather_forecast_for_query(query)

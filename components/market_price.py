@@ -228,7 +228,7 @@ def render_market_price():
             selected_date = st.date_input("Select Date", value=default_date)
         
         # Search Button
-        if st.button("🔍 Get Price", use_container_width=True, type="primary"):
+        if st.button("🔍 Get Price", width="stretch", type="primary"):
             if not selected_market:
                 st.warning("⚠️ Please select a market")
             elif not commodity:
@@ -289,7 +289,7 @@ def render_market_price():
                                         
                                         if not df_hist.empty:
                                             st.line_chart(df_hist.set_index('Date'))
-                                            st.dataframe(df_hist, use_container_width=True)
+                                            st.dataframe(df_hist, width="stretch")
                                         else:
                                             st.info("No historical data available")
                                     else:
@@ -318,9 +318,9 @@ def render_market_price():
     
     col_ask, col_clear = st.columns([4, 1])
     with col_ask:
-        ask_button = st.button("💬 Ask AI", use_container_width=True, type="secondary")
+        ask_button = st.button("💬 Ask AI", width="stretch", type="secondary")
     with col_clear:
-        if st.button("🗑️ Clear", use_container_width=True):
+        if st.button("🗑️ Clear", width="stretch"):
             st.session_state.market_chat_history = []
             st.rerun()
     

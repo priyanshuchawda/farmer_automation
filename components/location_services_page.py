@@ -64,7 +64,7 @@ def render_location_services_page():
         cols = st.columns(3)
         for idx, (emoji_name, query) in enumerate(quick_searches.items()):
             with cols[idx % 3]:
-                if st.button(emoji_name, use_container_width=True):
+                if st.button(emoji_name, width="stretch"):
                     st.session_state['quick_search'] = query
                     st.session_state['search_triggered'] = True
         
@@ -87,7 +87,7 @@ def render_location_services_page():
                                 with col1:
                                     st.markdown(f"**{source['title']}**")
                                 with col2:
-                                    st.link_button("View", source['uri'], use_container_width=True)
+                                    st.link_button("View", source['uri'], width="stretch")
                     else:
                         st.error("❌ Could not find nearby places.")
                 
@@ -119,7 +119,7 @@ def render_location_services_page():
         
         radius = st.slider("Search Radius (km)", 1, 50, 10)
         
-        if st.button("🔍 Search Agricultural Services", use_container_width=True):
+        if st.button("🔍 Search Agricultural Services", width="stretch"):
             query = f"{service_type} within {radius}km of my location"
             
             with st.spinner(f"🔍 Finding {service_type}..."):
@@ -135,7 +135,7 @@ def render_location_services_page():
                         st.markdown(f"**🗺️ {service_type} Found:**")
                         for idx, source in enumerate(result['sources'], 1):
                             with st.expander(f"{idx}. {source['title']}"):
-                                st.link_button("📍 View on Google Maps", source['uri'], use_container_width=True)
+                                st.link_button("📍 View on Google Maps", source['uri'], width="stretch")
     
     # Tab 3: Veterinary Services
     with tabs[2]:
@@ -160,7 +160,7 @@ def render_location_services_page():
             ]
         )
         
-        if st.button("🔍 Find Veterinary Services", use_container_width=True):
+        if st.button("🔍 Find Veterinary Services", width="stretch"):
             query = f"{vet_service} near me with ratings and reviews"
             
             with st.spinner(f"🔍 Finding {vet_service}..."):
@@ -179,7 +179,7 @@ def render_location_services_page():
                             with col1:
                                 st.markdown(f"**{idx}. {source['title']}**")
                             with col2:
-                                st.link_button("View", source['uri'], use_container_width=True)
+                                st.link_button("View", source['uri'], width="stretch")
     
     # Tab 4: Government Offices
     with tabs[3]:
@@ -206,7 +206,7 @@ def render_location_services_page():
             ]
         )
         
-        if st.button("🔍 Find Government Office", use_container_width=True):
+        if st.button("🔍 Find Government Office", width="stretch"):
             query = f"{gov_service} near me with address and contact details"
             
             with st.spinner(f"🔍 Finding {gov_service}..."):
@@ -222,7 +222,7 @@ def render_location_services_page():
                         st.markdown(f"**🏛️ {gov_service} Found:**")
                         for source in result['sources']:
                             with st.expander(source['title']):
-                                st.link_button("📍 Get Directions", source['uri'], use_container_width=True)
+                                st.link_button("📍 Get Directions", source['uri'], width="stretch")
     
     # Tab 5: Custom Search
     with tabs[4]:
@@ -250,7 +250,7 @@ def render_location_services_page():
         with col2:
             include_hours = st.checkbox("Include opening hours", value=True)
         
-        if st.button("🔍 Search Now", use_container_width=True, type="primary"):
+        if st.button("🔍 Search Now", width="stretch", type="primary"):
             if custom_query:
                 # Enhance query with additional requirements
                 enhanced_query = custom_query
@@ -278,7 +278,7 @@ def render_location_services_page():
                                     with col1:
                                         st.markdown(f"**{idx}. {source['title']}**")
                                     with col2:
-                                        st.link_button("📍 Open", source['uri'], use_container_width=True)
+                                        st.link_button("📍 Open", source['uri'], width="stretch")
                                     st.markdown("---")
                         
                         if result.get('widget_token'):

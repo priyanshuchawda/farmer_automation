@@ -82,29 +82,29 @@ def render_ai_chatbot_page():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🌾 Best crops for my region", use_container_width=True):
+        if st.button("🌾 Best crops for my region", width="stretch"):
             st.session_state.quick_question = f"What are the best crops to grow in {location}?"
     
     with col2:
-        if st.button("🐛 Pest control tips", use_container_width=True):
+        if st.button("🐛 Pest control tips", width="stretch"):
             st.session_state.quick_question = "What are effective organic pest control methods?"
     
     with col3:
-        if st.button("💰 Market timing advice", use_container_width=True):
+        if st.button("💰 Market timing advice", width="stretch"):
             st.session_state.quick_question = "When is the best time to sell my crops?"
     
     col4, col5, col6 = st.columns(3)
     
     with col4:
-        if st.button("🌧️ Monsoon preparation", use_container_width=True):
+        if st.button("🌧️ Monsoon preparation", width="stretch"):
             st.session_state.quick_question = "How should I prepare my farm for monsoon season?"
     
     with col5:
-        if st.button("🏛️ Government schemes", use_container_width=True):
+        if st.button("🏛️ Government schemes", width="stretch"):
             st.session_state.quick_question = "What government schemes are available for farmers?"
     
     with col6:
-        if st.button("📊 Farm budgeting", use_container_width=True):
+        if st.button("📊 Farm budgeting", width="stretch"):
             st.session_state.quick_question = "How can I better manage my farm finances?"
     
     st.markdown("---")
@@ -124,10 +124,10 @@ def render_ai_chatbot_page():
     col_send, col_clear = st.columns([3, 1])
     
     with col_send:
-        send_button = st.button("📤 Send", use_container_width=True, type="primary")
+        send_button = st.button("📤 Send", width="stretch", type="primary")
     
     with col_clear:
-        if st.button("🗑️ Clear Chat", use_container_width=True):
+        if st.button("🗑️ Clear Chat", width="stretch"):
             st.session_state.chat_history = []
             st.rerun()
     
