@@ -456,4 +456,24 @@ TRANSLATIONS = {
     "Prototype by Team AgroLink": "Prototype by Team AgroLink",
     "You are now part of the": "You're now part of the",
     "family": "family",
+    
+    # Units
+    "Acres": "Acres",
+    "Hectares": "Hectares",
+    "Bigha": "Bigha",
+    "Guntha": "Guntha",
+    
+    # Months
+    "January": "January",
+    "February": "February",
+    "March": "March",
+    "April": "April",
+    "May": "May",
+    "June": "June",
+    "July": "July",
+    "August": "August",
+    "September": "September",
+    "October": "October",
+    "November": "November",
+    "December": "December",
 }

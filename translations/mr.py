@@ -479,4 +479,24 @@ TRANSLATIONS = {
     "Prototype by Team AgroLink": "टीम एग्रोलिंक द्वारे प्रोटोटाइप",
     "You are now part of the": "आता तुम्ही",
     "family": "कुटुंबाचा भाग आहात",
+    
+    # Units
+    "Acres": "एकर",
+    "Hectares": "हेक्टर",
+    "Bigha": "बीघा",
+    "Guntha": "गुंठा",
+    
+    # Months
+    "January": "जानेवारी",
+    "February": "फेब्रुवारी",
+    "March": "मार्च",
+    "April": "एप्रिल",
+    "May": "मे",
+    "June": "जून",
+    "July": "जुलै",
+    "August": "ऑगस्ट",
+    "September": "सप्टेंबर",
+    "October": "ऑक्टोबर",
+    "November": "नोव्हेंबर",
+    "December": "डिसेंबर",
 }

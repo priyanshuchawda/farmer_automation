@@ -142,3 +142,30 @@ def translate_dataframe_columns(df, columns_to_translate):
             df_copy[col] = df_copy[col].apply(lambda x: t(str(x)) if pd.notna(x) else x)
     
     return df_copy
+
+def format_date_localized(date_obj, format_pattern='%B %d, %Y'):
+    """
+    Format date with translated month names
+    
+    Args:
+        date_obj: datetime object
+        format_pattern: strftime format pattern (default: '%B %d, %Y')
+    
+    Returns:
+        Formatted date string with translated month name
+    """
+    from datetime import datetime
+    
+    # Get the formatted date in English
+    english_date = date_obj.strftime(format_pattern)
+    
+    # Extract month name from the formatted date
+    month_name = date_obj.strftime('%B')
+    
+    # Translate the month name
+    translated_month = t(month_name)
+    
+    # Replace English month with translated month
+    localized_date = english_date.replace(month_name, translated_month)
+    
+    return localized_date
