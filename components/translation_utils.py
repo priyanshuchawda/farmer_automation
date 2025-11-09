@@ -169,3 +169,66 @@ def format_date_localized(date_obj, format_pattern='%B %d, %Y'):
     localized_date = english_date.replace(month_name, translated_month)
     
     return localized_date
+
+def convert_numbers_to_local(text):
+    """
+    Convert English numerals to Hindi/Marathi Devanagari numerals
+    
+    Args:
+        text: String containing English numbers
+    
+    Returns:
+        String with converted numerals based on selected language
+    """
+    lang_code = get_current_language()
+    
+    # Only convert for Hindi and Marathi
+    if lang_code not in ['hi', 'mr']:
+        return text
+    
+    # Mapping of English to Devanagari numerals
+    number_map = {
+        '0': '०', '1': '१', '2': '२', '3': '३', '4': '४',
+        '5': '५', '6': '६', '7': '७', '8': '८', '9': '९'
+    }
+    
+    result = text
+    for eng, dev in number_map.items():
+        result = result.replace(eng, dev)
+    
+    return result
+
+def translate_location(location):
+    """
+    Translate only specific location keywords while keeping place names in English
+    
+    Args:
+        location: Full address string
+    
+    Returns:
+        Address with translated keywords but original place names
+    """
+    lang_code = get_current_language()
+    
+    # If English, return as-is
+    if lang_code == 'en':
+        return location
+    
+    # Keywords to translate
+    keywords = [
+        "Unit No",
+        "Upper Ground Floor", 
+        "Ground Floor",
+        "S No",
+        "India"
+    ]
+    
+    translated_location = location
+    for keyword in keywords:
+        translated_keyword = t(keyword)
+        translated_location = translated_location.replace(keyword, translated_keyword)
+    
+    # Convert numbers to local numerals
+    translated_location = convert_numbers_to_local(translated_location)
+    
+    return translated_location

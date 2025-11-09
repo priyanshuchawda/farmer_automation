@@ -499,4 +499,11 @@ TRANSLATIONS = {
     "October": "ऑक्टोबर",
     "November": "नोव्हेंबर",
     "December": "डिसेंबर",
+    
+    # Location Keywords
+    "Unit No": "युनिट क्र",
+    "Upper Ground Floor": "अप्पर ग्राउंड फ्लोअर",
+    "Ground Floor": "तळमजला",
+    "S No": "सर्वे क्र",
+    "India": "भारत",
 }

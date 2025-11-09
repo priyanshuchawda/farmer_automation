@@ -81,13 +81,18 @@ def render_home_page():
     
     col1, col2, col3 = st.columns([2, 2, 2])
     with col1:
-        st.markdown(f"📍 **{t('Location')}:** {location}")
+        from components.translation_utils import translate_location
+        localized_location = translate_location(location)
+        st.markdown(f"📍 **{t('Location')}:** {localized_location}")
     with col2:
+        from components.translation_utils import convert_numbers_to_local
         translated_unit = t(farm_unit) if farm_unit else farm_unit
-        st.markdown(f"🚜 **{t('Farm Size')}:** {farm_size} {translated_unit}")
+        localized_farm_size = convert_numbers_to_local(str(farm_size))
+        st.markdown(f"🚜 **{t('Farm Size')}:** {localized_farm_size} {translated_unit}")
     with col3:
         from components.translation_utils import format_date_localized
         localized_date = format_date_localized(datetime.now())
+        localized_date = convert_numbers_to_local(localized_date)
         st.markdown(f"📅 **{t('Today')}:** {localized_date}")
     
     st.markdown("---")
