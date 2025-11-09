@@ -11,6 +11,20 @@ from calender.calendar_component import render_calendar
 from calender.day_view import render_day_view
 from calender.week_view import render_week_view
 
+def parse_event_date(event_date_str):
+    """
+    Parse event date string that can be in two formats:
+    - "2025-11-09" (date only)
+    - "2025-11-09 09:00" (date with time)
+    Returns: date object
+    """
+    if ' ' in event_date_str:
+        # Has time component
+        return datetime.strptime(event_date_str, '%Y-%m-%d %H:%M').date()
+    else:
+        # Just date
+        return datetime.strptime(event_date_str, '%Y-%m-%d').date()
+
 def get_weather_for_event(farmer_profile, event_date):
     """Get weather forecast for a specific date and farmer location"""
     if not farmer_profile or 'weather_location' not in farmer_profile:
@@ -25,8 +39,8 @@ def get_weather_for_event(farmer_profile, event_date):
         forecast = get_weather_forecast(location, lat=lat, lon=lon)
         
         if forecast:
-            # Find forecast for the specific date
-            event_date_obj = datetime.strptime(event_date, '%Y-%m-%d').date()
+            # Find forecast for the specific date - handle both formats
+            event_date_obj = parse_event_date(event_date) if isinstance(event_date, str) else event_date
             
             for day in forecast:
                 if isinstance(day['date'], str):
@@ -359,7 +373,8 @@ def render_integrated_calendar(farmer_name):
     overdue_tasks = []
     
     for _, row in events_df.iterrows():
-        event_date = datetime.strptime(row['event_date'], '%Y-%m-%d').date()
+        event_date = parse_event_date(row['event_date'])
+        
         if event_date >= today and event_date <= today + timedelta(days=7):
             upcoming_tasks.append(row)
         elif event_date < today:
@@ -373,13 +388,13 @@ def render_integrated_calendar(farmer_name):
     with col3:
         st.metric("⚠️ Overdue", len(overdue_tasks))
     with col4:
-        today_tasks = len([t for t in upcoming_tasks if datetime.strptime(t['event_date'], '%Y-%m-%d').date() == today])
+        today_tasks = len([t for t in upcoming_tasks if parse_event_date(t['event_date']) == today])
         st.metric("📌 Today", today_tasks)
     
     # Show today's tasks if any
     if today_tasks > 0:
         st.info("**Today's Tasks:**")
-        for task in [t for t in upcoming_tasks if datetime.strptime(t['event_date'], '%Y-%m-%d').date() == today]:
+        for task in [t for t in upcoming_tasks if parse_event_date(t['event_date']) == today]:
             task_time = task.get('event_time', '09:00')
             st.markdown(f"- 🕐 **{task_time}** - {task['event_title']}")
     
