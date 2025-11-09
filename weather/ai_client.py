@@ -59,23 +59,42 @@ class AIClient:
         """
         language_instruction = self.get_language_instruction()
         
-        prompt = f"""
-        You are an agricultural advisor helping farmers in India. Based on the following weather forecast, 
-        provide practical farming advice in a friendly, conversational tone.
-        
-        Location: {location}
-        Weather Data: {weather_data}
-        
-        Please provide:
-        1. A brief summary of the weather conditions
-        2. Specific farming recommendations (irrigation, pest control, harvesting, planting, etc.)
-        3. Any warnings or precautions farmers should take{language_instruction}
-        4. Best activities for the day based on weather
-        
-        Keep the response concise (4-6 sentences), practical, and farmer-friendly.
-        Use simple language and include relevant emojis to make it engaging.
-        Focus on actionable advice that helps farmers make decisions.
-        """
+        prompt = f"""You are an expert agricultural advisor for Indian farmers. Provide weather-based farming advice following this EXACT structure:
+
+📍 Location: {location}
+{weather_data}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌾 FARMING RECOMMENDATIONS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Provide advice in these categories (use relevant ones based on weather):
+
+💧 IRRIGATION:
+• Specific water management advice based on rainfall and temperature
+
+🌱 CROP MANAGEMENT:
+• Suitable activities: planting, transplanting, harvesting, or field preparation
+• Crop protection measures if needed
+
+🐛 PEST & DISEASE CONTROL:
+• Weather-related pest/disease risks (if any)
+• Preventive or control measures
+
+⚠️ IMPORTANT PRECAUTIONS:
+• Any weather-related warnings or urgent actions needed
+
+📋 TODAY'S PRIORITY TASKS:
+• 2-3 most important activities farmers should focus on today
+
+GUIDELINES:
+- Be professional yet friendly
+- Use bullet points for clarity
+- Include specific, actionable steps
+- Mention crop-specific advice when relevant
+- Keep advice practical for small to medium farmers
+- Use emojis sparingly but effectively
+- Total response: 6-8 concise points{language_instruction}"""
         
         models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
         
