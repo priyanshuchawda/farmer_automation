@@ -161,7 +161,7 @@ def render_weather_component():
                                 with cols[idx % 4]:
                                     with st.container():
                                         st.markdown(f"**{hour['time']}**")
-                                        st.metric("", f"{hour['temp']:.1f}°C")
+                                        st.metric("Temperature", f"{hour['temp']:.1f}°C", label_visibility="collapsed")
                                         
                                         # Weather icon emoji
                                         if hour['rain'] > 2:

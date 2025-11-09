@@ -395,7 +395,7 @@ with st.sidebar:
             translated_item = f"{item_emoji} {t(item_text)}"
             
             # Create button for each menu item
-            if st.button(translated_item, key=f"menu_{item}", use_container_width=True, 
+            if st.button(translated_item, key=f"menu_{item}", width="stretch", 
                         type="primary" if st.session_state.selected_menu == item else "secondary"):
                 # Add current page to history before navigation
                 if st.session_state.selected_menu != item:
@@ -411,7 +411,7 @@ with st.sidebar:
     st.markdown("---")
     
     # Logout button at bottom
-    if st.button(f"🔐 {t('Logout')}", use_container_width=True, type="secondary"):
+    if st.button(f"🔐 {t('Logout')}", width="stretch", type="secondary"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.success("✅ Logged out successfully!")
@@ -429,7 +429,7 @@ nav_col1, nav_col2, nav_col3 = st.columns([1, 8, 1])
 with nav_col1:
     # Back button
     if len(st.session_state.nav_history) > 0:
-        if st.button("⬅️ Back", use_container_width=True, help="Go to previous page"):
+        if st.button("⬅️ Back", width="stretch", help="Go to previous page"):
             # Move current page to forward history
             st.session_state.nav_forward.append(st.session_state.selected_menu)
             # Get previous page from history
@@ -440,7 +440,7 @@ with nav_col1:
 with nav_col3:
     # Forward button (if user went back)
     if len(st.session_state.nav_forward) > 0:
-        if st.button("➡️", use_container_width=True, help="Go forward"):
+        if st.button("➡️", width="stretch", help="Go forward"):
             # Move current page to history
             st.session_state.nav_history.append(st.session_state.selected_menu)
             # Get next page from forward history
@@ -496,7 +496,7 @@ elif menu == "📦 My Listings":
     
     with tab1:
         if not my_tools.empty:
-            st.dataframe(my_tools, use_container_width=True)
+            st.dataframe(my_tools, width="stretch")
             st.success(f"✅ You have {len(my_tools)} tool(s) listed")
         else:
             st.info("📝 You haven't listed any tools yet.")
@@ -510,7 +510,7 @@ elif menu == "📦 My Listings":
     
     with tab2:
         if not my_crops.empty:
-            st.dataframe(my_crops, use_container_width=True)
+            st.dataframe(my_crops, width="stretch")
             st.success(f"✅ You have {len(my_crops)} crop(s) listed")
         else:
             st.info("📝 You haven't listed any crops yet.")

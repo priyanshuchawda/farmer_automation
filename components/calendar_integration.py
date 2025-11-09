@@ -584,11 +584,12 @@ def render_integrated_calendar(farmer_name):
             
             col1, col2 = st.columns(2)
             with col1:
-                if st.button("💾 Save Changes", use_container_width=True, type="primary"):
+                if st.button("💾 Save Changes", width="stretch", type="primary"):
+                    # Combine date and time into event_date field
+                    combined_datetime = f"{new_date.strftime('%Y-%m-%d')} {new_time.strftime('%H:%M')}"
                     update_event(
                         event['id'],
-                        new_date.strftime('%Y-%m-%d'),
-                        new_time.strftime('%H:%M'),
+                        combined_datetime,
                         new_title,
                         new_description,
                         weather_alert_to_save
@@ -601,7 +602,7 @@ def render_integrated_calendar(farmer_name):
                     st.rerun()
             
             with col2:
-                if st.button("❌ Cancel", use_container_width=True):
+                if st.button("❌ Cancel", width="stretch"):
                     st.session_state.edit_mode = False
                     if 'temp_weather_alert' in st.session_state:
                         del st.session_state.temp_weather_alert
