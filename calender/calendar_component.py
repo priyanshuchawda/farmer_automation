@@ -137,3 +137,5 @@ def render_calendar(year, month, events, lang):
     # Show message if no events
     if not has_events:
         st.info(f"ℹ️ {TRANSLATIONS[lang]['no_events']}")
+
+

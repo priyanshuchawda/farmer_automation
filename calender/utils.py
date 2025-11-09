@@ -62,3 +62,5 @@ def wrap_text(text, line_length=15):
         lines.append(' '.join(current_line))
     
     return '\n'.join(lines) if len(lines) <= 2 else '\n'.join(lines[:2]) + "..."
+
+

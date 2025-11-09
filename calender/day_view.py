@@ -229,3 +229,5 @@ def render_day_view(year, month, day, events, lang):
                         st.rerun()
     else:
         st.info("📅 No events scheduled for this day. Click 'Add Event' to create one!")
+
+

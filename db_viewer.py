@@ -44,3 +44,5 @@ def view_data_from_db():
 
 if __name__ == "__main__":
     view_data_from_db()
+
+

@@ -74,3 +74,5 @@ def get_weather_forecast(city="Pune", lat=None, lon=None):
         else:
             print(f"Could not find coordinates for {city}.")
             return None
+
+

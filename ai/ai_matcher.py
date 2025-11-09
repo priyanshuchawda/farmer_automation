@@ -5,13 +5,13 @@ import sqlite3
 import pandas as pd
 from google import genai
 
-# --- Initialize Gemini AI Client ---
+# --- Initialize AI AI Client ---
 client = None
 try:
     # The API key is automatically picked up from the GEMINI_API_KEY environment variable.
     client = genai.Client()
 except Exception as e:
-    print(f"Warning: Failed to initialize Gemini AI client: {e}. AI suggestions will be unavailable.")
+    print(f"Warning: Failed to initialize AI AI client: {e}. AI suggestions will be unavailable.")
 
 DB_NAME = "farmermarket.db"
 
@@ -46,7 +46,7 @@ def get_recommendations(context: dict):
     :param context: Dictionary containing user context or preferences.
     """
     if not client:
-        return "(AI suggestion unavailable: Gemini AI client not initialized.)"
+        return "(AI suggestion unavailable: AI AI client not initialized.)"
 
     # Fetch recent database data
     recent_data = fetch_recent_data()
@@ -84,8 +84,10 @@ Generate 2-3 concise and practical recommendations for the farmer. The recommend
 
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash', contents=prompt
+            model='AI-2.5-flash', contents=prompt
         )
         return response.text
     except Exception as e:
         return f"(AI suggestion unavailable due to an error: {e})"
+
+

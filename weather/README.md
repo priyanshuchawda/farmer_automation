@@ -2,12 +2,12 @@
 
 ## Project Overview
 
-This project aims to provide accurate weather predictions, with a special focus on serving farmers in various locations, including small villages across India. It combines a custom-trained local weather model (for Pune) with real-time data from the OpenWeather API. The system is designed to be user-friendly, allowing natural language queries, and leverages the Gemini API for intelligent query parsing and enhanced location accuracy through Google Search.
+This project aims to provide accurate weather predictions, with a special focus on serving farmers in various locations, including small villages across India. It combines a custom-trained local weather model (for Pune) with real-time data from the OpenWeather API. The system is designed to be user-friendly, allowing natural language queries, and leverages the AI API for intelligent query parsing and enhanced location accuracy through Google Search.
 
 ## Features
 
--   **Natural Language Understanding:** Utilizes the Gemini API to parse user queries in a conversational manner, extracting city, date, and desired information type.
--   **Enhanced Location Accuracy:** Integrates Google Search via the Gemini API to accurately pinpoint locations, including specific addresses or sub-locations (e.g., "wadgaonsheri pune"), and retrieve precise coordinates.
+-   **Natural Language Understanding:** Utilizes the AI API to parse user queries in a conversational manner, extracting city, date, and desired information type.
+-   **Enhanced Location Accuracy:** Integrates Google Search via the AI API to accurately pinpoint locations, including specific addresses or sub-locations (e.g., "wadgaonsheri pune"), and retrieve precise coordinates.
 -   **Hybrid Forecasting Model:**
     -   For **Pune**: Combines a local machine learning model (trained on historical Pune weather data) with OpenWeather API forecasts using a weighted averaging approach.
     -   For **Other Locations**: Fetches forecasts directly from the OpenWeather API, providing reliable data for areas without a dedicated local model.
@@ -48,12 +48,12 @@ pip install -r requirements.txt
 
 ### 4. Configure API Keys
 
-This project requires API keys for OpenWeatherMap and Google Gemini.
+This project requires API keys for OpenWeatherMap and Google AI.
 
 -   **OpenWeatherMap API Key:**
     1.  Sign up for a free account at [OpenWeatherMap](https://openweathermap.org/api).
     2.  Generate an API key.
--   **Google Gemini API Key:**
+-   **Google AI API Key:**
     1.  Go to [Google AI Studio](https://aistudio.google.com/app/apikey).
     2.  Create an API key.
 
@@ -61,7 +61,7 @@ Create a `.env` file in the root directory of the project (`weather_prediction_m
 
 ```
 OPENWEATHER_API_KEY=YOUR_OPENWEATHER_API_KEY
-GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+AI_API_KEY=YOUR_AI_API_KEY
 ```
 
 **Note:** A `.env.example` file is provided for reference. **Do not commit your actual `.env` file to version control.**
@@ -99,7 +99,7 @@ weather_prediction_model/
 ├── api_client.py            # Handles all interactions with the OpenWeather API
 ├── combined_forecast.py     # Logic for combining local model and API forecasts
 ├── config.py                # Configuration settings and API key loading
-├── gemini_client.py         # Handles interactions with the Google Gemini API for NLU and Google Search
+├── ai_client.py         # Handles interactions with the Google AI API for NLU and Google Search
 ├── last_update.txt          # Stores the last update date for the local model
 ├── pune_weather_cleaned.csv # Cleaned historical weather data for Pune
 ├── requirements.txt         # Python dependencies

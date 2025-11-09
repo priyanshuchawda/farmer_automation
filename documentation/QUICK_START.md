@@ -9,7 +9,7 @@
 
 ## 🎯 Current Features
 
-1. ✅ **AI-Powered Plans** - Gemini generates farming advice
+1. ✅ **AI-Powered Plans** - AI generates farming advice
 2. ✅ **Auto-Translation** - Deep Translator converts to Hindi/Marathi
 3. ✅ **Custom Calendar** - No infinite loops, stable navigation
 4. ✅ **Big, Readable UI** - 120px cells, 20px fonts, dark numbers
@@ -24,7 +24,7 @@
 calender_app/
 ├── app.py                    # Main application (13.5 KB)
 ├── config.py                 # Translations & settings (11.4 KB)
-├── ai_service.py            # Gemini AI integration (2.2 KB)
+├── ai_service.py            # AI AI integration (2.2 KB)
 ├── translation_service.py   # Deep Translator (3.4 KB)
 ├── calendar_component.py    # Custom calendar (6.2 KB)
 ├── event_component.py       # Event display (3.7 KB)

@@ -2,7 +2,7 @@
 import streamlit as st
 from database.db_functions import add_data, get_data
 import pandas as pd
-from ai.ai_matcher import get_recommendations  # ✅ Gemini AI integration
+from ai.ai_matcher import get_recommendations  # ✅ AI AI integration
 
 
 def render_tool_listing(farmer_name):
@@ -96,3 +96,5 @@ def render_tool_management(tools_df, farmer_name):
             st.info("You have no tool listings yet.")
     else:
         st.warning("Please log in to view and manage your listings.")
+
+

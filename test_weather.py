@@ -13,3 +13,5 @@ if forecast:
         print(f"Date: {day['date']}, Temp: {day['temperature']}°C, Rain: {day['rainfall']}mm, Wind: {day['wind_speed']} km/h")
 else:
     print('No forecast data received!')
+
+

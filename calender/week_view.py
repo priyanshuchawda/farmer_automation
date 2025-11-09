@@ -231,3 +231,5 @@ def render_week_view(year, month, day, events, lang):
         st.info(f"📊 Total events this week: **{total_events}**")
     else:
         st.info(f"ℹ️ {TRANSLATIONS[lang]['no_events']} this week")
+
+

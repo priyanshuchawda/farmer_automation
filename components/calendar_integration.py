@@ -591,3 +591,5 @@ def render_integrated_calendar(farmer_name):
                 event_time = event['extendedProps'].get('time', '09:00')
                 st.metric("📅 Date", event_date)
                 st.metric("🕐 Time", event_time)
+
+

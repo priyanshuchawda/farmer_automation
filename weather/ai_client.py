@@ -15,7 +15,7 @@ class WeatherQuery(BaseModel):
     info_type: str = Field(description="The type of weather information requested, e.g., 'temperature', 'rain', 'wind', or 'all'.")
 
 
-class GeminiClient:
+class AIClient:
     def __init__(self):
         self.api_key = get_gemini_api_key()
         if not self.api_key:
@@ -24,11 +24,11 @@ class GeminiClient:
         try:
             self.client = genai.Client(api_key=self.api_key)
         except Exception as e:
-            raise Exception(f"Failed to initialize Gemini client. Error: {e}")
+            raise Exception(f"Failed to initialize AI client. Error: {e}")
 
     def get_farmer_advice(self, weather_data: str, location: str) -> str:
         """
-        Get farmer-specific advice based on weather data using Gemini AI.
+        Get farmer-specific advice based on weather data using AI AI.
         """
         prompt = f"""
         You are an agricultural advisor helping farmers in India. Based on the following weather forecast, 
@@ -48,7 +48,7 @@ class GeminiClient:
         Focus on actionable advice that helps farmers make decisions.
         """
         
-        models_to_try = ["gemini-2.0-flash-exp", "gemini-2.5-flash", "gemini-2.0-flash"]
+        models_to_try = ["AI-2.0-flash-exp", "AI-2.5-flash", "AI-2.0-flash"]
         
         for model in models_to_try:
             try:
@@ -65,11 +65,21 @@ class GeminiClient:
 
     def get_coordinates_from_google_search(self, location: str) -> Optional[dict]:
         """
-        Uses Gemini with Google Search to find the latitude and longitude of a given location.
+        Uses AI with Google Search to find the latitude and longitude of a given location.
         """
-        prompt = f"What are the latitude and longitude of {location}? Provide only the numerical coordinates in decimal format (e.g., 19.0760, 72.8777)."
+        prompt = f"""Find the GPS coordinates for: {location}
+
+IMPORTANT: You MUST respond in EXACTLY this format, nothing else:
+LAT: [latitude]
+LON: [longitude]
+
+Example response format:
+LAT: 18.553516
+LON: 73.930104
+
+Do not add any explanations, notes, or additional text. Just the two lines above."""
         
-        models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash"]
+        models_to_try = ["AI-2.5-flash", "AI-2.0-flash", "AI-1.5-flash"]
         
         for model in models_to_try:
             try:
@@ -81,54 +91,104 @@ class GeminiClient:
                     ),
                 )
                 
-                text = response.text
-                print(f"Gemini response for '{location}': {text}")
+                text = response.text.strip()
+                print(f"AI response for '{location}': {text}")
                 
-                # Try to find two comma-separated floats (e.g., "19.0760, 72.8777")
-                coords_match = re.search(r"(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)", text)
+                # Primary: Try to extract from strict format LAT: X LON: Y
+                lat_match = re.search(r"LAT:\s*(-?\d+\.?\d+)", text, re.IGNORECASE)
+                lon_match = re.search(r"LON:\s*(-?\d+\.?\d+)", text, re.IGNORECASE)
+                
+                if lat_match and lon_match:
+                    lat = float(lat_match.group(1))
+                    lon = float(lon_match.group(1))
+                    print(f"✅ Extracted coordinates: LAT={lat}, LON={lon}")
+                    return {"lat": lat, "lon": lon}
+                
+                # Fallback: Try latitude/longitude format
+                lat_match = re.search(r"(?:latitude|lat)[\s:]+(-?\d+\.?\d+)", text, re.IGNORECASE)
+                lon_match = re.search(r"(?:longitude|lon|long)[\s:]+(-?\d+\.?\d+)", text, re.IGNORECASE)
+                
+                if lat_match and lon_match:
+                    lat = float(lat_match.group(1))
+                    lon = float(lon_match.group(1))
+                    print(f"✅ Extracted coordinates (fallback): LAT={lat}, LON={lon}")
+                    return {"lat": lat, "lon": lon}
+                
+                # Additional fallback: "are X and Y" format
+                coords_are_match = re.search(r"are\s+(-?\d+\.?\d+)\s+and\s+(-?\d+\.?\d+)", text, re.IGNORECASE)
+                if coords_are_match:
+                    lat = float(coords_are_match.group(1))
+                    lon = float(coords_are_match.group(2))
+                    print(f"✅ Extracted coordinates (are/and): LAT={lat}, LON={lon}")
+                    return {"lat": lat, "lon": lon}
+                
+                # Fallback: Two comma-separated floats
+                coords_match = re.search(r"(-?\d+\.?\d+)\s*,\s*(-?\d+\.?\d+)", text)
                 if coords_match:
                     lat = float(coords_match.group(1))
                     lon = float(coords_match.group(2))
-                    return {"lat": lat, "lon": lon}
-                
-                # Try to find latitude and longitude with labels (e.g., "latitude: 19.0760, longitude: 72.8777")
-                lat_match = re.search(r"(?:latitude|lat)[\s:]+(-?\d+\.?\d*)", text, re.IGNORECASE)
-                lon_match = re.search(r"(?:longitude|lon|long)[\s:]+(-?\d+\.?\d*)", text, re.IGNORECASE)
-                
-                if lat_match and lon_match:
-                    return {"lat": float(lat_match.group(1)), "lon": float(lon_match.group(1))}
-                
-                # Try to find coordinates in parentheses (e.g., "(19.0760, 72.8777)")
-                coords_paren = re.search(r"\((-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\)", text)
-                if coords_paren:
-                    lat = float(coords_paren.group(1))
-                    lon = float(coords_paren.group(2))
-                    return {"lat": lat, "lon": lon}
-                
-                # Handle degrees with decimals and directions (e.g., "19.0760° N, 72.8777° E")
-                dms_lat_match = re.search(r"(-?\d+\.?\d*)°?\s*([NS])", text, re.IGNORECASE)
-                dms_lon_match = re.search(r"(-?\d+\.?\d*)°?\s*([EW])", text, re.IGNORECASE)
-
-                if dms_lat_match and dms_lon_match:
-                    lat_val = float(dms_lat_match.group(1))
-                    lat_dir = dms_lat_match.group(2).upper()
-                    lon_val = float(dms_lon_match.group(1))
-                    lon_dir = dms_lon_match.group(2).upper()
-
-                    lat = lat_val if lat_dir == 'N' else -lat_val
-                    lon = lon_val if lon_dir == 'E' else -lon_val
+                    print(f"✅ Extracted coordinates (comma): LAT={lat}, LON={lon}")
                     return {"lat": lat, "lon": lon}
 
-                print(f"Could not extract coordinates from Gemini response for {location}: {text}")
+                print(f"❌ Could not extract coordinates from AI response for {location}: {text}")
                 return None
             except Exception as e:
                 print(f"Error getting coordinates with {model} and Google Search for {location}: {e}")
                 continue
         return None
 
+    def get_location_from_coordinates(self, latitude: float, longitude: float) -> Optional[dict]:
+        """
+        Get location information (city, state, country) from GPS coordinates using AI.
+        """
+        prompt = f"""Find the location name for these GPS coordinates:
+Latitude: {latitude}
+Longitude: {longitude}
+
+IMPORTANT: You MUST respond in EXACTLY this format, one item per line:
+City: [city name]
+State: [state/province name]
+Country: [country name]
+Address: [full address]
+
+Example response:
+City: Wadgaonsheri
+State: Maharashtra
+Country: India
+Address: Wadgaonsheri, Pune, Maharashtra, India
+
+Do not add any explanations or additional text."""
+        
+        models_to_try = ["AI-2.5-flash", "AI-2.0-flash", "AI-1.5-flash"]
+        
+        for model in models_to_try:
+            try:
+                response = self.client.models.generate_content(
+                    model=model,
+                    contents=prompt
+                )
+                
+                text = response.text.strip()
+                
+                # Parse the response
+                location_info = {}
+                for line in text.split('\n'):
+                    if ':' in line:
+                        key, value = line.split(':', 1)
+                        key = key.strip().lower().replace(' ', '_').replace('/', '_')
+                        location_info[key] = value.strip()
+                
+                return location_info
+                
+            except Exception as e:
+                print(f"Error getting location from coordinates with {model}: {e}")
+                continue
+        
+        return None
+
     def parse_weather_query(self, query: str) -> Optional[WeatherQuery]:
         """
-        Uses the Gemini API to parse a weather query and extract structured information.
+        Uses the AI API to parse a weather query and extract structured information.
         """
         prompt = f"""
         Please extract the weather query from the following text.
@@ -148,7 +208,7 @@ class GeminiClient:
         - Use "all" for general weather queries
         """
         
-        models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash"]
+        models_to_try = ["AI-2.5-flash", "AI-2.0-flash"]
         
         for model in models_to_try:
             try:
@@ -167,3 +227,5 @@ class GeminiClient:
                 continue
         
         return None
+
+

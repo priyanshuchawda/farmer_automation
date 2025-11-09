@@ -430,3 +430,5 @@ st.markdown("""
     <p style='font-size: 12px;'>Made with ❤️ for Farmers</p>
 </div>
 """, unsafe_allow_html=True)
+
+

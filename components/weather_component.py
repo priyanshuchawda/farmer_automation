@@ -228,3 +228,5 @@ def render_weather_component():
                 st.write(response)
         else:
             st.warning("⚠️ Please enter a query.")
+
+

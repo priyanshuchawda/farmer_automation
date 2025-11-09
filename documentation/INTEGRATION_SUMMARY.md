@@ -15,7 +15,7 @@
 Features:
 - ✅ Create/Update farmer profiles
 - ✅ Store farm location AND weather location
-- ✅ Automatic coordinate lookup using Gemini AI + Google Search
+- ✅ Automatic coordinate lookup using AI AI + Google Search
 - ✅ Display all farmer profiles with coordinates
 - ✅ Profile data persisted in SQL database
 
@@ -29,7 +29,7 @@ Features:
 Features:
 - ✅ Multi-source weather data (OpenWeather API + ML models)
 - ✅ Location-based forecasts using farmer profile
-- ✅ Natural language queries with Gemini AI
+- ✅ Natural language queries with AI AI
 - ✅ Farming advice based on weather conditions
 - ✅ 7-day forecast with temperature, rainfall, wind speed
 - ✅ Automatic weather display for logged-in farmer's location
@@ -37,13 +37,13 @@ Features:
 **Integration Points:**
 - Profile → Weather (uses farmer's weather_location)
 - Weather → Calendar (provides alerts for events)
-- Weather → Gemini AI (generates farming recommendations)
+- Weather → AI AI (generates farming recommendations)
 
 ### 4. Smart Calendar with AI
 **Location:** `components/calendar_integration.py`, `calender/` folder
 
 Features:
-- ✅ AI-powered farming plan generation (Gemini)
+- ✅ AI-powered farming plan generation (AI)
 - ✅ Calendar event management
 - ✅ Weather alerts for each event
 - ✅ Profile-based location weather
@@ -54,11 +54,11 @@ Features:
 **Integration Points:**
 - Calendar → Profile (gets farmer's location)
 - Calendar → Weather (fetches forecast for event dates)
-- Calendar → Gemini AI (generates farming plans)
+- Calendar → AI AI (generates farming plans)
 - Calendar → Database (stores events)
 
-### 5. AI Integration (Gemini)
-**Location:** `weather/gemini_client.py`, `calender/ai_service.py`
+### 5. AI Integration (AI)
+**Location:** `weather/ai_client.py`, `calender/ai_service.py`
 
 Features:
 - ✅ Natural language query parsing
@@ -84,7 +84,7 @@ Features:
 │   Create/Update Profile             │
 │   - Name, Location, Farm Size       │
 │   - Weather Location                │
-│   - Auto-fetch Coordinates (Gemini) │
+│   - Auto-fetch Coordinates (AI) │
 └────────┬────────────────────────────┘
          │
          ├──────────────┬─────────────────┐
@@ -161,7 +161,7 @@ Features:
 streamlit          # Main framework
 pandas             # Data handling
 python-dotenv      # Environment variables
-google-genai       # Gemini AI integration
+google-genai       # AI AI integration
 requests           # API calls
 numpy              # Numerical operations
 scikit-learn       # ML models

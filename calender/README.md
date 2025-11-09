@@ -4,7 +4,7 @@ An AI-powered farming schedule planner that helps farmers organize their agricul
 
 ## Features
 
-- **AI-Powered Planning**: Get customized farming plans using Google's Gemini AI
+- **AI-Powered Planning**: Get customized farming plans using Google's AI AI
 - **Auto-Translation**: AI-generated plans automatically translated to Hindi/Marathi using Deep Translator
 - **Multi-Language Support**: Available in English, Hindi (हिन्दी), and Marathi (मराठी)
 - **Dynamic Language Switching**: Change language anytime - all content translates instantly
@@ -35,7 +35,7 @@ calender_app/
 pip install -r requirements.txt
 ```
 
-2. Set up your Google Gemini API key:
+2. Set up your Google AI API key:
    - Create a `.env` file in the project directory
    - Add your API key: `GOOGLE_API_KEY=your_api_key_here`
 
@@ -83,7 +83,7 @@ streamlit run app.py
 ## Technologies Used
 
 - **Streamlit**: Web application framework
-- **Google Gemini AI**: For generating farming plans
+- **Google AI AI**: For generating farming plans
 - **Deep Translator**: For translating AI-generated plans to Hindi/Marathi
 - **Python Calendar**: For calendar functionality
 - **Pandas**: Data manipulation

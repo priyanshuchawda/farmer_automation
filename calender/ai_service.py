@@ -11,11 +11,11 @@ load_dotenv()
 class AIService:
     def __init__(self):
         self.client = genai.Client()
-        self.model_name = 'gemini-2.5-flash'
+        self.model_name = 'AI-2.5-flash'
     
     def generate_farming_plan(self, user_prompt, language):
-        """Generate a farming plan using Gemini AI"""
-        gemini_prompt = f"""
+        """Generate a farming plan using AI AI"""
+        AI_prompt = f"""
         As a farming expert, create a concise, practical plan for the following task. 
         Provide the output in a single, valid JSON object.
         The plan should be in {language} language.
@@ -36,7 +36,7 @@ class AIService:
         try:
             response = self.client.models.generate_content(
                 model=self.model_name, 
-                contents=gemini_prompt
+                contents=AI_prompt
             )
             # Clean the response to ensure it is a valid JSON string
             cleaned_response = response.text.strip().replace('```json', '').replace('```', '')
@@ -54,3 +54,5 @@ class AIService:
             return None, "Could not parse the AI response. Please try again."
         except Exception as e:
             return None, f"An error occurred: {str(e)}"
+
+

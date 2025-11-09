@@ -148,3 +148,5 @@ class OpenWeatherAPI:
         except requests.exceptions.RequestException as e:
             print(f"Error fetching detailed forecast: {e}")
             return None
+
+

@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from weather.combined_forecast import get_weather_forecast
-from weather.gemini_client import GeminiClient, WeatherQuery
+from weather.ai_client import AIClient, WeatherQuery
 
-def format_weather_response(weather_data, query_info: WeatherQuery, gemini_client):
+def format_weather_response(weather_data, query_info: WeatherQuery, ai_client):
     """Format weather data into a natural language response with farmer advice"""
     date_str = weather_data['date'].strftime('%Y-%m-%d')
     temp = weather_data['temperature']
@@ -19,9 +19,9 @@ def format_weather_response(weather_data, query_info: WeatherQuery, gemini_clien
         f"💨 Wind Speed: {wind} km/h\n"
     )
     
-    # Get farmer-specific advice from Gemini
+    # Get farmer-specific advice from AI
     try:
-        farming_advice = gemini_client.get_farmer_advice(
+        farming_advice = ai_client.get_farmer_advice(
             weather_data=f"Temperature: {temp}°C, Rainfall: {rain}mm, Wind Speed: {wind} km/h on {date_str}",
             location=query_info.city
         )
@@ -41,9 +41,9 @@ def format_weather_response(weather_data, query_info: WeatherQuery, gemini_clien
 
 def get_weather_forecast_for_query(query):
     """Main function to handle weather queries"""
-    # Parse the query using Gemini
-    gemini_client = GeminiClient()
-    query_info = gemini_client.parse_weather_query(query)
+    # Parse the query using AI
+    ai_client = AIClient()
+    query_info = ai_client.parse_weather_query(query)
 
     if not query_info:
         return "Sorry, I couldn't understand your query. Please try again."
@@ -68,7 +68,7 @@ def get_weather_forecast_for_query(query):
     coordinates = None
     if query_info.city.lower() != "pune":
         print(f"Searching for coordinates for {query_info.city} using Google Search...")
-        coordinates = gemini_client.get_coordinates_from_google_search(query_info.city)
+        coordinates = ai_client.get_coordinates_from_google_search(query_info.city)
         if not coordinates:
             return f"Sorry, I couldn't find coordinates for {query_info.city}."
         
@@ -109,7 +109,7 @@ def get_weather_forecast_for_query(query):
         return "मैं केवल अगले 5-7 दिनों का मौसम बता सकता हूं। (I can only provide forecasts for the next 5-7 days.)"
     
     # Format response with farmer advice
-    response = format_weather_response(forecast, query_info, gemini_client)
+    response = format_weather_response(forecast, query_info, ai_client)
     return response
 
 def main():
@@ -134,3 +134,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

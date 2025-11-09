@@ -25,7 +25,7 @@ print("\n2️⃣ Testing Weather Integration...")
 try:
     from weather.weather_assistant import get_weather_forecast_for_query
     from weather.combined_forecast import get_weather_forecast
-    from weather.gemini_client import GeminiClient
+    from weather.ai_client import AIClient
     print("   ✅ Weather modules imported successfully")
     tests_passed += 1
 except Exception as e:
@@ -70,11 +70,11 @@ print("\n6️⃣ Testing Environment Variables...")
 try:
     from weather.config import get_api_key, get_gemini_api_key
     api_key = get_api_key()
-    gemini_key = get_gemini_api_key()
+    AI_key = get_gemini_api_key()
     
-    if api_key and gemini_key:
+    if api_key and AI_key:
         print(f"   ✅ OpenWeather API Key: {api_key[:10]}...")
-        print(f"   ✅ Gemini API Key: {gemini_key[:10]}...")
+        print(f"   ✅ AI API Key: {AI_key[:10]}...")
         tests_passed += 1
     else:
         print("   ⚠️ API keys not found in .env")
@@ -149,3 +149,5 @@ else:
     sys.exit(1)
 
 print("="*70)
+
+

@@ -91,3 +91,5 @@ def render_event_details(event, lang, editing=False):
             if st.button(TRANSLATIONS[lang]["close"], use_container_width=True):
                 st.session_state.selected_event = None
                 st.rerun()
+
+

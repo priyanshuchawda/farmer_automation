@@ -153,7 +153,7 @@ Total: ~800 lines (vs 354 lines before, but much more organized)
 ## Translation Feature
 
 ### How It Works:
-1. **AI generates plan in English** (Gemini AI default)
+1. **AI generates plan in English** (AI AI default)
 2. **Auto-translates to selected language** using Deep Translator
 3. **When language changes**, all plans and events are re-translated
 4. **Preserves original structure** while translating text content
