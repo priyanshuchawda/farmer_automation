@@ -4,6 +4,7 @@ import os
 from datetime import datetime, timedelta
 from google import genai
 import pandas as pd
+from components.translation_utils import t
 
 API_URL = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070"
 API_KEY = os.getenv("DATAGOVIN_API_KEY")
@@ -175,8 +176,8 @@ You are an expert agricultural market advisor for Indian farmers. Answer the far
 
 def render_market_price():
     """Main component to display market prices"""
-    st.header("💰 Market Price Checker")
-    st.caption("Check live vegetable and commodity prices from government mandis across India")
+    st.header(f"💰 {t('Market Price Checker')}")
+    st.caption(t("Live vegetable and commodity prices from government sources"))
     
     if not API_KEY:
         st.error("⚠️ DATAGOVIN_API_KEY not found in .env file. Please add your API key from data.gov.in")
@@ -302,16 +303,16 @@ def render_market_price():
     
     # AI Assistant Chatbot Section
     st.divider()
-    st.markdown("### 🤖 AI Market Assistant")
-    st.caption("Ask anything about market prices, selling strategies, or crop planning!")
+    st.markdown(f"### 🤖 {t('AI Market Assistant')}")
+    st.caption(t("Ask anything about market prices, selling strategies, or crop planning!"))
     
     # Chat interface
     if 'market_chat_history' not in st.session_state:
         st.session_state.market_chat_history = []
     
     user_question = st.text_input(
-        "Ask your question:",
-        placeholder="e.g., 'When is the best time to sell tomatoes?', 'Should I store onions or sell now?'",
+        t("Ask your question") + ":",
+        placeholder=f"{t('e.g.')}, '{t('What is current tomato price in Pune?')}', '{t('Should I sell my onions now?')}'",
         key="market_ai_query"
     )
     

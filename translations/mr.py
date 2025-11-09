@@ -442,4 +442,18 @@ TRANSLATIONS = {
     "to": "पर्यंत",
     "in": "मध्ये",
     "at": "येथे",
+    
+    # Market Price Page
+    "Market Price Checker": "बाजार मूल्य तपासणी",
+    "Live vegetable and commodity prices from government sources": "सरकारी स्त्रोतांकडून भाज्या आणि वस्तूंच्या थेट किंमती",
+    "Showing prices for your location": "तुमच्या स्थानासाठी किंमती दाखवत आहे",
+    "Current Prices in Your Area": "तुमच्या क्षेत्रातील सध्याच्या किंमती",
+    "Click to view details": "तपशील पाहण्यासाठी क्लिक करा",
+    "Check Prices in Other Locations": "इतर ठिकाणी किंमती तपासा",
+    "Search for prices in different cities or villages": "विविध शहरे किंवा गावांमधील किंमती शोधा",
+    "AI Market Assistant": "AI बाजार सहाय्यक",
+    "Ask anything about market prices, selling strategies, or crop planning!": "बाजार किंमती, विक्री धोरणे किंवा पीक नियोजनाबद्दल काहीही विचारा!",
+    "Ask your question": "तुमचा प्रश्न विचारा",
+    "What is current tomato price in Pune?": "पुण्यात टोमॅटोची सध्याची किंमत काय आहे?",
+    "Should I sell my onions now?": "मी आता माझे कांदे विकावेत का?",
 }

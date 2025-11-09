@@ -419,4 +419,18 @@ TRANSLATIONS = {
     "to": "to",
     "in": "in",
     "at": "at",
+    
+    # Market Price Page
+    "Market Price Checker": "Market Price Checker",
+    "Live vegetable and commodity prices from government sources": "Live vegetable and commodity prices from government sources",
+    "Showing prices for your location": "Showing prices for your location",
+    "Current Prices in Your Area": "Current Prices in Your Area",
+    "Click to view details": "Click to view details",
+    "Check Prices in Other Locations": "Check Prices in Other Locations",
+    "Search for prices in different cities or villages": "Search for prices in different cities or villages",
+    "AI Market Assistant": "AI Market Assistant",
+    "Ask anything about market prices, selling strategies, or crop planning!": "Ask anything about market prices, selling strategies, or crop planning!",
+    "Ask your question": "Ask your question",
+    "What is current tomato price in Pune?": "What is current tomato price in Pune?",
+    "Should I sell my onions now?": "Should I sell my onions now?",
 }
