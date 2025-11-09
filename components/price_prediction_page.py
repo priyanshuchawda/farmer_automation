@@ -6,12 +6,22 @@ Provides farmers with price predictions, selling advice, and profit calculations
 
 import streamlit as st
 from datetime import datetime, timedelta
-from ai.price_predictor import PricePredictor
+try:
+    from ai.price_predictor import PricePredictor
+except ImportError:
+    # Fallback if module not found
+    PricePredictor = None
 
 def render_price_prediction_page():
     """Render the comprehensive price prediction and analysis page."""
     
     st.header("🤖 AI-Powered Price Intelligence")
+    
+    # Check if PricePredictor is available
+    if PricePredictor is None:
+        st.error("⚠️ AI Price Prediction module is not available. Please contact administrator.")
+        st.info("💡 The prediction feature requires additional AI components to be installed.")
+        return
     
     st.markdown("""
     <div style='background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%); 

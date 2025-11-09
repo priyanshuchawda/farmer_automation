@@ -13,10 +13,12 @@ def create_database_indexes():
     conn = sqlite3.connect('farmermarket.db')
     cursor = conn.cursor()
     
-    # Farmers table indexes
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_farmers_phone ON farmers(phone)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_farmers_location ON farmers(location)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_farmers_district ON farmers(district)')
+    # Farmers table indexes - only create if columns exist
+    try:
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_farmers_name ON farmers(name)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_farmers_location ON farmers(location)')
+    except sqlite3.OperationalError as e:
+        print(f"⚠️ Performance optimization warning: {e}")
     
     # Tool listings indexes
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_tools_farmer_id ON tool_listings(farmer_id)')

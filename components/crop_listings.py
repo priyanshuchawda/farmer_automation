@@ -3,7 +3,12 @@ import streamlit as st
 from database.db_functions import add_data, get_data
 from datetime import date
 import pandas as pd
-from ai.ai_matcher import get_recommendations  # ✅ AI AI integration
+try:
+    from ai.ai_matcher import get_recommendations  # ✅ AI integration
+except ImportError:
+    # Fallback if module not found
+    def get_recommendations(*args, **kwargs):
+        return []
 from components.translation_utils import t
 
 
