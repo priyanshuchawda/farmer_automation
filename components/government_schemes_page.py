@@ -39,7 +39,7 @@ class GovernmentSchemesHelper:
             print("⚠️ Fallback to Gemini 2.0 Flash")
         self.cache = CacheManager()
     
-    def search_government_schemes(self, location, crop_type=None, force_refresh=False):
+    def search_government_schemes(self, location, crop_type=None, force_refresh=False, language="English"):
         """
         Search for government agricultural schemes using Google Search grounding.
         
@@ -47,11 +47,12 @@ class GovernmentSchemesHelper:
             location: Farmer's location (city, state/district)
             crop_type: Optional crop type for specific schemes
             force_refresh: Force fetch fresh data instead of using cache
+            language: Response language (English, Hindi, Marathi)
         
         Returns:
             dict: Schemes information with sources
         """
-        cache_key = f"schemes_{location}_{crop_type or 'general'}"
+        cache_key = f"schemes_{location}_{crop_type or 'general'}_{language}"
         
         # Check cache first (unless force refresh)
         if not force_refresh:
@@ -60,6 +61,9 @@ class GovernmentSchemesHelper:
                 cached_data['from_cache'] = True
                 cached_data['cache_age'] = self._get_cache_age(cache_key)
                 return cached_data
+        
+        # Language instruction
+        lang_instruction = f"\n\n**IMPORTANT: Write the ENTIRE response in {language} language ONLY. Do NOT mix languages. All text, headings, and content must be in {language}.**"
         
         try:
             # Build search query with structured output format
@@ -72,7 +76,7 @@ class GovernmentSchemesHelper:
 List 3-4 major central schemes (PM-KISAN, PMFBY, Kisan Credit Card, etc.)
 For each scheme:
 - **Scheme Name & Full Form**
-- **Key Benefits** (in simple Hindi-English words)
+- **Key Benefits** (in simple terms)
 - **Who Can Apply** (eligibility in simple terms)
 - **How to Apply** (step-by-step process)
 - **Official Website/Helpline**
@@ -91,7 +95,7 @@ For each scheme:
 - Required documents
 - Common mistakes to avoid
 
-Format everything in bullet points and use simple language that farmers can understand."""
+Format everything in bullet points and use simple language that farmers can understand.{lang_instruction}"""
             else:
                 search_query = f"""Search for current government agricultural schemes available in {location}, India.
 
@@ -99,24 +103,18 @@ Format everything in bullet points and use simple language that farmers can unde
 
 ## 🇮🇳 MAJOR CENTRAL GOVERNMENT SCHEMES
 
-### 1. PM-KISAN (प्रधानमंत्री किसान सम्मान निधि)
-- **Benefits:** ₹6000 per year in 3 installments
-- **Who Can Apply:** All landholding farmers
-- **How to Apply:** [Online/offline process]
-- **Website:** [Official link]
+List 4-5 major schemes like:
+- PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)
+- PMFBY (Pradhan Mantri Fasal Bima Yojana)
+- Kisan Credit Card (KCC)
+- PM Kisan Maandhan Yojana
+- Soil Health Card Scheme
 
-### 2. Pradhan Mantri Fasal Bima Yojana (PMFBY)
-- **Benefits:** Crop insurance coverage
-- **Who Can Apply:** All farmers
-- **How to Apply:** [Process]
-- **Details:** [Information]
-
-### 3. Kisan Credit Card (KCC)
-- **Benefits:** Easy loans for farming
-- **Who Can Apply:** Farmers with land
-- **How to Apply:** [Bank process]
-
-[Add 2-3 more central schemes]
+For each scheme:
+- **Benefits:** (what farmers get)
+- **Who Can Apply:** (eligibility)
+- **How to Apply:** (step-by-step)
+- **Website/Helpline:** (contact info)
 
 ## 🏛️ {location.upper()} STATE SCHEMES
 
@@ -128,15 +126,15 @@ List state-specific schemes with:
 
 ## 📞 HELPLINE & SUPPORT
 - Kisan Call Center: 1800-180-1551
-- State Agriculture Helpline: [Local number]
-- Online Portal: [Links]
+- State Agriculture Helpline
+- Online Portal Links
 
 ## ⚠️ IMPORTANT NOTES
 - Documents needed: Aadhar, Bank Account, Land Records
 - Application deadlines
 - Tips for successful application
 
-Use simple language and bullet points. Make it easy for farmers to understand and act."""
+Use simple language and bullet points. Make it easy for farmers to understand and act.{lang_instruction}"""
 
             # Use AI with Google Search grounding
             response = self.client.models.generate_content(
@@ -379,12 +377,16 @@ def render_government_schemes_page():
         # Show immediate loading message
         loading_placeholder = st.empty()
         
+        # Get current language
+        from components.translation_utils import get_current_language_name
+        current_language = get_current_language_name()
+        
         # Auto-load schemes for farmer's location
         auto_load = 'auto_loaded_schemes' not in st.session_state
         if auto_load and default_location:
             loading_placeholder.info(f"🔍 Searching government schemes for {default_location}...")
             
-            schemes_data = helper.search_government_schemes(default_location, None, force_refresh=False)
+            schemes_data = helper.search_government_schemes(default_location, None, force_refresh=False, language=current_language)
             
             loading_placeholder.empty()  # Clear loading message
             
@@ -431,10 +433,10 @@ def render_government_schemes_page():
         col1, col2 = st.columns([1, 1])
         
         with col1:
-            search_btn = st.button("🔍 Search Schemes", type="primary", use_container_width=True)
+            search_btn = st.button("🔍 Search Schemes", type="primary", width="stretch")
         
         with col2:
-            refresh_btn = st.button("🔄 Force Refresh", use_container_width=True,
+            refresh_btn = st.button("🔄 Force Refresh", width="stretch",
                                    help="Get latest data (ignores cache)")
         
         # Manual search for schemes
@@ -444,7 +446,8 @@ def render_government_schemes_page():
                 schemes_data = helper.search_government_schemes(
                     location, 
                     crop, 
-                    force_refresh=refresh_btn
+                    force_refresh=refresh_btn,
+                    language=current_language
                 )
                 
                 if 'error' not in schemes_data:

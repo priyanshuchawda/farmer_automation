@@ -96,6 +96,22 @@ def get_current_language():
     selected_lang = st.session_state.get('language', 'English')
     return LANGUAGES.get(selected_lang, 'en')
 
+def get_current_language_name():
+    """
+    Get current selected language name in English
+    
+    Returns:
+        Language name ('English', 'Hindi', 'Marathi')
+    """
+    selected_lang = st.session_state.get('language', 'English')
+    # Extract just the English name
+    if 'Hindi' in selected_lang:
+        return 'Hindi'
+    elif 'Marathi' in selected_lang:
+        return 'Marathi'
+    else:
+        return 'English'
+
 def render_language_selector():
     """Render language selector at top of sidebar"""
     with st.sidebar:
