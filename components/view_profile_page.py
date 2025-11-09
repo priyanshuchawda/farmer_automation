@@ -6,7 +6,7 @@ from components.translation_utils import t
 def render_view_profile_page():
     st.header(f"👤 {t('MY PROFILE')}")
     
-    # Custom CSS for profile page
+    # Custom CSS for profile page with mobile responsiveness
     st.markdown("""
     <style>
     .profile-card {
@@ -16,6 +16,31 @@ def render_view_profile_page():
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         margin-bottom: 20px;
         border-left: 5px solid #2E8B57;
+    }
+    
+    @media (max-width: 768px) {
+        .profile-card {
+            padding: 15px;
+            font-size: 0.9rem;
+        }
+        
+        /* Stack profile columns */
+        [data-testid="column"] {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+        
+        /* Form inputs */
+        .stTextInput, .stNumberInput, .stSelectbox {
+            margin-bottom: 10px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .profile-card {
+            padding: 10px;
+            font-size: 0.85rem;
+        }
     }
     </style>
     """, unsafe_allow_html=True)

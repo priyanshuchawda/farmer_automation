@@ -45,6 +45,39 @@ def get_farming_advice(temp, rain, humidity, wind_speed):
     return advice if advice else ["✅ **Good Conditions**: Favorable weather for general farming activities."]
 
 def render_weather_component():
+    # Mobile responsive CSS for weather component
+    st.markdown("""
+    <style>
+    /* Mobile responsive for weather metrics */
+    @media (max-width: 768px) {
+        [data-testid="stMetricLabel"] {
+            font-size: 0.85rem !important;
+        }
+        [data-testid="stMetricValue"] {
+            font-size: 1.3rem !important;
+        }
+        [data-testid="stMetricDelta"] {
+            font-size: 0.75rem !important;
+        }
+        /* Stack columns vertically on mobile */
+        [data-testid="column"] {
+            width: 100% !important;
+            margin-bottom: 10px !important;
+        }
+        /* Expander adjustments */
+        .streamlit-expanderHeader {
+            font-size: 0.9rem !important;
+            padding: 10px !important;
+        }
+    }
+    @media (max-width: 480px) {
+        [data-testid="stMetricValue"] {
+            font-size: 1.1rem !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     st.header("🌤️ Weather Forecast & Farming Advice")
     
     # Check if farmer is logged in and has profile

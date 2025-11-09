@@ -20,6 +20,51 @@ def get_week_dates(year, month, day):
 def render_week_view(year, month, day, events, lang):
     """Render week view showing 7 days with events"""
     
+    # Mobile responsive CSS for week view
+    st.markdown("""
+    <style>
+    @media (max-width: 768px) {
+        /* Stack week columns on mobile */
+        [data-testid="column"] {
+            min-width: 100% !important;
+            margin-bottom: 10px;
+        }
+        
+        /* Compact navigation */
+        .stButton>button {
+            padding: 8px 12px !important;
+            font-size: 0.85rem !important;
+        }
+        
+        /* Smaller week headers */
+        h3 {
+            font-size: 1.1rem !important;
+        }
+        
+        /* Day cards */
+        .week-day-card {
+            padding: 10px !important;
+            margin-bottom: 10px !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .stButton>button {
+            padding: 6px 10px !important;
+            font-size: 0.8rem !important;
+        }
+        
+        h3 {
+            font-size: 1rem !important;
+        }
+        
+        .week-day-card {
+            padding: 8px !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Get week dates
     week_dates = get_week_dates(year, month, day)
     start_date = week_dates[0]

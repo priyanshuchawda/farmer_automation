@@ -35,6 +35,47 @@ def get_hourly_weather(farmer_profile, date):
 def render_day_view(year, month, day, events, lang):
     """Render day view with hourly schedule like Google Calendar"""
     
+    # Mobile responsive CSS for day view
+    st.markdown("""
+    <style>
+    @media (max-width: 768px) {
+        /* Stack navigation columns on mobile */
+        [data-testid="column"] {
+            min-width: 100% !important;
+            margin-bottom: 5px;
+        }
+        
+        /* Compact buttons */
+        .stButton>button {
+            padding: 8px 12px !important;
+            font-size: 0.85rem !important;
+        }
+        
+        /* Smaller headers */
+        h3 {
+            font-size: 1.1rem !important;
+        }
+        
+        /* Compact time slots */
+        .time-slot {
+            padding: 8px !important;
+            font-size: 0.85rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .stButton>button {
+            padding: 6px 10px !important;
+            font-size: 0.8rem !important;
+        }
+        
+        h3 {
+            font-size: 1rem !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Date navigation
     col1, col2, col3, col4 = st.columns([1, 1, 2, 1])
     

@@ -82,6 +82,35 @@ def create_weather_alert(weather_data):
 def render_integrated_calendar(farmer_name):
     """Render calendar with weather integration for logged-in farmer"""
     
+    # Mobile responsive CSS for calendar integration
+    st.markdown("""
+    <style>
+    @media (max-width: 768px) {
+        /* Compact header columns */
+        [data-testid="column"] {
+            min-width: 100% !important;
+            margin-bottom: 8px;
+        }
+        
+        /* Quick add button */
+        .stButton>button {
+            padding: 10px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        /* View toggle buttons */
+        .view-toggle {
+            padding: 8px 15px !important;
+        }
+        
+        /* Compact caption text */
+        .stCaption {
+            font-size: 0.75rem !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Get farmer profile
     farmer_profile = get_farmer_profile(farmer_name)
     

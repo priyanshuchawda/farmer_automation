@@ -228,6 +228,37 @@ Keep response concise and factual.
 
 def render_market_price():
     """Main component to display market prices"""
+    # Mobile responsive CSS for market price component
+    st.markdown("""
+    <style>
+    @media (max-width: 768px) {
+        /* Stack input columns */
+        [data-testid="column"] {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+        
+        /* Expander styling */
+        .streamlit-expanderHeader {
+            font-size: 0.9rem !important;
+            padding: 8px !important;
+        }
+        
+        /* Text input sizing */
+        .stTextInput input {
+            font-size: 14px !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        /* Smaller expander headers */
+        .streamlit-expanderHeader {
+            font-size: 0.85rem !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     st.header("💰 Market Price Checker")
     st.caption("Live vegetable and commodity prices from government sources")
     

@@ -8,6 +8,24 @@ from components.translation_utils import t
 
 def render_tool_listing(farmer_name):
     """Renders the form to add a new tool or machine listing with AI suggestions."""
+    # Mobile responsive CSS for tool listings
+    st.markdown("""
+    <style>
+    @media (max-width: 768px) {
+        /* Stack form columns */
+        [data-testid="column"] {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+        
+        /* Form input spacing */
+        .stTextInput, .stNumberInput, .stSelectbox, .stTextArea {
+            margin-bottom: 10px;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader(t("Add a Farm Tool for Rent"))
 

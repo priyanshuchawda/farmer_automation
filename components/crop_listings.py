@@ -9,6 +9,29 @@ from components.translation_utils import t
 
 def render_crop_listing(farmer_name):
     """Renders the form to add a new crop listing with AI recommendations."""
+    # Mobile responsive CSS for crop listings
+    st.markdown("""
+    <style>
+    @media (max-width: 768px) {
+        /* Stack form columns */
+        [data-testid="column"] {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+        
+        /* Form input spacing */
+        .stTextInput, .stNumberInput, .stSelectbox {
+            margin-bottom: 10px;
+        }
+        
+        /* Button sizing */
+        .stButton>button {
+            font-size: 0.9rem !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader(t("Add Crop for Sale"))
 

@@ -9,15 +9,180 @@ from calender.config import MONTH_NAMES, DAY_NAMES, TRANSLATIONS
 def render_calendar(year, month, events, lang):
     """Render custom calendar view"""
     
-    # Add custom CSS for uniform day boxes and green buttons
+    # Google Calendar-style responsive CSS
     st.markdown("""
     <style>
-    /* Ensure event buttons are compact and green */
+    /* Desktop: Full calendar view */
     div[data-testid="column"] button {
         font-size: 12px !important;
         padding: 4px 8px !important;
         min-height: 30px !important;
         line-height: 1.2 !important;
+    }
+    
+    .calendar-cell {
+        background-color: #ffffff;
+        padding: 8px;
+        border-radius: 8px;
+        min-height: 120px;
+        max-height: 120px;
+        border: 2px solid;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .calendar-day-number {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: #1B5E20;
+        margin-bottom: 6px;
+    }
+    
+    .calendar-day-header {
+        text-align: center;
+        font-weight: bold;
+        color: #0D47A1;
+        padding: 15px;
+        font-size: 17px;
+        background-color: #BBDEFB;
+        border-radius: 5px;
+        border: 2px solid #1976D2;
+    }
+    
+    /* Tablet: Medium-sized calendar */
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .calendar-cell {
+            min-height: 100px !important;
+            max-height: 100px !important;
+            padding: 6px !important;
+        }
+        
+        .calendar-day-number {
+            font-size: 16px !important;
+        }
+        
+        .calendar-day-header {
+            padding: 12px !important;
+            font-size: 15px !important;
+        }
+        
+        div[data-testid="column"] button {
+            font-size: 11px !important;
+            padding: 3px 6px !important;
+        }
+    }
+    
+    /* Mobile: Compact Google Calendar style (768px and below) */
+    @media (max-width: 768px) {
+        /* Remove column padding for tighter grid */
+        div[data-testid="column"] {
+            padding: 1px !important;
+        }
+        
+        /* Compact calendar cells - Google Calendar mobile size */
+        .calendar-cell {
+            min-height: 70px !important;
+            max-height: 70px !important;
+            padding: 4px !important;
+            border-radius: 6px !important;
+            border-width: 1px !important;
+        }
+        
+        /* Day numbers - prominent but compact */
+        .calendar-day-number {
+            font-size: 16px !important;
+            margin-bottom: 3px !important;
+        }
+        
+        /* Day headers - compact */
+        .calendar-day-header {
+            padding: 8px 2px !important;
+            font-size: 12px !important;
+            border-width: 1px !important;
+        }
+        
+        /* Event buttons - Google Calendar style pills */
+        div[data-testid="column"] button {
+            font-size: 8px !important;
+            padding: 2px 4px !important;
+            min-height: 16px !important;
+            line-height: 1 !important;
+            border-radius: 8px !important;
+            margin: 1px 0 !important;
+        }
+        
+        /* Month navigation */
+        .stButton>button {
+            padding: 8px 10px !important;
+            font-size: 14px !important;
+        }
+        
+        /* Month title */
+        h2 {
+            font-size: 1.3rem !important;
+        }
+    }
+    
+    /* Small phones: Ultra-compact (480px and below) */
+    @media (max-width: 480px) {
+        /* Even more compact cells */
+        .calendar-cell {
+            min-height: 55px !important;
+            max-height: 55px !important;
+            padding: 3px !important;
+            border-radius: 4px !important;
+        }
+        
+        /* Smaller day numbers */
+        .calendar-day-number {
+            font-size: 13px !important;
+            margin-bottom: 2px !important;
+        }
+        
+        /* Ultra-compact day headers */
+        .calendar-day-header {
+            padding: 5px 1px !important;
+            font-size: 10px !important;
+            border-radius: 3px !important;
+        }
+        
+        /* Tiny event indicators - just dots or very short text */
+        div[data-testid="column"] button {
+            font-size: 7px !important;
+            padding: 1px 2px !important;
+            min-height: 12px !important;
+            margin: 0.5px 0 !important;
+        }
+        
+        /* Smaller month navigation */
+        .stButton>button {
+            padding: 6px 8px !important;
+            font-size: 12px !important;
+        }
+        
+        /* Smaller month title */
+        h2 {
+            font-size: 1.1rem !important;
+        }
+    }
+    
+    /* Landscape mobile: Optimize for horizontal space */
+    @media (max-width: 900px) and (orientation: landscape) {
+        .calendar-cell {
+            min-height: 50px !important;
+            max-height: 50px !important;
+        }
+        
+        .calendar-day-number {
+            font-size: 12px !important;
+        }
+        
+        div[data-testid="column"] button {
+            font-size: 7px !important;
+            padding: 1px 3px !important;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -59,7 +224,7 @@ def render_calendar(year, month, events, lang):
     cols = st.columns(7)
     for i, day in enumerate(DAY_NAMES[lang]):
         cols[i].markdown(
-            f"<div style='text-align: center; font-weight: bold; color: #0D47A1; padding: 15px; font-size: 17px; background-color: #BBDEFB; border-radius: 5px; border: 2px solid #1976D2;'>{day}</div>", 
+            f"<div class='calendar-day-header'>{day}</div>", 
             unsafe_allow_html=True
         )
     
@@ -83,11 +248,8 @@ def render_calendar(year, month, events, lang):
                     
                     # Create uniform cell with fixed height
                     cell_content = f"""
-                    <div style='background-color: {box_bg}; padding: 8px; border-radius: 8px; 
-                                min-height: 120px; max-height: 120px; border: 2px solid {box_border};
-                                overflow: hidden; display: flex; flex-direction: column;'>
-                        <div style='text-align: center; font-size: 18px; font-weight: bold; 
-                                    color: #1B5E20; margin-bottom: 6px;'>{day_localized}</div>
+                    <div class='calendar-cell' style='background-color: {box_bg}; border-color: {box_border};'>
+                        <div class='calendar-day-number'>{day_localized}</div>
                         <div style='flex: 1; overflow-y: auto; overflow-x: hidden;'>
                     """
                     st.markdown(cell_content, unsafe_allow_html=True)

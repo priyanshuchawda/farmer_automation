@@ -12,6 +12,44 @@ def render_home_page():
     Personalized dashboard for logged-in farmers
     Shows quick actions, today's tasks, weather alerts, and recent activity
     """
+    # Mobile responsive CSS for home page
+    st.markdown("""
+    <style>
+    /* Home page mobile responsiveness */
+    @media (max-width: 768px) {
+        /* Quick action buttons - stack on mobile */
+        [data-testid="column"] {
+            min-width: 100% !important;
+            margin-bottom: 10px;
+        }
+        
+        /* Smaller captions */
+        .stCaption {
+            font-size: 0.75rem !important;
+        }
+        
+        /* Header adjustments */
+        h2 {
+            font-size: 1.5rem !important;
+        }
+        
+        h3 {
+            font-size: 1.2rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        h2 {
+            font-size: 1.3rem !important;
+        }
+        
+        h3 {
+            font-size: 1.1rem !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     farmer_name = st.session_state.get("farmer_name", "Farmer")
     farmer_profile = st.session_state.get("farmer_profile", {})
     user_role = st.session_state.get("role", "Farmer")

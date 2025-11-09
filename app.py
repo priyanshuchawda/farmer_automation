@@ -47,7 +47,7 @@ if 'db_initialized' not in st.session_state:
 # 2. Page Config
 st.set_page_config(page_title="Smart Farmer Marketplace", page_icon="favicon.ico", layout="wide")
 
-# 3. Custom CSS for styling
+# 3. Custom CSS for styling with mobile responsiveness
 st.markdown(
     """
     <style>
@@ -107,6 +107,117 @@ st.markdown(
         border-radius:10px; 
         padding:10px; 
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        /* Adjust titles for mobile */
+        h1 { 
+            font-size: 1.8rem !important; 
+            padding: 10px 5px !important;
+        }
+        h2 { 
+            font-size: 1.5rem !important; 
+        }
+        h3 { 
+            font-size: 1.3rem !important; 
+        }
+        
+        /* Card padding adjustment */
+        .card { 
+            padding: 15px !important; 
+            margin-bottom: 15px !important;
+            border-radius: 10px !important;
+            border-left-width: 5px !important;
+        }
+        
+        /* Button adjustments */
+        .stButton>button { 
+            padding: 8px 15px !important; 
+            font-size: 0.9rem !important;
+        }
+        
+        /* Sidebar adjustments */
+        [data-testid="stSidebar"] { 
+            padding: 10px !important;
+        }
+        
+        /* Column layouts - stack on mobile */
+        [data-testid="column"] {
+            width: 100% !important;
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+        }
+        
+        /* Tables and dataframes */
+        .stDataFrame, .stDataEditor { 
+            overflow-x: auto !important;
+            font-size: 0.85rem !important;
+        }
+        
+        /* Input fields */
+        .stTextInput>div>div>input,
+        .stTextArea>div>div>textarea,
+        .stSelectbox>div>div>select {
+            font-size: 16px !important; /* Prevents zoom on iOS */
+        }
+        
+        /* Tabs */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 5px !important;
+        }
+        
+        .stTabs [data-baseweb="tab"] {
+            padding: 8px 12px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        /* Metrics */
+        [data-testid="stMetricValue"] {
+            font-size: 1.5rem !important;
+        }
+        
+        /* Expander */
+        .streamlit-expanderHeader {
+            font-size: 0.95rem !important;
+        }
+    }
+    
+    /* Tablet adjustments */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        h1 { font-size: 2rem !important; }
+        h2 { font-size: 1.7rem !important; }
+        
+        .card { 
+            padding: 20px !important; 
+        }
+    }
+    
+    /* Extra small devices (phones in portrait) */
+    @media (max-width: 480px) {
+        h1 { font-size: 1.5rem !important; }
+        h2 { font-size: 1.3rem !important; }
+        h3 { font-size: 1.1rem !important; }
+        
+        .card { 
+            padding: 10px !important;
+            border-radius: 8px !important;
+        }
+        
+        .stButton>button { 
+            padding: 6px 12px !important; 
+            font-size: 0.85rem !important;
+        }
+    }
+    
+    /* Ensure touch-friendly interactive elements */
+    @media (hover: none) and (pointer: coarse) {
+        .stButton>button,
+        .stSelectbox,
+        .stTextInput,
+        [data-baseweb="tab"] {
+            min-height: 44px !important; /* Apple's recommended touch target */
+        }
     }
     </style>
     """,

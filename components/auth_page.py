@@ -243,6 +243,80 @@ def render_auth_page():
         border-top: 2px dashed #E0E0E0;
         text-align: center;
     }
+    
+    /* Mobile Responsive Styles for Auth Page */
+    @media (max-width: 768px) {
+        .main .block-container {
+            max-width: 100%;
+            padding: 1rem;
+        }
+        
+        .hero-section {
+            padding: 1.5rem 1rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero-title {
+            font-size: 1.8rem !important;
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem !important;
+        }
+        
+        .auth-container {
+            padding: 2rem 1.5rem;
+            border-radius: 15px;
+        }
+        
+        .stButton > button {
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+        
+        .progress-steps {
+            padding: 0 0.5rem;
+        }
+        
+        .step-circle {
+            width: 35px;
+            height: 35px;
+        }
+        
+        .step-label {
+            font-size: 10px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .hero-title {
+            font-size: 1.5rem !important;
+        }
+        
+        .hero-subtitle {
+            font-size: 0.9rem !important;
+        }
+        
+        .auth-container {
+            padding: 1.5rem 1rem;
+        }
+        
+        .stButton > button {
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+        
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            font-size: 12px;
+        }
+        
+        .step-label {
+            font-size: 9px;
+        }
+    }
     </style>
     """, unsafe_allow_html=True)
     
