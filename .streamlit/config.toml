@@ -1,19 +1,8 @@
-[theme]
-primaryColor = "#2E8B57"
-backgroundColor = "#F5F5F5"
-secondaryBackgroundColor = "#FFFFFF"
-textColor = "#262730"
-font = "sans serif"
+[runner]
+magicEnabled = true
+fastReruns = true
 
 [server]
-headless = true
 enableCORS = false
 enableXsrfProtection = true
 maxUploadSize = 200
-enableStaticServing = true
-
-[browser]
-gatherUsageStats = false
-
-[ui]
-hideTopBar = false
