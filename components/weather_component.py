@@ -137,8 +137,15 @@ def render_weather_component():
                                 current['humidity'], 
                                 current['wind_speed']
                             )
-                            for advice in advice_list:
-                                st.markdown(f"- {advice}")
+                            
+                            # Display advice with listen buttons
+                            from components.text_to_speech_widget import speak_button
+                            for idx, advice in enumerate(advice_list):
+                                col1, col2 = st.columns([10, 1])
+                                with col1:
+                                    st.markdown(f"- {advice}")
+                                with col2:
+                                    speak_button(advice, "🔊", key_suffix=f"advice_{idx}")
                             
                             st.divider()
                             

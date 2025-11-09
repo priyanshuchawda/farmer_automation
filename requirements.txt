@@ -11,3 +11,8 @@ plotly
 pydantic
 streamlit-geolocation
 deep-translator
+SpeechRecognition
+gTTS
+pydub
+streamlit-mic-recorder
+Pillow

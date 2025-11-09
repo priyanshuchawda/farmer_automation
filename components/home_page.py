@@ -66,7 +66,13 @@ def render_home_page():
         greeting = t("Good Evening")
         emoji = "🌙"
     
-    st.markdown(f"## {emoji} {greeting}, {farmer_name}!")
+    # Greeting with listen button
+    col1, col2 = st.columns([5, 1])
+    with col1:
+        st.markdown(f"## {emoji} {greeting}, {farmer_name}!")
+    with col2:
+        from components.text_to_speech_widget import speak_button
+        speak_button(f"{greeting} {farmer_name}", "🔊", key_suffix="greeting")
     
     # Location and basic info
     location = farmer_profile.get('location', 'Not set')
@@ -125,6 +131,12 @@ def render_home_page():
         st.caption(t("View all listings"))
     
     st.markdown("")
+    
+    # Voice input section
+    from components.voice_button import render_voice_quick_input
+    render_voice_quick_input()
+    
+    st.divider()
     
     # Two column layout for tasks and weather
     col_left, col_right = st.columns([3, 2])

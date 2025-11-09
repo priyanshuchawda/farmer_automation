@@ -86,6 +86,16 @@ def t(text, use_auto=True):
     # Step 3: If auto-translation disabled, return original
     return text
 
+def get_current_language():
+    """
+    Get current selected language code
+    
+    Returns:
+        Language code ('en', 'hi', 'mr')
+    """
+    selected_lang = st.session_state.get('language', 'English')
+    return LANGUAGES.get(selected_lang, 'en')
+
 def render_language_selector():
     """Render language selector at top of sidebar"""
     with st.sidebar:

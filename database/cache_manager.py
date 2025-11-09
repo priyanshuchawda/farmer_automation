@@ -160,7 +160,7 @@ class CacheManager:
         conn.commit()
         conn.close()
     
-    def clear_weather_cache(self, location: str = None):
+    def clear_weather_cache(self, location: Optional[str] = None):
         """Clear weather cache for specific location or all."""
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
@@ -236,7 +236,7 @@ class CacheManager:
         conn.commit()
         conn.close()
     
-    def clear_market_price_cache(self, crop_name: str = None, location: str = None):
+    def clear_market_price_cache(self, crop_name: Optional[str] = None, location: Optional[str] = None):
         """Clear market price cache."""
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()
@@ -328,7 +328,7 @@ class CacheManager:
         conn.commit()
         conn.close()
     
-    def clear_prediction_cache(self, crop_name: str = None, location: str = None):
+    def clear_prediction_cache(self, crop_name: Optional[str] = None, location: Optional[str] = None):
         """Clear prediction cache."""
         conn = sqlite3.connect(DB_NAME)
         c = conn.cursor()

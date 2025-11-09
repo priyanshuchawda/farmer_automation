@@ -2,12 +2,12 @@
 
 import streamlit as st
 from datetime import datetime
-from config import TRANSLATIONS, LANGUAGE_OPTIONS
-from utils import localize_number, create_event_id
-from ai_service import AIService
-from calendar_component import render_calendar
-from event_component import render_event_details
-from translation_service import TranslationService
+from .config import TRANSLATIONS, LANGUAGE_OPTIONS
+from .utils import localize_number, create_event_id
+from .ai_service import AIService
+from .calendar_component import render_calendar
+from .event_component import render_event_details
+from .translation_service import TranslationService
 
 # --- Page Configuration ---
 st.set_page_config(

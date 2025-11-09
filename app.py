@@ -31,6 +31,10 @@ from components.cache_admin_page import render_cache_admin_page
 from components.government_schemes_page import render_government_schemes_page
 from components.farm_finance_page import render_farm_finance_page
 from components.translation_utils import render_language_selector, t
+from components.pwa_component import inject_pwa_code
+from components.offline_manager import render_offline_status
+from components.performance_optimizer import init_performance_optimizations
+from components.notification_manager import init_notifications
 from calender.calendar_component import render_calendar
 from calender.config import TRANSLATIONS
 from calender.utils import get_events_for_date
@@ -42,10 +46,17 @@ from calender.utils import get_events_for_date
 # 1. Database Initialization
 if 'db_initialized' not in st.session_state:
     init_db()
+    init_performance_optimizations()
     st.session_state.db_initialized = True
 
 # 2. Page Config
 st.set_page_config(page_title="Smart Farmer Marketplace", page_icon="favicon.ico", layout="wide")
+
+# 2.5 Inject PWA Support
+inject_pwa_code()
+
+# 2.6 Initialize Notifications
+init_notifications()
 
 # 3. Custom CSS for styling with mobile responsiveness
 st.markdown(
@@ -287,7 +298,7 @@ if user_role == "Farmer":
         ("🗺️ LOCATION SERVICES", ["🗺️ Nearby Places & Services"]),
         ("🏛️ GOVERNMENT", ["🏛️ Government Schemes"]),
         ("💰 FINANCE", ["💰 Farm Finance Management"]),
-        ("🤖 ASSISTANCE", ["🤖 AI Chatbot", "🔔 Notifications & Alerts"])
+        ("🤖 ASSISTANCE", ["🎤 Voice Assistant", "🤖 AI Chatbot", "🔔 Notifications & Alerts"])
     ]
 else:
     # Admin Menu - Same as farmer but with admin section added
@@ -308,6 +319,12 @@ else:
 with st.sidebar:
     # Language Selector at the very top
     render_language_selector()
+    
+    st.markdown("---")
+    
+    # Voice shortcuts section
+    from components.voice_button import add_voice_shortcuts
+    add_voice_shortcuts()
     
     st.markdown("---")
     
@@ -434,6 +451,19 @@ with nav_col3:
 st.markdown("---")
 
 # ----------------------------------------
+# --- FLOATING VOICE BUTTON (GLOBAL) ---
+# ----------------------------------------
+from components.voice_button import render_floating_voice_button
+render_floating_voice_button()
+
+# ----------------------------------------
+# --- TEXT-TO-SPEECH FEATURES (GLOBAL) ---
+# ----------------------------------------
+from components.text_to_speech_widget import add_listen_everywhere, add_page_narrator
+add_listen_everywhere()  # Adds listen mode toggle in sidebar
+add_page_narrator()  # Adds narrator button
+
+# ----------------------------------------
 # --- PAGE ROUTING ---
 # ----------------------------------------
 
@@ -557,6 +587,10 @@ elif menu == "💰 Farm Finance Management":
 elif menu == "🤖 AI Chatbot":
     from components.ai_chatbot_page import render_ai_chatbot_page
     render_ai_chatbot_page()
+
+elif menu == "🎤 Voice Assistant":
+    from components.voice_assistant import render_voice_assistant_page
+    render_voice_assistant_page()
 
 elif menu == "🔔 Notifications & Alerts":
     from components.notifications_page import render_notifications_page

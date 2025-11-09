@@ -407,7 +407,7 @@ def render_auth_page():
     # ========================================
     with tab2:
         st.markdown("### Join Our Farming Community! 🌱")
-        st.markdown("Create your account in just a few simple steps")
+        st.markdown(t("Create your account in just a few simple steps"))
         
         # Initialize registration step if not exists
         if 'reg_step' not in st.session_state:
@@ -417,10 +417,10 @@ def render_auth_page():
         
         # Progress Steps Indicator
         steps = [
-            ("1", "Basic Info"),
-            ("2", "Farm & Location"),
-            ("3", "Create Account"),
-            ("4", "Complete")
+            ("1", t("Basic Info")),
+            ("2", t("Farm & Location")),
+            ("3", t("Create Account")),
+            ("4", t("Complete"))
         ]
         
         # Progress indicator using columns
@@ -445,7 +445,7 @@ def render_auth_page():
                 st.info("👤 **Tell us about yourself** - This information will be used to create your farmer profile")
                 
                 name = st.text_input(
-                    "Your Name *",
+                    f"{t('Your Name')} *",
                     placeholder="e.g., Ramesh Patil",
                     help="Enter your full name as you'd like it to appear",
                     value=st.session_state.reg_data.get('name', '')
@@ -454,7 +454,7 @@ def render_auth_page():
                 col1, col2 = st.columns(2)
                 with col1:
                     password = st.text_input(
-                        "Create Password *",
+                        f"{t('Create Password')} *",
                         type="password",
                         placeholder="Min. 4 characters",
                         help="Choose a secure password"
@@ -473,14 +473,14 @@ def render_auth_page():
                 
                 with col2:
                     confirm_password = st.text_input(
-                        "Confirm Password *",
+                        f"{t('Confirm Password')} *",
                         type="password",
                         placeholder="Re-enter password",
                         help="Must match the password above"
                     )
                 
                 contact = st.text_input(
-                    "Mobile Number *",
+                    f"{t('Mobile Number')} *",
                     placeholder="e.g., 9876543210",
                     help="Your contact number for marketplace communications",
                     value=st.session_state.reg_data.get('contact', '')
@@ -521,7 +521,7 @@ def render_auth_page():
         elif st.session_state.reg_step == 2:
             st.markdown("#### 🌾 Step 2: Farm Details & Location")
             
-            st.info("🚜 **Tell us about your farm and location** - We'll get your GPS coordinates for weather, market prices, and location services")
+            st.info(f"🚜 **{t('Tell us about your farm and location')}** - {t(\"We'll get your GPS coordinates for weather, market prices, and location services\")}")
             
             # Farm Size and Unit (outside form for better UX)
             col1, col2 = st.columns(2)
@@ -644,7 +644,7 @@ def render_auth_page():
                 
                 else:
                     # Step 1: GPS Detection using Streamlit Geolocation
-                    st.markdown("**Step 1️⃣: Detect Your GPS Location**")
+                    st.markdown(f"**1️⃣: {t('Detect Your GPS Location')}**")
                     
                     # Import streamlit-geolocation
                     from streamlit_geolocation import streamlit_geolocation
@@ -742,7 +742,7 @@ def render_auth_page():
                     st.rerun()
             
             with col2:
-                if st.button("Next: Complete Registration →", use_container_width=True, type="primary", key="step2_next"):
+                if st.button(f"{t('Next: Complete Registration')} →", use_container_width=True, type="primary", key="step2_next"):
                     # Validation
                     errors = []
                     
@@ -776,7 +776,7 @@ def render_auth_page():
         # STEP 3: ACCOUNT CREATION & COMPLETION
         # ========================================
         elif st.session_state.reg_step == 3:
-            st.markdown("#### 🎉 Step 3: Create Your Account")
+            st.markdown(f"#### 🎉 {t('Step 3: Create Your Account')}")
             
             st.info("✅ **Review your information before creating your account**")
             
@@ -846,7 +846,7 @@ def render_auth_page():
         # STEP 4: COMPLETION
         # ========================================
         elif st.session_state.reg_step == 4:
-            st.markdown("#### 🎉 Registration Complete!")
+            st.markdown(f"#### 🎉 {t('Registration Complete!')}")
             
             st.success("✅ **Welcome to Smart Farmer Marketplace!**")
             st.write("Your account has been created successfully. You can now:")
@@ -877,9 +877,9 @@ def render_auth_page():
     # ADMIN LOGIN SECTION
     # ========================================
     st.markdown("---")
-    st.markdown("### 👨‍💼 Admin Access")
+    st.markdown(f"### 👨‍💼 {t('Admin Access')}")
     
-    with st.expander("🔐 Admin Login", expanded=False):
+    with st.expander(f"🔐 {t('Admin Login')}", expanded=False):
         with st.form("admin_login_form"):
             admin_password = st.text_input(
                 "Admin Password",
