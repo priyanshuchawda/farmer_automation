@@ -10,3 +10,4 @@ joblib
 plotly
 pydantic
 streamlit-geolocation
+deep-translator
