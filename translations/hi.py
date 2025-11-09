@@ -456,4 +456,20 @@ TRANSLATIONS = {
     "Ask your question": "अपना प्रश्न पूछें",
     "What is current tomato price in Pune?": "पुणे में टमाटर की वर्तमान कीमत क्या है?",
     "Should I sell my onions now?": "क्या मुझे अभी अपने प्याज बेचने चाहिए?",
+    
+    # Registration Form Placeholders
+    "e.g., Ramesh Patil": "उदा., रमेश पाटील",
+    "Min. 4 characters": "कम से कम 4 अक्षर",
+    "Re-enter password": "पासवर्ड फिर से दर्ज करें",
+    "e.g., 9876543210": "उदा., 9876543210",
+    "e.g., Wadgaon Sheri, Pune, Maharashtra": "उदा., वडगांव शेरी, पुणे, महाराष्ट्र",
+    "Join Our Farming Community!": "हमारे किसान समुदाय में शामिल हों!",
+    "Tell us about yourself": "अपने बारे में बताएं",
+    "This information will be used to create your farmer profile": "यह जानकारी आपकी किसान प्रोफाइल बनाने के लिए उपयोग की जाएगी",
+    "Enter your full name as you'd like it to appear": "अपना पूरा नाम वैसे दर्ज करें जैसे आप चाहते हैं",
+    "Choose a secure password": "एक सुरक्षित पासवर्ड चुनें",
+    "Must match the password above": "ऊपर दिए गए पासवर्ड से मेल खाना चाहिए",
+    "Your contact number for marketplace communications": "बाजार संचार के लिए आपका संपर्क नंबर",
+    "Enter your village, city, district, and state for best results": "सर्वोत्तम परिणामों के लिए अपना गाँव, शहर, जिला और राज्य दर्ज करें",
+    "Step 1: Basic Information": "चरण 1: मूल जानकारी",
 }

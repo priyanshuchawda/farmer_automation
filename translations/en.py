@@ -433,4 +433,20 @@ TRANSLATIONS = {
     "Ask your question": "Ask your question",
     "What is current tomato price in Pune?": "What is current tomato price in Pune?",
     "Should I sell my onions now?": "Should I sell my onions now?",
+    
+    # Registration Form Placeholders
+    "e.g., Ramesh Patil": "e.g., Ramesh Patil",
+    "Min. 4 characters": "Min. 4 characters",
+    "Re-enter password": "Re-enter password",
+    "e.g., 9876543210": "e.g., 9876543210",
+    "e.g., Wadgaon Sheri, Pune, Maharashtra": "e.g., Wadgaon Sheri, Pune, Maharashtra",
+    "Join Our Farming Community!": "Join Our Farming Community!",
+    "Tell us about yourself": "Tell us about yourself",
+    "This information will be used to create your farmer profile": "This information will be used to create your farmer profile",
+    "Enter your full name as you'd like it to appear": "Enter your full name as you'd like it to appear",
+    "Choose a secure password": "Choose a secure password",
+    "Must match the password above": "Must match the password above",
+    "Your contact number for marketplace communications": "Your contact number for marketplace communications",
+    "Enter your village, city, district, and state for best results": "Enter your village, city, district, and state for best results",
+    "Step 1: Basic Information": "Step 1: Basic Information",
 }

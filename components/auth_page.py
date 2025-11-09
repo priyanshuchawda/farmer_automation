@@ -406,7 +406,7 @@ def render_auth_page():
     # TAB 2: NEW FARMER REGISTRATION
     # ========================================
     with tab2:
-        st.markdown("### Join Our Farming Community! 🌱")
+        st.markdown(f"### {t('Join Our Farming Community!')} 🌱")
         st.markdown(t("Create your account in just a few simple steps"))
         
         # Initialize registration step if not exists
@@ -439,15 +439,15 @@ def render_auth_page():
         # STEP 1: BASIC INFO
         # ========================================
         if st.session_state.reg_step == 1:
-            st.markdown("#### 📝 Step 1: Basic Information")
+            st.markdown(f"#### 📝 {t('Step 1: Basic Information')}")
             
             with st.form("step1_form"):
-                st.info("👤 **Tell us about yourself** - This information will be used to create your farmer profile")
+                st.info(f"👤 **{t('Tell us about yourself')}** - {t('This information will be used to create your farmer profile')}")
                 
                 name = st.text_input(
                     f"{t('Your Name')} *",
-                    placeholder="e.g., Ramesh Patil",
-                    help="Enter your full name as you'd like it to appear",
+                    placeholder=t("e.g., Ramesh Patil"),
+                    help=t("Enter your full name as you'd like it to appear"),
                     value=st.session_state.reg_data.get('name', '')
                 )
                 
@@ -456,8 +456,8 @@ def render_auth_page():
                     password = st.text_input(
                         f"{t('Create Password')} *",
                         type="password",
-                        placeholder="Min. 4 characters",
-                        help="Choose a secure password"
+                        placeholder=t("Min. 4 characters"),
+                        help=t("Choose a secure password")
                     )
                     
                     if password:
@@ -475,14 +475,14 @@ def render_auth_page():
                     confirm_password = st.text_input(
                         f"{t('Confirm Password')} *",
                         type="password",
-                        placeholder="Re-enter password",
-                        help="Must match the password above"
+                        placeholder=t("Re-enter password"),
+                        help=t("Must match the password above")
                     )
                 
                 contact = st.text_input(
                     f"{t('Mobile Number')} *",
-                    placeholder="e.g., 9876543210",
-                    help="Your contact number for marketplace communications",
+                    placeholder=t("e.g., 9876543210"),
+                    help=t("Your contact number for marketplace communications"),
                     value=st.session_state.reg_data.get('contact', '')
                 )
                 
@@ -567,9 +567,9 @@ def render_auth_page():
                 st.markdown("**Enter your farm location and we'll find the GPS coordinates**")
                 
                 location = st.text_input(
-                    "Farm Location *",
-                    placeholder="e.g., Wadgaon Sheri, Pune, Maharashtra",
-                    help="Enter your village, city, district, and state for best results",
+                    f"{t('Farm Location')} *",
+                    placeholder=t("e.g., Wadgaon Sheri, Pune, Maharashtra"),
+                    help=t("Enter your village, city, district, and state for best results"),
                     value=st.session_state.reg_data.get('location', ''),
                     key="manual_location_input"
                 )
