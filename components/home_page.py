@@ -140,9 +140,9 @@ def render_home_page():
     
     st.markdown("")
     
-    # Voice input section
-    from components.voice_button import render_voice_quick_input
-    render_voice_quick_input()
+    # Voice input section - Disabled due to mic_recorder compatibility issues
+    # from components.voice_button import render_voice_quick_input
+    # render_voice_quick_input()
     
     st.divider()
     

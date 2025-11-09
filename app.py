@@ -298,7 +298,7 @@ if user_role == "Farmer":
         ("🗺️ LOCATION SERVICES", ["🗺️ Nearby Places & Services"]),
         ("🏛️ GOVERNMENT", ["🏛️ Government Schemes"]),
         ("💰 FINANCE", ["💰 Farm Finance Management"]),
-        ("🤖 ASSISTANCE", ["🎤 Voice Assistant", "🤖 AI Chatbot", "🔔 Notifications & Alerts"])
+        ("🤖 ASSISTANCE", ["🤖 AI Chatbot", "🔔 Notifications & Alerts"])
     ]
 else:
     # Admin Menu - Same as farmer but with admin section added
@@ -322,9 +322,9 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Voice shortcuts section
-    from components.voice_button import add_voice_shortcuts
-    add_voice_shortcuts()
+    # Voice shortcuts section - Disabled
+    # from components.voice_button import add_voice_shortcuts
+    # add_voice_shortcuts()
     
     st.markdown("---")
     
@@ -451,17 +451,14 @@ with nav_col3:
 st.markdown("---")
 
 # ----------------------------------------
-# --- FLOATING VOICE BUTTON (GLOBAL) ---
+# --- VOICE & AUDIO FEATURES (DISABLED) ---
 # ----------------------------------------
-from components.voice_button import render_floating_voice_button
-render_floating_voice_button()
-
-# ----------------------------------------
-# --- TEXT-TO-SPEECH FEATURES (GLOBAL) ---
-# ----------------------------------------
-from components.text_to_speech_widget import add_listen_everywhere, add_page_narrator
-add_listen_everywhere()  # Adds listen mode toggle in sidebar
-add_page_narrator()  # Adds narrator button
+# Disabled due to microphone compatibility issues on Streamlit Cloud
+# from components.voice_button import render_floating_voice_button
+# render_floating_voice_button()
+# from components.text_to_speech_widget import add_listen_everywhere, add_page_narrator
+# add_listen_everywhere()
+# add_page_narrator()
 
 # ----------------------------------------
 # --- PAGE ROUTING ---
@@ -588,9 +585,10 @@ elif menu == "🤖 AI Chatbot":
     from components.ai_chatbot_page import render_ai_chatbot_page
     render_ai_chatbot_page()
 
-elif menu == "🎤 Voice Assistant":
-    from components.voice_assistant import render_voice_assistant_page
-    render_voice_assistant_page()
+# Voice Assistant removed due to microphone compatibility issues
+# elif menu == "🎤 Voice Assistant":
+#     from components.voice_assistant import render_voice_assistant_page
+#     render_voice_assistant_page()
 
 elif menu == "🔔 Notifications & Alerts":
     from components.notifications_page import render_notifications_page
