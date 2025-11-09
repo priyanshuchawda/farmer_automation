@@ -461,7 +461,7 @@ TRANSLATIONS = {
     "e.g., Ramesh Patil": "उदा., रमेश पाटील",
     "Min. 4 characters": "किमान ४ अक्षरे",
     "Re-enter password": "पासवर्ड पुन्हा एंटर करा",
-    "e.g., 9876543210": "उदा., 9876543210",
+    "e.g., 9876543210": "उदा., ९८७६५४३२१०",
     "e.g., Wadgaon Sheri, Pune, Maharashtra": "उदा., वडगाव शेरी, पुणे, महाराष्ट्र",
     "Join Our Farming Community!": "आमच्या शेती समुदायात सामील व्हा!",
     "Tell us about yourself": "तुमच्याबद्दल सांगा",

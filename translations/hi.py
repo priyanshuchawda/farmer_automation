@@ -459,9 +459,9 @@ TRANSLATIONS = {
     
     # Registration Form Placeholders
     "e.g., Ramesh Patil": "उदा., रमेश पाटील",
-    "Min. 4 characters": "कम से कम 4 अक्षर",
+    "Min. 4 characters": "कम से कम ४ अक्षर",
     "Re-enter password": "पासवर्ड फिर से दर्ज करें",
-    "e.g., 9876543210": "उदा., 9876543210",
+    "e.g., 9876543210": "उदा., ९८७६५४३२१०",
     "e.g., Wadgaon Sheri, Pune, Maharashtra": "उदा., वडगांव शेरी, पुणे, महाराष्ट्र",
     "Join Our Farming Community!": "हमारे किसान समुदाय में शामिल हों!",
     "Tell us about yourself": "अपने बारे में बताएं",
