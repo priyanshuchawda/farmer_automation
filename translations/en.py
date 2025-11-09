@@ -483,4 +483,7 @@ TRANSLATIONS = {
     "Ground Floor": "Ground Floor",
     "S No": "S No",
     "India": "India",
+    
+    # Weather
+    "Visit Weather section for detailed forecast": "Visit Weather section for detailed forecast",
 }

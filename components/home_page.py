@@ -200,8 +200,9 @@ def render_home_page():
         st.markdown(f"### 🌤️ {t('Weather Update')}")
         
         weather_location = farmer_profile.get('weather_location', location)
+        localized_weather_location = translate_location(weather_location)
         
-        st.info(f"📍 {weather_location}\n\n{t('Visit Weather section for detailed forecast')}")
+        st.info(f"📍 {localized_weather_location}\n\n{t('Visit Weather section for detailed forecast')}")
         
         if st.button(f"🌤️ {t('View Weather Forecast')}", key="weather_home", use_container_width=True, type="primary"):
             # Add to navigation history

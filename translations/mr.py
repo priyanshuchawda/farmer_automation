@@ -513,4 +513,7 @@ TRANSLATIONS = {
     "Viman Nagar": "विमान नगर",
     "Pune": "पुणे",
     "Maharashtra": "महाराष्ट्र",
+    
+    # Weather
+    "Visit Weather section for detailed forecast": "तपशीलवार अंदाजासाठी हवामान विभाग पहा",
 }
