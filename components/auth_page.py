@@ -521,7 +521,9 @@ def render_auth_page():
         elif st.session_state.reg_step == 2:
             st.markdown("#### 🌾 Step 2: Farm Details & Location")
             
-            st.info(f"🚜 **{t('Tell us about your farm and location')}** - {t(\"We'll get your GPS coordinates for weather, market prices, and location services\")}")
+            farm_location_text = t('Tell us about your farm and location')
+            gps_text = t("We'll get your GPS coordinates for weather, market prices, and location services")
+            st.info(f"🚜 **{farm_location_text}** - {gps_text}")
             
             # Farm Size and Unit (outside form for better UX)
             col1, col2 = st.columns(2)
