@@ -77,7 +77,7 @@ class AIClient:
         Focus on actionable advice that helps farmers make decisions.
         """
         
-        models_to_try = ["AI-2.0-flash-exp", "AI-2.5-flash", "AI-2.0-flash"]
+        models_to_try = ["gemini-2.0-flash-exp", "gemini-2.5-flash", "gemini-2.0-flash"]
         
         for model in models_to_try:
             try:
@@ -268,7 +268,7 @@ Provide structured information."""
         - Use "all" for general weather queries
         """
         
-        models_to_try = ["AI-2.5-flash", "AI-2.0-flash"]
+        models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash"]
         
         for model in models_to_try:
             try:
