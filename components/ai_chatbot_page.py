@@ -1,5 +1,6 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import os
 from datetime import datetime
 
@@ -11,15 +12,15 @@ def render_ai_chatbot_page():
     st.markdown("Ask me anything about farming, crops, weather, or marketplace!")
     
     # Get API key from environment
-    api_key = os.getenv("GEMINI_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     
     if not api_key:
         st.error("⚠️ AI API key not configured. Please add GEMINI_API_KEY to your .env file.")
         st.info("💡 Get your API key from: https://makersuite.google.com/app/apikey")
         return
     
-    # Configure AI
-    genai.configure(api_key=api_key)
+    # Initialize Gemini client
+    client = genai.Client(api_key=api_key)
     
     # Initialize chat history in session state
     if 'chat_history' not in st.session_state:
@@ -142,21 +143,36 @@ def render_ai_chatbot_page():
                     "timestamp": datetime.now().isoformat()
                 })
                 
-                # Create model
-                model = genai.GenerativeModel('gemini-1.5-flash')
-                
                 # Build conversation history for context
                 conversation = system_context + "\n\n"
                 for msg in st.session_state.chat_history[-5:]:  # Last 5 messages for context
                     conversation += f"{msg['role']}: {msg['content']}\n"
                 
-                # Generate response
-                response = model.generate_content(conversation)
+                # Try models in order: 2.5-flash, 2.0-flash, 1.5-flash
+                models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
+                response_text = None
+                
+                for model_name in models_to_try:
+                    try:
+                        response = client.models.generate_content(
+                            model=model_name,
+                            contents=conversation,
+                            config=types.GenerateContentConfig(
+                                temperature=0.7,
+                                thinking_config=types.ThinkingConfig(thinking_budget=0)  # Disable thinking for faster response
+                            )
+                        )
+                        response_text = response.text
+                        break  # Success, exit loop
+                    except Exception as model_error:
+                        if model_name == models_to_try[-1]:  # Last model failed
+                            raise model_error
+                        continue  # Try next model
                 
                 # Add AI response to history
                 st.session_state.chat_history.append({
                     "role": "assistant",
-                    "content": response.text,
+                    "content": response_text,
                     "timestamp": datetime.now().isoformat()
                 })
                 
