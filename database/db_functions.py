@@ -87,7 +87,7 @@ def add_data(table_name, data_tuple):
     elif table_name == "farmers":
         sql = "INSERT OR REPLACE INTO farmers (name, location, farm_size, farm_unit, contact, weather_location, latitude, longitude, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
     elif table_name == "calendar_events":
-        sql = "INSERT INTO calendar_events (farmer_name, event_date, event_title, event_description, weather_alert, created_at) VALUES (?, ?, ?, ?, ?, ?)"
+        sql = "INSERT INTO calendar_events (farmer_name, event_date, event_time, event_title, event_description, weather_alert, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
         
     c.execute(sql, data_tuple)
     conn.commit()
