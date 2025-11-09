@@ -25,18 +25,18 @@ class GovernmentSchemesHelper:
             raise ValueError("GEMINI_API_KEY or GOOGLE_API_KEY not found in environment")
         
         self.client = genai.Client(api_key=api_key)
-        # Try AI 2.5 Flash first, fallback to 2.0 Flash
+        # Try Gemini 2.5 Flash first, fallback to 2.0 Flash
         try:
             self.client.models.generate_content(
-                model='AI-2.5-flash',
+                model='gemini-2.5-flash',
                 contents="test",
                 config=types.GenerateContentConfig(temperature=0.1)
             )
-            self.model = 'AI-2.5-flash'
-            print("✅ Using AI 2.5 Flash")
+            self.model = 'gemini-2.5-flash'
+            print("✅ Using Gemini 2.5 Flash")
         except:
-            self.model = 'AI-2.0-flash-exp'
-            print("⚠️ Fallback to AI 2.0 Flash")
+            self.model = 'gemini-2.0-flash'
+            print("⚠️ Fallback to Gemini 2.0 Flash")
         self.cache = CacheManager()
     
     def search_government_schemes(self, location, crop_type=None, force_refresh=False):
@@ -44,7 +44,7 @@ class GovernmentSchemesHelper:
         Search for government agricultural schemes using Google Search grounding.
         
         Args:
-            location: Farmer's location (state/district)
+            location: Farmer's location (city, state/district)
             crop_type: Optional crop type for specific schemes
             force_refresh: Force fetch fresh data instead of using cache
         
@@ -62,33 +62,81 @@ class GovernmentSchemesHelper:
                 return cached_data
         
         try:
-            # Build search query
+            # Build search query with structured output format
             if crop_type:
-                search_query = f"""Find current government agricultural schemes for {crop_type} farmers in {location}, India:
+                search_query = f"""Search for current government agricultural schemes for {crop_type} farmers in {location}, India.
 
-1. List active central government schemes (PM-KISAN, PMFBY, KCC, etc.)
-2. List state-specific schemes for {location}
-3. For each scheme provide:
-   - Scheme name
-   - Key benefits
-   - Eligibility criteria
-   - Application process
-   - Contact information
-4. Include recent updates or new schemes from 2024-2025
+**Search the web and provide a well-structured response for farmers:**
 
-Focus on schemes specifically beneficial for {crop_type} cultivation."""
+## 🇮🇳 CENTRAL GOVERNMENT SCHEMES
+List 3-4 major central schemes (PM-KISAN, PMFBY, Kisan Credit Card, etc.)
+For each scheme:
+- **Scheme Name & Full Form**
+- **Key Benefits** (in simple Hindi-English words)
+- **Who Can Apply** (eligibility in simple terms)
+- **How to Apply** (step-by-step process)
+- **Official Website/Helpline**
+
+## 🏛️ STATE SCHEMES FOR {location.upper()}
+List 2-3 state-specific schemes for {location}
+For each scheme:
+- **Scheme Name**
+- **Special Benefits for {crop_type} Farmers**
+- **Who Can Apply**
+- **Application Process**
+- **Contact Details**
+
+## 💡 IMPORTANT TIPS
+- Best time to apply
+- Required documents
+- Common mistakes to avoid
+
+Format everything in bullet points and use simple language that farmers can understand."""
             else:
-                search_query = f"""Find current government agricultural schemes in {location}, India:
+                search_query = f"""Search for current government agricultural schemes available in {location}, India.
 
-1. List all active central government schemes for farmers
-2. List state-specific agricultural schemes for {location}
-3. For each major scheme provide:
-   - Scheme name
-   - Key benefits
-   - Eligibility criteria
-   - How to apply
-4. Include recent updates from 2024-2025
-5. Mention helpline numbers or online portals"""
+**Provide a farmer-friendly structured response:**
+
+## 🇮🇳 MAJOR CENTRAL GOVERNMENT SCHEMES
+
+### 1. PM-KISAN (प्रधानमंत्री किसान सम्मान निधि)
+- **Benefits:** ₹6000 per year in 3 installments
+- **Who Can Apply:** All landholding farmers
+- **How to Apply:** [Online/offline process]
+- **Website:** [Official link]
+
+### 2. Pradhan Mantri Fasal Bima Yojana (PMFBY)
+- **Benefits:** Crop insurance coverage
+- **Who Can Apply:** All farmers
+- **How to Apply:** [Process]
+- **Details:** [Information]
+
+### 3. Kisan Credit Card (KCC)
+- **Benefits:** Easy loans for farming
+- **Who Can Apply:** Farmers with land
+- **How to Apply:** [Bank process]
+
+[Add 2-3 more central schemes]
+
+## 🏛️ {location.upper()} STATE SCHEMES
+
+List state-specific schemes with:
+- Scheme name and benefits
+- Eligibility criteria
+- Application method
+- Local contact numbers
+
+## 📞 HELPLINE & SUPPORT
+- Kisan Call Center: 1800-180-1551
+- State Agriculture Helpline: [Local number]
+- Online Portal: [Links]
+
+## ⚠️ IMPORTANT NOTES
+- Documents needed: Aadhar, Bank Account, Land Records
+- Application deadlines
+- Tips for successful application
+
+Use simple language and bullet points. Make it easy for farmers to understand and act."""
 
             # Use AI with Google Search grounding
             response = self.client.models.generate_content(
@@ -291,12 +339,85 @@ def render_government_schemes_page():
     with tab1:
         st.subheader("📋 Agricultural Schemes Database")
         
+        # Get farmer's location from profile
+        farmer_name = st.session_state.get("farmer_name")
+        default_location = "Maharashtra"
+        city_name = None
+        state_name = "Maharashtra"
+        
+        if farmer_name:
+            from database.db_functions import get_farmer_profile
+            farmer_profile = get_farmer_profile(farmer_name)
+            if farmer_profile:
+                farmer_location = farmer_profile.get('location', '')
+                if farmer_location:
+                    # Extract city and state from address
+                    location_parts = [part.strip() for part in farmer_location.split(',')]
+                    
+                    # Find state name
+                    for part in location_parts:
+                        if any(state in part.lower() for state in ['maharashtra', 'karnataka', 'punjab', 'gujarat', 'tamil nadu', 'kerala', 'rajasthan', 'madhya pradesh', 'uttar pradesh', 'bihar', 'west bengal', 'andhra pradesh', 'telangana', 'odisha', 'haryana']):
+                            state_name = part
+                            break
+                    else:
+                        # Use second-to-last part as likely state
+                        if len(location_parts) >= 2:
+                            state_name = location_parts[-2]
+                    
+                    # Find city name (look for major cities)
+                    for part in location_parts:
+                        if any(city in part.lower() for city in ['pune', 'mumbai', 'nashik', 'bangalore', 'delhi', 'ahmedabad', 'hyderabad', 'chennai', 'kolkata', 'jaipur', 'lucknow', 'kanpur', 'nagpur', 'indore', 'bhopal', 'patna', 'surat', 'vadodara']):
+                            city_name = part
+                            break
+                    
+                    # Build location string: "City, State" or just "State"
+                    if city_name:
+                        default_location = f"{city_name}, {state_name}"
+                    else:
+                        default_location = state_name
+        
+        # Show immediate loading message
+        loading_placeholder = st.empty()
+        
+        # Auto-load schemes for farmer's location
+        auto_load = 'auto_loaded_schemes' not in st.session_state
+        if auto_load and default_location:
+            loading_placeholder.info(f"🔍 Searching government schemes for {default_location}...")
+            
+            schemes_data = helper.search_government_schemes(default_location, None, force_refresh=False)
+            
+            loading_placeholder.empty()  # Clear loading message
+            
+            if 'error' not in schemes_data:
+                st.success(f"📍 Government Schemes for: **{default_location}**")
+                
+                # Display content
+                st.markdown("---")
+                st.markdown(schemes_data['content'])
+                
+                # Show sources
+                if schemes_data.get('sources'):
+                    st.markdown("---")
+                    st.subheader("📚 Sources & References")
+                    for source in schemes_data['sources']:
+                        st.markdown(f"- [{source['title']}]({source['url']})")
+                
+                st.session_state['last_schemes_data'] = schemes_data
+                st.session_state['auto_loaded_schemes'] = True
+            else:
+                loading_placeholder.error(f"❌ Could not load schemes. Please try manual search below.")
+            
+            st.markdown("---")
+        
+        # Manual search section
+        st.markdown("### 🔍 Search Schemes for Other Locations")
+        
         col1, col2 = st.columns([2, 1])
         
         with col1:
             location = st.text_input(
-                "Your Location (State/District)",
-                value=st.session_state.get('user_location', 'Maharashtra'),
+                "Location (State/District)",
+                value=default_location,
                 help="Enter your state or district name"
             )
         
@@ -316,7 +437,7 @@ def render_government_schemes_page():
             refresh_btn = st.button("🔄 Force Refresh", use_container_width=True,
                                    help="Get latest data (ignores cache)")
         
-        # Search for schemes
+        # Manual search for schemes
         if search_btn or refresh_btn:
             with st.spinner("Searching government schemes..."):
                 crop = None if crop_type == "All Crops" else crop_type
@@ -456,87 +577,180 @@ Search for latest official requirements."""
                     except Exception as e:
                         st.error(f"Error: {e}")
     
-    # TAB 4: EMI Calculator
+    # TAB 4: AI-Powered Loan Calculator
     with tab4:
-        st.subheader("💰 Agricultural Loan EMI Calculator")
+        st.subheader("💰 Smart Agricultural Loan Calculator")
+        st.caption("AI searches real interest rates and calculates EMI for your location")
         
-        st.write("Calculate your monthly EMI for agricultural loans:")
+        # Get farmer's location
+        farmer_location_for_loan = default_location if 'default_location' in locals() else "Maharashtra"
+        
+        st.info(f"📍 Getting loan information for: **{farmer_location_for_loan}**")
+        
+        # Loan type selection
+        loan_types = [
+            "Kisan Credit Card (KCC)",
+            "Crop Loan",
+            "Equipment Purchase Loan",
+            "Land Development Loan",
+            "Dairy Loan",
+            "Poultry Loan",
+            "General Agricultural Loan"
+        ]
         
         col1, col2 = st.columns(2)
         
         with col1:
-            principal = st.number_input(
+            loan_type = st.selectbox("Select Loan Type", loan_types)
+            loan_amount = st.number_input(
                 "Loan Amount (₹)",
                 min_value=10000,
                 max_value=10000000,
                 value=200000,
-                step=10000
-            )
-            
-            rate = st.number_input(
-                "Interest Rate (% per annum)",
-                min_value=1.0,
-                max_value=20.0,
-                value=7.0,
-                step=0.5
+                step=10000,
+                help="Enter the amount you need"
             )
         
         with col2:
+            loan_purpose = st.text_input(
+                "Loan Purpose (Optional)",
+                placeholder="e.g., Buy tractor, Seeds, Irrigation",
+                help="Helps get more specific information"
+            )
             tenure_years = st.number_input(
-                "Loan Tenure (years)",
+                "Desired Tenure (years)",
                 min_value=1,
                 max_value=20,
-                value=5
+                value=3,
+                help="How many years to repay"
             )
-            
-            tenure_months = tenure_years * 12
         
-        if st.button("💰 Calculate EMI", type="primary"):
-            result = helper.calculate_loan_emi(principal, rate, tenure_months)
-            
-            if result:
-                st.success("✅ EMI Calculation")
-                st.markdown("---")
+        if st.button("🔍 Search Rates & Calculate EMI", type="primary", use_container_width=True):
+            with st.spinner(f"🔍 Searching current {loan_type} rates in {farmer_location_for_loan}..."):
                 
-                col1, col2, col3 = st.columns(3)
-                
-                with col1:
-                    st.metric("Monthly EMI", f"₹{result['emi']:,.2f}")
-                
-                with col2:
-                    st.metric("Total Payment", f"₹{result['total_payment']:,.2f}")
-                
-                with col3:
-                    st.metric("Total Interest", f"₹{result['total_interest']:,.2f}")
-                
-                # Breakdown
-                st.markdown("---")
-                st.subheader("Payment Breakdown")
-                
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.write(f"**Principal Amount:** ₹{principal:,.2f}")
-                    st.write(f"**Interest Rate:** {rate}% per annum")
-                    st.write(f"**Loan Tenure:** {tenure_years} years ({tenure_months} months)")
-                
-                with col2:
-                    st.write(f"**Monthly EMI:** ₹{result['emi']:,.2f}")
-                    st.write(f"**Total Interest:** ₹{result['total_interest']:,.2f}")
-                    interest_percent = (result['total_interest'] / principal) * 100
-                    st.write(f"**Interest %:** {interest_percent:.1f}% of principal")
-                
-                # Tips
-                st.info("💡 **Tip:** Lower interest rates and shorter tenures reduce total interest paid. Check for government subsidy schemes!")
-    
-    # Information footer
-    st.markdown("---")
-    st.info("""
-    💡 **Smart Caching System:**
-    - Schemes data is cached for 2 hours
-    - Click "Force Refresh" to get latest information
-    - Cache age is shown when viewing cached data
-    - Saves API costs and improves performance
-    """)
+                # Build AI query to search for real loan data
+                search_query = f"""Search for current agricultural loan information for {loan_type} in {farmer_location_for_loan}, India.
+
+**Find and provide the following information:**
+
+## 💰 LOAN DETAILS FOR {loan_type.upper()}
+
+### Current Interest Rates
+- Search for current interest rates from major banks (SBI, HDFC, ICICI, Punjab National Bank, Bank of Maharashtra)
+- Government subsidy rates (if applicable)
+- Interest subvention schemes available
+- Special rates for {farmer_location_for_loan}
+
+### Loan Terms & Conditions
+- Maximum loan amount available
+- Typical tenure options
+- Processing fees
+- Collateral requirements
+- Documentation needed
+
+### EMI Calculation
+Based on:
+- **Loan Amount:** ₹{loan_amount:,}
+- **Tenure:** {tenure_years} years ({tenure_years * 12} months)
+- **Current Average Interest Rate:** [Find real rate]
+
+Calculate and show:
+1. **Monthly EMI Amount**
+2. **Total Interest Payable**
+3. **Total Amount Payable**
+4. **EMI Breakdown Table** (First 6 months showing principal + interest split)
+
+### Available Schemes & Subsidies
+- Interest subvention schemes
+- Government subsidies for {loan_purpose if loan_purpose else loan_type}
+- Special schemes in {farmer_location_for_loan}
+
+### Where to Apply
+- List 3-4 banks offering best rates in {farmer_location_for_loan}
+- Online application links
+- Branch contact information
+- Required documents
+
+### 💡 RECOMMENDATIONS
+- Best time to apply
+- Tips to get better interest rates
+- How to improve loan eligibility
+
+**Format the response in a clear, structured way with:**
+- Headings and subheadings
+- Bullet points
+- Tables for EMI breakdown
+- Actual numbers and calculations
+- Simple language for farmers"""
+
+                try:
+                    response = helper.client.models.generate_content(
+                        model=helper.model,
+                        contents=search_query,
+                        config=types.GenerateContentConfig(
+                            tools=[types.Tool(google_search=types.GoogleSearch())],
+                            temperature=0.2,  # Lower temperature for accurate calculations
+                            response_modalities=["TEXT"]
+                        )
+                    )
+                    
+                    st.success("✅ Loan Information & EMI Calculation")
+                    st.markdown("---")
+                    
+                    # Display AI response
+                    st.markdown(response.text)
+                    
+                    # Show sources if available
+                    if hasattr(response, 'grounding_metadata') and response.grounding_metadata:
+                        st.markdown("---")
+                        st.subheader("📚 Information Sources")
+                        for source in response.grounding_metadata.grounding_supports:
+                            if hasattr(source, 'uri'):
+                                st.markdown(f"- [{source.title if hasattr(source, 'title') else 'Source'}]({source.uri})")
+                    
+                except Exception as e:
+                    st.error(f"❌ Error fetching loan information: {str(e)}")
+                    
+                    # Fallback: Basic EMI calculation
+                    st.warning("⚠️ Using fallback calculator with estimated rate (7% p.a.)")
+                    
+                    rate = 7.0  # Default rate
+                    tenure_months = tenure_years * 12
+                    monthly_rate = rate / (12 * 100)
+                    
+                    if monthly_rate > 0:
+                        emi = loan_amount * monthly_rate * ((1 + monthly_rate) ** tenure_months) / (((1 + monthly_rate) ** tenure_months) - 1)
+                        total_payment = emi * tenure_months
+                        total_interest = total_payment - loan_amount
+                        
+                        st.markdown("---")
+                        col1, col2, col3 = st.columns(3)
+                        
+                        with col1:
+                            st.metric("Monthly EMI", f"₹{emi:,.2f}")
+                        with col2:
+                            st.metric("Total Interest", f"₹{total_interest:,.2f}")
+                        with col3:
+                            st.metric("Total Payment", f"₹{total_payment:,.2f}")
+                        
+                        st.info("💡 **Note:** This is an estimate. Actual rates may vary. Please search again or contact your bank.")
+        
+        # Quick comparison section
+        st.markdown("---")
+        st.markdown("### 🏦 Quick Loan Comparison")
+        st.caption("Common agricultural loan types and typical rates")
+        
+        comparison_data = {
+            "Loan Type": ["Kisan Credit Card", "Crop Loan", "Tractor Loan", "Land Development"],
+            "Typical Rate (%)": ["4-7%", "7-9%", "8-10%", "9-11%"],
+            "Max Amount": ["₹3 Lakhs", "As per crop", "₹10-15 Lakhs", "₹50 Lakhs+"],
+            "Tenure": ["1 year", "6-12 months", "7-9 years", "10-15 years"]
+        }
+        
+        import pandas as pd
+        df = pd.DataFrame(comparison_data)
+        st.dataframe(df, use_container_width=True, hide_index=True)
+        
+        st.caption("💡 **Tip:** Rates shown are approximate. Click 'Search Rates' above for current rates in your area.")
 
 

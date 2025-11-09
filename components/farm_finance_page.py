@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import sqlite3
 import json
 import pandas as pd
+from components.translation_utils import t
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -84,24 +85,45 @@ class FinanceAI:
         if not api_key:
             raise ValueError("GEMINI_API_KEY not found")
         self.client = genai.Client(api_key=api_key)
-        # Try AI 2.5 Flash first, fallback to 2.0 Flash
+        # Try Gemini 2.5 Flash first, fallback to 2.0 Flash
         try:
             self.client.models.generate_content(
-                model='AI-2.5-flash',
+                model='gemini-2.5-flash',
                 contents="test",
                 config=types.GenerateContentConfig(temperature=0.1)
             )
-            self.model = 'AI-2.5-flash'
-            print("✅ Using AI 2.5 Flash")
+            self.model = 'gemini-2.5-flash'
+            print("✅ Using Gemini 2.5 Flash")
         except:
-            self.model = 'AI-2.0-flash-exp'
-            print("⚠️ Fallback to AI 2.0 Flash")
+            self.model = 'gemini-2.0-flash-exp'
+            print("⚠️ Fallback to Gemini 2.0 Flash")
+    
+    def get_language_instruction(self):
+        """Get language instruction based on selected language"""
+        try:
+            selected_lang = st.session_state.get('language', 'English')
+            
+            language_map = {
+                "English": "English",
+                "हिन्दी (Hindi)": "Hindi (हिन्दी)",
+                "मराठी (Marathi)": "Marathi (मराठी)"
+            }
+            
+            target_language = language_map.get(selected_lang, "English")
+            
+            if target_language != "English":
+                return f"\n\nIMPORTANT: Reply ONLY in {target_language} language. Do not use English."
+            return ""
+        except:
+            return ""
     
     def analyze_profit_loss(self, income_data, expense_data, period):
         """Analyze profit/loss with AI insights."""
         total_income = sum([t['amount'] for t in income_data])
         total_expense = sum([t['amount'] for t in expense_data])
         profit = total_income - total_expense
+        
+        language_instruction = self.get_language_instruction()
         
         prompt = f"""Analyze this farm's financial performance for {period}:
 
@@ -124,7 +146,7 @@ Provide:
 4. Revenue improvement recommendations
 5. Seasonal planning advice
 
-Keep response concise and actionable for farmers."""
+Keep response concise and actionable for farmers.{language_instruction}"""
 
         try:
             response = self.client.models.generate_content(
@@ -209,20 +231,29 @@ def render_farm_finance_page():
             st.error(f"AI features unavailable: {e}")
             st.session_state.finance_ai = None
     
-    # Get farmer ID
-    farmer_id = st.session_state.get('user_id')
-    if not farmer_id:
+    # Get farmer ID from session
+    farmer_name = st.session_state.get('farmer_name')
+    if not farmer_name:
         st.warning("Please login to access finance features.")
         return
     
+    # Get farmer profile to retrieve farmer_id
+    from database.db_functions import get_farmer_profile
+    farmer_profile = get_farmer_profile(farmer_name)
+    if not farmer_profile:
+        st.error("Could not load farmer profile.")
+        return
+    
+    farmer_id = farmer_profile.get('id')
+    
     # Tabs
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-        "📊 Dashboard",
-        "➕ Add Transaction",
-        "📈 Profit/Loss Analysis",
-        "🎯 Investment Planning",
-        "🛡️ Insurance Tracker",
-        "🧾 Receipt Generator"
+        f"📊 {t('Dashboard')}",
+        f"➕ {t('Add Transaction')}",
+        f"📈 {t('Profit/Loss Analysis')}",
+        f"🎯 {t('Investment Planning')}",
+        f"🛡️ {t('Insurance Tracker')}",
+        f"🧾 {t('Receipt Generator')}"
     ])
     
     # TAB 1: Dashboard
@@ -367,7 +398,7 @@ def render_add_transaction(farmer_id):
     
     with col2:
         date = st.date_input("Date", value=datetime.now())
-        payment_mode = st.selectbox("Payment Mode", ["Cash", "Bank Transfer", "UPI", "Cheque"])
+        payment_mode = st.selectbox("Payment Mode", ["Cash", "Bank Transfer", "UPI", "Cheque"], key="transaction_payment_mode")
         receipt_no = st.text_input("Receipt/Reference Number (Optional)")
     
     description = st.text_area("Description", placeholder="e.g., Sold 10 quintals wheat to APMC")
@@ -589,11 +620,11 @@ def render_investment_planning(farmer_id):
         
         with col1:
             budget = st.number_input("Available Budget (₹)", min_value=0.0, step=10000.0, value=50000.0)
-            farm_size = st.text_input("Farm Size", value="2 acres")
+            farm_size = st.text_input("Farm Size", value="2 acres", key="investment_farm_size")
         
         with col2:
-            current_equip = st.text_input("Current Equipment", placeholder="e.g., Tractor, pump")
-            crop_type = st.text_input("Primary Crop", placeholder="e.g., Wheat, Rice")
+            current_equip = st.text_input("Current Equipment", placeholder="e.g., Tractor, pump", key="investment_current_equip")
+            crop_type = st.text_input("Primary Crop", placeholder="e.g., Wheat, Rice", key="investment_crop_type")
         
         if st.button("🤖 Get AI Suggestions", type="primary"):
             if st.session_state.finance_ai and budget > 0:
@@ -708,11 +739,11 @@ def render_insurance_tracker(farmer_id):
         col1, col2 = st.columns(2)
         
         with col1:
-            location = st.text_input("Your Location", value=st.session_state.get('user_location', ''))
-            crop_type = st.text_input("Primary Crop")
+            location = st.text_input("Your Location", value=st.session_state.get('user_location', ''), key="insurance_location")
+            crop_type = st.text_input("Primary Crop", key="insurance_crop_type")
         
         with col2:
-            farm_size = st.text_input("Farm Size", value="2 acres")
+            farm_size = st.text_input("Farm Size", value="2 acres", key="insurance_farm_size")
         
         if st.button("💡 Get Recommendations", type="primary"):
             if st.session_state.finance_ai and location and crop_type:
@@ -732,7 +763,7 @@ def render_receipt_generator(farmer_id):
     # Get farmer details
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
-    c.execute("SELECT name, location, contact FROM farmers WHERE id = ?", (farmer_id,))
+    c.execute("SELECT name, location, contact FROM farmers WHERE ROWID = ?", (farmer_id,))
     farmer = c.fetchone()
     
     if not farmer:
@@ -767,8 +798,8 @@ def render_receipt_generator(farmer_id):
         
         st.markdown("---")
         sale_date = st.date_input("Sale Date", value=datetime.now())
-        payment_mode = st.selectbox("Payment Mode", ["Cash", "Bank Transfer", "UPI", "Cheque"])
-        payment_status = st.selectbox("Payment Status", ["Paid", "Pending", "Partial"])
+        payment_mode = st.selectbox("Payment Mode", ["Cash", "Bank Transfer", "UPI", "Cheque"], key="receipt_payment_mode")
+        payment_status = st.selectbox("Payment Status", ["Paid", "Pending", "Partial"], key="receipt_payment_status")
     
     # Calculate totals
     total_amount = quantity * price_per_unit

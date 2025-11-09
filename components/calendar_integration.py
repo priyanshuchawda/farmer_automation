@@ -191,31 +191,32 @@ def render_integrated_calendar(farmer_name):
     ai_service = AIService()
     lang = "en"
     
-    with st.expander("🤖 AI Farming Plan Generator", expanded=False):
-        st.write("Ask AI to create a farming schedule for you!")
-        
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            prompt = st.text_area(
-                "Your farming question:",
-                height=80,
-                placeholder="E.g., Create a 10-day wheat planting schedule for November",
-                key="ai_calendar_prompt"
-            )
-        
-        with col2:
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🌱 Generate", use_container_width=True, type="primary"):
-                if prompt.strip():
-                    with st.spinner("🔄 Creating plan..."):
-                        plan_data, error = ai_service.generate_farming_plan(prompt, lang)
-                        
-                        if plan_data:
-                            st.session_state.ai_plan = plan_data
-                            st.success("✅ Plan ready!")
-                            st.rerun()
-                        else:
-                            st.error(f"❌ {error}")
+    st.markdown("---")
+    st.subheader("🤖 AI Farming Plan Generator")
+    st.write("Ask AI to create a farming schedule for you!")
+    
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        prompt = st.text_area(
+            "Your farming question:",
+            height=80,
+            placeholder="E.g., Create a 10-day wheat planting schedule for November",
+            key="ai_calendar_prompt"
+        )
+    
+    with col2:
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("🌱 Generate", use_container_width=True, type="primary"):
+            if prompt.strip():
+                with st.spinner("🔄 Creating plan..."):
+                    plan_data, error = ai_service.generate_farming_plan(prompt, lang)
+                    
+                    if plan_data:
+                        st.session_state.ai_plan = plan_data
+                        st.success("✅ Plan ready!")
+                        st.rerun()
+                    else:
+                        st.error(f"❌ {error}")
     
     # Display and save AI-generated plan with editable dates and times
     if 'ai_plan' in st.session_state:

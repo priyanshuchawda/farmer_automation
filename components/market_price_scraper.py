@@ -148,7 +148,7 @@ Keep advice practical, specific to Indian agricultural markets, and focused on m
 """
         
         response = ai_client.models.generate_content(
-            model='AI-2.0-flash-exp',
+            model='gemini-2.0-flash',
             contents=prompt
         )
         return response.text
@@ -185,7 +185,7 @@ You are an expert agricultural market advisor for Indian farmers.
         
         # Enable Google Search for real-time price data
         response = ai_client.models.generate_content(
-            model='AI-2.0-flash-exp',
+            model='gemini-2.0-flash',
             contents=prompt,
             config={
                 'tools': [{'google_search': {}}],  # Enable Google Search
@@ -214,7 +214,7 @@ Keep response concise and factual.
 """
         
         response = ai_client.models.generate_content(
-            model='AI-2.0-flash-exp',
+            model='gemini-2.0-flash',
             contents=query,
             config={
                 'tools': [{'google_search': {}}],
@@ -231,6 +231,51 @@ def render_market_price():
     st.header("💰 Market Price Checker")
     st.caption("Live vegetable and commodity prices from government sources")
     
+    # Get farmer's location from profile
+    farmer_name = st.session_state.get("farmer_name")
+    farmer_location = None
+    
+    if farmer_name:
+        from database.db_functions import get_farmer_profile
+        farmer_profile = get_farmer_profile(farmer_name)
+        if farmer_profile:
+            farmer_location = farmer_profile.get('location', '')
+            # Extract city from full address (if it contains commas, take relevant part)
+            if farmer_location:
+                # Try to extract city name from address
+                location_parts = [part.strip() for part in farmer_location.split(',')]
+                # Look for city names in common positions
+                for part in location_parts:
+                    if any(keyword in part.lower() for keyword in ['pune', 'mumbai', 'nashik', 'bangalore', 'delhi', 'ahmedabad']):
+                        farmer_location = part
+                        break
+                else:
+                    # If no major city found, use the first meaningful part
+                    farmer_location = location_parts[-3] if len(location_parts) >= 3 else location_parts[0]
+    
+    # Default prices for farmer's location
+    if farmer_location:
+        st.success(f"📍 Showing prices for your location: **{farmer_location}**")
+        
+        # Auto-fetch common crop prices for farmer's location
+        st.subheader("🌾 Current Prices in Your Area")
+        
+        common_crops = ["Tomato", "Onion", "Potato", "Wheat", "Rice"]
+        
+        with st.spinner(f"🔍 AI is searching for current prices in {farmer_location}... Please wait..."):
+            if ai_client:
+                for crop in common_crops:
+                    with st.expander(f"**{crop}** - Click to view details", expanded=False):
+                        live_result = get_live_price_with_search(crop, farmer_location)
+                        if live_result:
+                            st.info(live_result)
+                        else:
+                            st.warning("Price data not available")
+            else:
+                st.warning("⚠️ AI service unavailable. Please check other locations manually below.")
+        
+        st.markdown("---")
+    
     # Data source toggle
     col_mode, col_refresh = st.columns([4, 1])
     with col_mode:
@@ -240,10 +285,11 @@ def render_market_price():
             st.cache_data.clear()
             st.rerun()
     
-    # Live Price Search
-    st.subheader("🔍 Search Market Prices")
+    # Search for other locations
+    st.subheader("🔍 Check Prices in Other Locations")
+    st.caption("Search for prices in different cities or villages")
+    
     col1, col2 = st.columns(2)
-        
     
     with col1:
         live_commodity = st.text_input(
@@ -253,14 +299,14 @@ def render_market_price():
         )
     with col2:
         live_location = st.text_input(
-            "Location",
+            "Location (City/Village)",
             placeholder="e.g., Pune, Mumbai, Nashik",
             key="live_location"
         )
     
     if st.button("🔍 Search Prices", use_container_width=True, type="primary"):
         if live_commodity and live_location:
-            with st.spinner(f"Fetching prices for {live_commodity} in {live_location}..."):
+            with st.spinner(f"🔍 AI is searching for {live_commodity} prices in {live_location}... Please wait..."):
                 if ai_client:
                     live_result = get_live_price_with_search(live_commodity, live_location)
                     if live_result:
@@ -269,7 +315,7 @@ def render_market_price():
                         
                         # AI Insights
                         with st.expander("🤖 Market Insights & Recommendations", expanded=True):
-                            with st.spinner("Analyzing market conditions..."):
+                            with st.spinner("🤖 AI is analyzing market conditions... Please wait..."):
                                 insight_query = f"Based on current {live_commodity} prices in {live_location}, provide selling recommendations for farmers"
                                 insights = ask_ai_assistant(insight_query, f"Commodity: {live_commodity}\nLocation: {live_location}")
                                 st.markdown(insights)
@@ -301,7 +347,7 @@ def render_market_price():
             st.rerun()
     
     if ask_button and user_question:
-        with st.spinner("🤔 Analyzing your question..."):
+        with st.spinner("🤖 AI is searching and analyzing your question... Please wait..."):
             context = ""
             if 'live_commodity' in locals() and live_commodity:
                 context += f"Commodity: {live_commodity}\n"

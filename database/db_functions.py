@@ -106,7 +106,7 @@ def get_farmer_profile(name):
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute("SELECT * FROM farmers WHERE LOWER(name) = LOWER(?)", (name,))
+    c.execute("SELECT ROWID as id, * FROM farmers WHERE LOWER(name) = LOWER(?)", (name,))
     profile = c.fetchone()
     conn.close()
     return dict(profile) if profile else None
@@ -236,5 +236,17 @@ def update_onboarding_progress(farmer_name, **kwargs):
         conn.close()
     except Exception as e:
         print(f"Error updating onboarding progress: {e}")
+
+def update_farmer_location(farmer_name, location, latitude, longitude):
+    """Update farmer's location and coordinates."""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("""
+        UPDATE farmers 
+        SET location = ?, weather_location = ?, latitude = ?, longitude = ?
+        WHERE LOWER(name) = LOWER(?)
+    """, (location, location, latitude, longitude, farmer_name))
+    conn.commit()
+    conn.close()
 
 

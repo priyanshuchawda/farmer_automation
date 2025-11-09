@@ -1,11 +1,14 @@
 import streamlit as st
 import pandas as pd
 from datetime import date
-from dotenv import load_dotenv # <-- NEW: Used to load the .env file
+from dotenv import load_dotenv
 import os
 
-# Load environment variables from the .env file immediately
-load_dotenv()
+# Smart environment loading: Works both locally and on Streamlit Cloud
+# Locally → .env is used
+# On Cloud → Streamlit Secrets are used
+if os.getenv("STREAMLIT_RUNTIME") is None:
+    load_dotenv()  # Load .env only if running locally
 
 # ----------------------------------------
 # --- 0. MODULE IMPORTS ---
@@ -27,6 +30,7 @@ from components.price_prediction_page import render_price_prediction_page
 from components.cache_admin_page import render_cache_admin_page
 from components.government_schemes_page import render_government_schemes_page
 from components.farm_finance_page import render_farm_finance_page
+from components.translation_utils import render_language_selector, t
 from calender.calendar_component import render_calendar
 from calender.config import TRANSLATIONS
 from calender.utils import get_events_for_date
@@ -124,17 +128,17 @@ if 'logged_in' not in st.session_state or not st.session_state.logged_in:
     st.stop()  # Stop execution here if not logged in
 
 # ----------------------------------------
-# --- FIRST-TIME USER WELCOME SCREEN ---
+# --- FIRST-TIME USER WELCOME SCREEN (OPTIONAL) ---
 # ----------------------------------------
-# Show welcome screen for first-time farmers (not admin)
-if st.session_state.get('role') == 'Farmer':
-    if 'show_welcome' not in st.session_state:
-        # First time login - show welcome screen
-        st.session_state.show_welcome = True
-    
-    if st.session_state.get('show_welcome', False):
-        render_welcome_screen()
-        st.stop()  # Stop here to show only welcome screen
+# Skip welcome screen - go directly to home page after login
+# Welcome screen can be accessed via a separate menu item if needed
+# if st.session_state.get('role') == 'Farmer':
+#     if 'show_welcome' not in st.session_state:
+#         st.session_state.show_welcome = True
+#     
+#     if st.session_state.get('show_welcome', False):
+#         render_welcome_screen()
+#         st.stop()
 
 # ----------------------------------------
 # --- MAIN APPLICATION (After Login) ---
@@ -150,17 +154,26 @@ st.markdown("""
 # ----------------------------------------
 # --- REORGANIZED MENU STRUCTURE ---
 # ----------------------------------------
+# ----------------------------------------
+# --- NAVIGATION HISTORY (DOUBLY LINKED LIST APPROACH) ---
+# ----------------------------------------
+# Initialize navigation history stack
+if 'nav_history' not in st.session_state:
+    st.session_state.nav_history = []
+if 'nav_forward' not in st.session_state:
+    st.session_state.nav_forward = []
+
 # Build menu based on user role - Define structure first
 user_role = st.session_state.get("role", "User")
 
 if user_role == "Farmer":
     # Farmer Menu - Organized by sections
     menu_structure = [
-        ("📖 HELP", ["📖 How to Use"]),
         ("🏠 DASHBOARD", ["🏠 Home"]),
         ("👤 MY ACCOUNT", ["👤 My Profile", "📦 My Listings"]),
         ("🛍️ MARKETPLACE", ["🛍️ Browse Listings", "➕ Create New Listing"]),
         ("📊 PLANNING & INSIGHTS", ["📅 Farming Calendar", "🌤️ Weather Forecast", "💰 Market Prices", "🤖 AI Price Prediction"]),
+        ("🗺️ LOCATION SERVICES", ["🗺️ Nearby Places & Services"]),
         ("🏛️ GOVERNMENT", ["🏛️ Government Schemes"]),
         ("💰 FINANCE", ["💰 Farm Finance Management"]),
         ("🤖 ASSISTANCE", ["🤖 AI Chatbot", "🔔 Notifications & Alerts"])
@@ -168,21 +181,26 @@ if user_role == "Farmer":
 else:
     # Admin Menu - Same as farmer but with admin section added
     menu_structure = [
-        ("📖 HELP", ["📖 How to Use"]),
         ("🏠 DASHBOARD", ["🏠 Home"]),
         ("👨‍💼 ADMIN TOOLS", ["👥 Manage Farmers", "🗄️ Database Viewer", "💾 Cache Management"]),
         ("👤 MY ACCOUNT", ["👤 My Profile", "📦 My Listings"]),
         ("🛍️ MARKETPLACE", ["🛍️ Browse Listings", "➕ Create New Listing"]),
         ("📊 PLANNING & INSIGHTS", ["📅 Farming Calendar", "🌤️ Weather Forecast", "💰 Market Prices", "🤖 AI Price Prediction"]),
+        ("🗺️ LOCATION SERVICES", ["🗺️ Nearby Places & Services"]),
         ("🏛️ GOVERNMENT", ["🏛️ Schemes & Financial Tools"]),
         ("💰 FINANCE", ["💰 Farm Finance Management"])
     ]
 
 # ----------------------------------------
-# --- SIDEBAR: USER INFO, MENU & LOGOUT ---
+# --- SIDEBAR: LANGUAGE, USER INFO, MENU & LOGOUT ---
 # ----------------------------------------
 with st.sidebar:
-    # User info box at top
+    # Language Selector at the very top
+    render_language_selector()
+    
+    st.markdown("---")
+    
+    # User info box
     user_name = st.session_state.get("farmer_name", "User")
     
     if user_role == "Farmer":
@@ -192,14 +210,14 @@ with st.sidebar:
         <div style='background-color:#E8F5E9;padding:15px;border-radius:10px;margin-bottom:20px;border-left:4px solid #2E8B57;'>
             <strong>👤 {user_name}</strong><br>
             <small>📍 {location}</small><br>
-            <small>🌾 Farmer Account</small>
+            <small>🌾 {t("Farmer Account")}</small>
         </div>
         """, unsafe_allow_html=True)
     else:
         st.markdown(f"""
         <div style='background-color:#E3F2FD;padding:15px;border-radius:10px;margin-bottom:20px;border-left:4px solid #1976D2;'>
             <strong>👨‍💼 {user_name}</strong><br>
-            <small>🔐 Admin Account</small>
+            <small>🔐 {t("Admin Account")}</small>
         </div>
         """, unsafe_allow_html=True)
     
@@ -223,20 +241,40 @@ if 'menu_selection' in st.session_state and st.session_state.menu_selection:
         "Database Check": "🗄️ Database Viewer"
     }
     mapped_selection = menu_map.get(st.session_state.menu_selection, st.session_state.menu_selection)
+    
+    # Add current page to history before navigation
+    if st.session_state.selected_menu != mapped_selection:
+        if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
+            st.session_state.nav_history.append(st.session_state.selected_menu)
+        st.session_state.nav_forward = []  # Clear forward history on new navigation
+    
     st.session_state.selected_menu = mapped_selection
     st.session_state.menu_selection = None
 
 # Render menu with sections
 with st.sidebar:
     for section_title, section_items in menu_structure:
-        # Section header
-        st.markdown(f"**{section_title}**")
+        # Section header (remove emoji for translation, keep emoji separate)
+        section_text = section_title.split(' ', 1)[1] if ' ' in section_title else section_title
+        section_emoji = section_title.split(' ', 1)[0] if ' ' in section_title else ""
+        st.markdown(f"**{section_emoji} {t(section_text)}**")
         
         # Menu items as buttons
         for item in section_items:
+            # Extract emoji and text
+            item_text = item.split(' ', 1)[1] if ' ' in item else item
+            item_emoji = item.split(' ', 1)[0] if ' ' in item else ""
+            translated_item = f"{item_emoji} {t(item_text)}"
+            
             # Create button for each menu item
-            if st.button(item, key=f"menu_{item}", use_container_width=True, 
+            if st.button(translated_item, key=f"menu_{item}", use_container_width=True, 
                         type="primary" if st.session_state.selected_menu == item else "secondary"):
+                # Add current page to history before navigation
+                if st.session_state.selected_menu != item:
+                    if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
+                        st.session_state.nav_history.append(st.session_state.selected_menu)
+                    st.session_state.nav_forward = []  # Clear forward history on new navigation
+                
                 st.session_state.selected_menu = item
                 st.rerun()
         
@@ -245,7 +283,7 @@ with st.sidebar:
     st.markdown("---")
     
     # Logout button at bottom
-    if st.button("🔐 Logout", use_container_width=True, type="secondary"):
+    if st.button(f"🔐 {t('Logout')}", use_container_width=True, type="secondary"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.success("✅ Logged out successfully!")
@@ -253,6 +291,36 @@ with st.sidebar:
 
 # Get selected menu
 menu = st.session_state.selected_menu
+
+# ----------------------------------------
+# --- BACK/FORWARD NAVIGATION BUTTONS ---
+# ----------------------------------------
+# Create navigation bar with back/forward buttons
+nav_col1, nav_col2, nav_col3 = st.columns([1, 8, 1])
+
+with nav_col1:
+    # Back button
+    if len(st.session_state.nav_history) > 0:
+        if st.button("⬅️ Back", use_container_width=True, help="Go to previous page"):
+            # Move current page to forward history
+            st.session_state.nav_forward.append(st.session_state.selected_menu)
+            # Get previous page from history
+            previous_page = st.session_state.nav_history.pop()
+            st.session_state.selected_menu = previous_page
+            st.rerun()
+
+with nav_col3:
+    # Forward button (if user went back)
+    if len(st.session_state.nav_forward) > 0:
+        if st.button("➡️", use_container_width=True, help="Go forward"):
+            # Move current page to history
+            st.session_state.nav_history.append(st.session_state.selected_menu)
+            # Get next page from forward history
+            next_page = st.session_state.nav_forward.pop()
+            st.session_state.selected_menu = next_page
+            st.rerun()
+
+st.markdown("---")
 
 # ----------------------------------------
 # --- PAGE ROUTING ---
@@ -292,7 +360,11 @@ elif menu == "📦 My Listings":
         else:
             st.info("📝 You haven't listed any tools yet.")
             if st.button("➕ List Your First Tool"):
-                st.session_state.menu_selection = "➕ Create New Listing"
+                # Add to navigation history
+                if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
+                    st.session_state.nav_history.append(st.session_state.selected_menu)
+                st.session_state.nav_forward = []
+                st.session_state.selected_menu = "➕ Create New Listing"
                 st.rerun()
     
     with tab2:
@@ -302,7 +374,11 @@ elif menu == "📦 My Listings":
         else:
             st.info("📝 You haven't listed any crops yet.")
             if st.button("➕ List Your First Crop"):
-                st.session_state.menu_selection = "➕ Create New Listing"
+                # Add to navigation history
+                if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
+                    st.session_state.nav_history.append(st.session_state.selected_menu)
+                st.session_state.nav_forward = []
+                st.session_state.selected_menu = "➕ Create New Listing"
                 st.rerun()
 
 elif menu == "🛍️ Browse Listings":
@@ -345,6 +421,10 @@ elif menu == "💰 Market Prices":
 elif menu == "🤖 AI Price Prediction":
     render_price_prediction_page()
 
+elif menu == "🗺️ Nearby Places & Services":
+    from components.location_services_page import render_location_services_page
+    render_location_services_page()
+
 elif menu == "👥 Manage Farmers":
     render_profiles_page()
 
@@ -371,65 +451,7 @@ elif menu == "🔔 Notifications & Alerts":
     from components.notifications_page import render_notifications_page
     render_notifications_page()
 
-elif menu == "📖 How to Use":
-    st.header("📖 How to Use Smart Farmer Marketplace")
-    
-    st.markdown("""
-    ### Welcome to your complete farming companion! 🌾
-    
-    This guide will help you make the most of all features available.
-    """)
-    
-    st.markdown("---")
-    
-    # Feature explanations
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("#### 👤 My Profile")
-        st.info("View and update your personal information, farm details, and location settings.")
-        
-        st.markdown("#### 📦 My Listings")
-        st.info("See all your tools and crops listed on the marketplace in one convenient place.")
-        
-        st.markdown("#### ➕ Create New Listing")
-        st.info("List tools for rent or crops for sale. Add photos, descriptions, and pricing.")
-        
-        st.markdown("#### 🛍️ Browse Listings")
-        st.info("Explore tools and crops from other farmers. Filter and search to find what you need.")
-    
-    with col2:
-        st.markdown("#### 📅 Farming Calendar")
-        st.info("Plan your farming activities with AI assistance. Get smart suggestions based on weather and crop cycles.")
-        
-        st.markdown("#### 🌤️ Weather Forecast")
-        st.info("Check 7-day weather predictions for your location. Plan irrigation and harvesting accordingly.")
-        
-        st.markdown("#### 💰 Market Prices")
-        st.info("Get real-time market prices for various crops. Make informed decisions about when to sell.")
-        
-        st.markdown("#### 🤖 AI Features")
-        st.info("Our AI assistant helps with calendar planning, weather alerts, and farming recommendations.")
-    
-    st.markdown("---")
-    
-    st.markdown("### 🎯 Quick Tips")
-    
-    st.success("✅ **Keep your profile updated** - Accurate location helps with weather and marketplace features")
-    st.success("✅ **Check weather daily** - Plan your activities around upcoming weather conditions")
-    st.success("✅ **Use the calendar** - Stay organized with AI-powered farming schedules")
-    st.success("✅ **List actively** - The more you list, the more connections you make")
-    st.success("✅ **Monitor prices** - Check market rates before harvesting to maximize profits")
-    
-    st.markdown("---")
-    
-    st.markdown("### 📞 Need More Help?")
-    st.warning("If you have questions or encounter issues, please contact our support team.")
-    
-    if st.button("🏠 Back to Dashboard", use_container_width=True, type="primary"):
-        st.session_state.menu_selection = "🏠 Home"
-        st.rerun()
-    
+
 # ----------------------------------------
 # --- FOOTER ---
 # ----------------------------------------

@@ -4,12 +4,13 @@ from database.db_functions import add_data, get_data
 from datetime import date
 import pandas as pd
 from ai.ai_matcher import get_recommendations  # ✅ AI AI integration
+from components.translation_utils import t
 
 
 def render_crop_listing(farmer_name):
     """Renders the form to add a new crop listing with AI recommendations."""
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("Add Crop for Sale")
+    st.subheader(t("Add Crop for Sale"))
 
     profile = st.session_state.get("farmer_profile", {})
     location_value = profile.get("location", "") if profile else ""
@@ -18,17 +19,17 @@ def render_crop_listing(farmer_name):
     with st.form("crop_form"):
         col1, col2, col3 = st.columns(3)
         with col1:
-            name = st.text_input("Your Name", value=farmer_name, key="crop_name_input")
-            location = st.text_input("Your Location (Village)", value=location_value, key="crop_loc_input")
+            name = st.text_input(t("Your Name"), value=farmer_name, key="crop_name_input")
+            location = st.text_input(t("Your Location (Village)"), value=location_value, key="crop_loc_input")
         with col2:
-            crop_name = st.text_input("Crop Name (e.g., Wheat, Rice)", key="crop_type_input")
-            quantity = st.number_input("Quantity", min_value=0.0, format="%.2f", key="crop_qty_input")
-            unit = st.selectbox("Unit", ["Quintals", "Kilograms", "Tonnes"], key="crop_unit_select")
+            crop_name = st.text_input(t("Crop Name (e.g., Wheat, Rice)"), key="crop_type_input")
+            quantity = st.number_input(t("Quantity"), min_value=0.0, format="%.2f", key="crop_qty_input")
+            unit = st.selectbox(t("Unit"), [t("Quintals"), t("Kilograms"), t("Tonnes")], key="crop_unit_select")
         with col3:
-            expected_price = st.number_input("Expected Price (per unit)", min_value=0.0, format="%.2f", key="crop_price_input")
-            contact = st.text_input("Contact Number", value=contact_value, key="crop_contact_input")
+            expected_price = st.number_input(t("Expected Price (per unit)"), min_value=0.0, format="%.2f", key="crop_price_input")
+            contact = st.text_input(t("Contact Number"), value=contact_value, key="crop_contact_input")
         
-        submitted = st.form_submit_button("Add Crop Listing")
+        submitted = st.form_submit_button(t("Add Crop Listing"))
         
         if submitted:
             if name and location and crop_name and quantity > 0 and expected_price > 0 and contact:
@@ -47,41 +48,41 @@ def render_crop_listing(farmer_name):
                     "quantity": quantity_str,
                     "expected_price": expected_price
                 })
-                st.info(f"Smart Suggestion: {recs}")
+                st.info(f"{t('Smart Suggestion')}: {recs}")
                 
                 total_value = quantity * expected_price
-                st.success(f"Crop '{crop_name}' listed successfully! Estimated value: ₹{total_value:,.2f}")
+                st.success(f"{t('Crop')} '{crop_name}' {t('listed successfully! Estimated value')}: ₹{total_value:,.2f}")
             else:
-                st.error("Please fill in all required fields.")
+                st.error(t("Please fill in all required fields."))
     st.markdown('</div>', unsafe_allow_html=True)
 
 
 def render_crop_management(crops_df, farmer_name):
     """Renders the full crop management view with filtering and editable tables."""
-    st.subheader("All Crop Listings")
+    st.subheader(t("All Crop Listings"))
     
     if not crops_df.empty:
         crops_without_rowid = crops_df.drop(columns=['rowid'])
-        crop_locations = ["All"] + sorted(crops_without_rowid["Location"].unique().tolist())
-        crop_types = ["All"] + sorted(crops_without_rowid["Crop"].unique().tolist())
+        crop_locations = [t("All")] + sorted(crops_without_rowid["Location"].unique().tolist())
+        crop_types = [t("All")] + sorted(crops_without_rowid["Crop"].unique().tolist())
         
         filter_cols = st.columns(3)
-        selected_crop_loc = filter_cols[0].selectbox("Filter by Location", crop_locations, key="crop_loc_filter")
-        selected_crop_type = filter_cols[1].selectbox("Filter by Crop Type", crop_types, key="crop_type_filter")
+        selected_crop_loc = filter_cols[0].selectbox(t("Filter by Location"), crop_locations, key="crop_loc_filter")
+        selected_crop_type = filter_cols[1].selectbox(t("Filter by Crop Type"), crop_types, key="crop_type_filter")
         
         filtered_crops = crops_without_rowid.copy()
-        if selected_crop_loc != "All":
+        if selected_crop_loc != t("All"):
             filtered_crops = filtered_crops[filtered_crops["Location"] == selected_crop_loc]
-        if selected_crop_type != "All":
+        if selected_crop_type != t("All"):
             filtered_crops = filtered_crops[filtered_crops["Crop"] == selected_crop_type]
 
         st.dataframe(filtered_crops, use_container_width=True)
     else:
-        st.info("No crops listed yet.")
+        st.info(t("No crops listed yet."))
 
     st.markdown('<hr>', unsafe_allow_html=True)
     if farmer_name:
-        st.subheader(f"Your Crop Listings (Editable by {farmer_name})")
+        st.subheader(f"{t('Your Crop Listings (Editable by')} {farmer_name})")
         
         editable_crops = crops_df[crops_df["Farmer"] == farmer_name]
         
@@ -97,7 +98,7 @@ def render_crop_management(crops_df, farmer_name):
             st.session_state.crops.loc[updated_crops_df.index, updated_crops_df.columns] = updated_crops_df.values
             
         else:
-            st.info("You have no crop listings yet.")
+            st.info(t("You have no crop listings yet."))
     else:
         st.warning("Please log in to view and manage your listings.")
 

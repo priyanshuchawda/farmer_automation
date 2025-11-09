@@ -30,6 +30,16 @@ def render_ai_chatbot_page():
     farmer_profile = st.session_state.get("farmer_profile", {})
     location = farmer_profile.get('location', 'Unknown')
     
+    # Get language instruction
+    selected_lang = st.session_state.get('language', 'English')
+    language_map = {
+        "English": "English",
+        "हिन्दी (Hindi)": "Hindi (हिन्दी)",
+        "मराठी (Marathi)": "Marathi (मराठी)"
+    }
+    target_language = language_map.get(selected_lang, "English")
+    language_instruction = f"\n\nIMPORTANT: Reply ONLY in {target_language} language." if target_language != "English" else ""
+    
     # System context for the AI
     system_context = f"""You are an AI farming assistant helping {farmer_name}, a farmer from {location}. 
     Provide practical, actionable advice about:
@@ -37,7 +47,7 @@ def render_ai_chatbot_page():
     - Weather-based farming decisions
     - Pest and disease control
     - Market prices and selling strategies
-    - Government schemes and subsidies
+    - Government schemes and subsidies{language_instruction}
     - Farm finance and budgeting
     - Seasonal farming calendar
     

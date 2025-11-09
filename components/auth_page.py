@@ -8,6 +8,7 @@ import streamlit as st
 from database.db_functions import verify_farmer_login, add_data, get_farmer_profile
 from weather.ai_client import AIClient
 from datetime import datetime
+from components.translation_utils import t, render_language_selector
 
 def check_password_strength(password):
     """Check password strength and return score and message"""
@@ -25,15 +26,19 @@ def render_auth_page():
     
     # Add sidebar info while on login page
     with st.sidebar:
-        st.markdown("## 🌾 Welcome!")
-        st.info("**Smart Farmer Marketplace**\n\nPlease login or register to continue.")
+        # Language selector at the very top
+        render_language_selector()
         st.markdown("---")
-        st.markdown("### 🌟 Features")
-        st.write("✅ Marketplace for tools & crops")
-        st.write("🌤️ Weather forecasts")
-        st.write("📅 Smart calendar")
-        st.write("💰 Market prices")
-        st.write("🤖 AI assistance")
+        
+        st.markdown(f"## 🌾 {t('Welcome')}!")
+        st.info(f"**Smart Farmer Marketplace**\n\n{t('Please login to continue')}")
+        st.markdown("---")
+        st.markdown(f"### 🌟 {t('Features')}")
+        st.write(f"✅ {t('Marketplace for tools & crops')}")
+        st.write(f"🌤️ {t('Weather forecasts')}")
+        st.write(f"📅 {t('Smart calendar')}")
+        st.write(f"💰 {t('Market prices')}")
+        st.write(f"🤖 {t('AI assistance')}")
     
     # Custom CSS for authentication page
     st.markdown("""
@@ -243,21 +248,21 @@ def render_auth_page():
     
     # Hero Section - Using Streamlit native components
     st.markdown("# 🌾 Smart Farmer Marketplace")
-    st.markdown("### Empowering Farmers, Connecting Communities")
+    st.markdown(f"### {t('Empowering Farmers, Connecting Communities')}")
     st.markdown("---")
     
     # Tabs for Login and Registration
-    tab1, tab2 = st.tabs(["👤 Login", "🌱 New Farmer Registration"])
+    tab1, tab2 = st.tabs([f"👤 {t('Login')}", f"🌱 {t('New Farmer Registration')}"])
     
     # ========================================
     # TAB 1: EXISTING FARMER LOGIN
     # ========================================
     with tab1:
         # Centered login box with visual appeal
-        st.markdown("""
+        st.markdown(f"""
         <div style='text-align: center; margin-bottom: 2rem;'>
-            <h2 style='color: #2E8B57; margin-bottom: 0.5rem;'>🌾 FARMER LOGIN</h2>
-            <p style='color: #666; font-size: 1rem;'>Enter your credentials to access your dashboard</p>
+            <h2 style='color: #2E8B57; margin-bottom: 0.5rem;'>🌾 {t('FARMER LOGIN').upper()}</h2>
+            <p style='color: #666; font-size: 1rem;'>{t('Enter your credentials to access your dashboard')}</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -267,24 +272,24 @@ def render_auth_page():
         
         with st.form("login_form"):
             farmer_name = st.text_input(
-                "👤 Username",
-                placeholder="Enter your name",
-                help="Use the name you registered with",
+                f"👤 {t('Username')}",
+                placeholder=t("Enter your name"),
+                help=t("Use the name you registered with"),
                 key="login_username"
             )
             
             farmer_password = st.text_input(
-                "🔒 Password",
+                f"🔒 {t('Password')}",
                 type="password",
-                placeholder="Enter your password",
-                help="Enter your secure password",
+                placeholder=t("Enter your password"),
+                help=t("Enter your secure password"),
                 key="login_password"
             )
             
             st.markdown("<br>", unsafe_allow_html=True)
             
             login_button = st.form_submit_button(
-                "🌱 Login",
+                f"🌱 {t('Login')}",
                 use_container_width=True,
                 type="primary"
             )
@@ -339,8 +344,8 @@ def render_auth_page():
         # Progress Steps Indicator
         steps = [
             ("1", "Basic Info"),
-            ("2", "Farm Details"),
-            ("3", "Weather Setup"),
+            ("2", "Farm & Location"),
+            ("3", "Create Account"),
             ("4", "Complete")
         ]
         
@@ -437,158 +442,331 @@ def render_auth_page():
                         st.rerun()
         
         # ========================================
-        # STEP 2: FARM DETAILS
+        # STEP 2: FARM DETAILS WITH LOCATION
         # ========================================
         elif st.session_state.reg_step == 2:
-            st.markdown("#### 🌾 Step 2: Farm Details")
+            st.markdown("#### 🌾 Step 2: Farm Details & Location")
             
-            with st.form("step2_form"):
-                st.info("🚜 **Tell us about your farm** - This helps us provide relevant information and connect you with nearby farmers")
+            st.info("🚜 **Tell us about your farm and location** - We'll get your GPS coordinates for weather, market prices, and location services")
+            
+            # Farm Size and Unit (outside form for better UX)
+            col1, col2 = st.columns(2)
+            with col1:
+                farm_size = st.number_input(
+                    "Farm Size *",
+                    min_value=0.0,
+                    format="%.2f",
+                    help="Enter the size of your farm",
+                    value=st.session_state.reg_data.get('farm_size', 0.0),
+                    key="reg_farm_size"
+                )
+            
+            with col2:
+                farm_unit = st.selectbox(
+                    "Unit *",
+                    ["Acres", "Hectares"],
+                    help="Choose the unit of measurement",
+                    index=0 if st.session_state.reg_data.get('farm_unit', 'Acres') == 'Acres' else 1,
+                    key="reg_farm_unit"
+                )
+            
+            st.markdown("---")
+            st.markdown("#### 📍 Farm Location Setup")
+            
+            # Location method selection
+            location_method = st.radio(
+                "How would you like to set your location?",
+                ["📝 Enter Location Manually", "🧭 Use GPS Auto-Detect"],
+                help="Choose your preferred method to set your farm location",
+                key="location_method_radio"
+            )
+            
+            # Initialize session state for coordinates if not exists
+            if 'temp_coordinates' not in st.session_state:
+                st.session_state.temp_coordinates = None
+            if 'temp_location_name' not in st.session_state:
+                st.session_state.temp_location_name = None
+            
+            if location_method == "📝 Enter Location Manually":
+                st.markdown("**Enter your farm location and we'll find the GPS coordinates**")
                 
                 location = st.text_input(
                     "Farm Location *",
-                    placeholder="e.g., Wadgaon Sheri, Pune",
-                    help="Village/City where your farm is located",
-                    value=st.session_state.reg_data.get('location', '')
+                    placeholder="e.g., Wadgaon Sheri, Pune, Maharashtra",
+                    help="Enter your village, city, district, and state for best results",
+                    value=st.session_state.reg_data.get('location', ''),
+                    key="manual_location_input"
                 )
                 
-                col1, col2 = st.columns(2)
-                with col1:
-                    farm_size = st.number_input(
-                        "Farm Size *",
-                        min_value=0.0,
-                        format="%.2f",
-                        help="Enter the size of your farm",
-                        value=st.session_state.reg_data.get('farm_size', 0.0)
-                    )
+                if st.button("🔍 Find My Location", use_container_width=True, type="primary", key="find_coords_btn"):
+                    if location and location.strip():
+                        with st.spinner("🔍 Finding your location..."):
+                            try:
+                                ai_client = AIClient()
+                                coords = ai_client.get_coordinates_from_google_search(location.strip())
+                                
+                                if coords:
+                                    st.session_state.temp_coordinates = coords
+                                    st.session_state.temp_location_name = location.strip()
+                                    
+                                    # Get full address confirmation using Google Maps
+                                    with st.spinner("📍 Verifying your location with Google Maps..."):
+                                        try:
+                                            from components.location_manager import LocationManager
+                                            location_manager = LocationManager()
+                                            address_info = location_manager.get_address_from_coordinates(coords['lat'], coords['lon'])
+                                            
+                                            if address_info:
+                                                st.success("✅ **Location Found!**")
+                                                st.info(f"📍 **You live at:** {address_info['full_address']}")
+                                                st.success(f"🌐 **GPS Coordinates:** {coords['lat']:.6f}, {coords['lon']:.6f}")
+                                                
+                                                if 'sources' in address_info and address_info['sources']:
+                                                    with st.expander("🗺️ View on Google Maps"):
+                                                        for source in address_info['sources']:
+                                                            st.markdown(f"- [{source['title']}]({source['uri']})")
+                                            else:
+                                                st.success(f"✅ Found coordinates: {coords['lat']:.6f}, {coords['lon']:.6f}")
+                                                st.info(f"📍 Location: {location.strip()}")
+                                        except Exception as e:
+                                            st.success(f"✅ Found coordinates: {coords['lat']:.6f}, {coords['lon']:.6f}")
+                                            st.info(f"📍 Location: {location.strip()}")
+                                else:
+                                    st.error("❌ Could not find this location. Please check spelling and try again.")
+                            except Exception as e:
+                                st.error(f"❌ Error: {str(e)}")
+                    else:
+                        st.warning("⚠️ Please enter a location first")
                 
-                with col2:
-                    farm_unit = st.selectbox(
-                        "Unit *",
-                        ["Acres", "Hectares"],
-                        help="Choose the unit of measurement",
-                        index=0 if st.session_state.reg_data.get('farm_unit', 'Acres') == 'Acres' else 1
-                    )
+                # Show saved coordinates if available
+                if st.session_state.temp_coordinates:
+                    st.markdown("---")
+                    st.success("✅ **Location Ready!** You can now proceed to the next step.")
+                    st.info(f"📍 **Your Location:** {st.session_state.temp_location_name}\n\n🌐 **Coordinates:** {st.session_state.temp_coordinates['lat']:.6f}, {st.session_state.temp_coordinates['lon']:.6f}")
+            
+            else:  # GPS Auto-detect (location_method == "🧭 Use GPS Auto-Detect")
+                # Initialize session state for GPS coordinates
+                if 'gps_detected_lat' not in st.session_state:
+                    st.session_state.gps_detected_lat = 0.0
+                if 'gps_detected_lon' not in st.session_state:
+                    st.session_state.gps_detected_lon = 0.0
                 
-                st.markdown("---")
-                col1, col2 = st.columns(2)
-                with col1:
-                    back_button = st.form_submit_button("← Back", use_container_width=True)
-                with col2:
-                    next_button = st.form_submit_button("Next: Weather Setup →", use_container_width=True)
+                # Show saved location if already detected
+                if st.session_state.temp_coordinates and st.session_state.temp_location_name:
+                    st.success("✅ **Location Set Successfully!**")
+                    
+                    col1, col2 = st.columns([2, 1])
+                    with col1:
+                        st.markdown(f"**📍 Your Farm Location:**")
+                        st.write(f"{st.session_state.temp_location_name}")
+                        st.caption(f"🌐 Coordinates: {st.session_state.temp_coordinates['lat']:.6f}, {st.session_state.temp_coordinates['lon']:.6f}")
+                    with col2:
+                        if st.button("🔄 Change Location", use_container_width=True):
+                            st.session_state.temp_coordinates = None
+                            st.session_state.temp_location_name = None
+                            st.session_state.gps_detected_lat = 0.0
+                            st.session_state.gps_detected_lon = 0.0
+                            st.rerun()
                 
-                if back_button:
+                else:
+                    # Step 1: GPS Detection using Streamlit Geolocation
+                    st.markdown("**Step 1️⃣: Detect Your GPS Location**")
+                    
+                    # Import streamlit-geolocation
+                    from streamlit_geolocation import streamlit_geolocation
+                    
+                    # Compact instruction box
+                    st.markdown("""
+                    <div style='background: linear-gradient(135deg, #2E8B57 0%, #3CB371 100%); 
+                                padding: 12px 20px; 
+                                border-radius: 10px; 
+                                margin-bottom: 15px;
+                                box-shadow: 0 4px 10px rgba(46, 139, 87, 0.3);
+                                border: 2px solid #1d5d3a;'>
+                        <p style='color: white; font-size: 15px; margin: 0; text-align: center; font-weight: 600;'>
+                            📍 Click the Button Below to Detect GPS
+                        </p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Get location from device - this creates a visible button
+                    location = streamlit_geolocation()
+                    
+                    # Check if location was retrieved
+                    if location and location.get('latitude') and location.get('longitude'):
+                        st.session_state.gps_detected_lat = location['latitude']
+                        st.session_state.gps_detected_lon = location['longitude']
+                        st.success(f"✅ GPS Detected Successfully: {location['latitude']:.6f}, {location['longitude']:.6f}")
+                    
+                    # Step 2: Verify and Use Coordinates
+                    if st.session_state.gps_detected_lat != 0.0 and st.session_state.gps_detected_lon != 0.0:
+                        st.markdown("---")
+                        st.markdown("**Step 2️⃣: Verify & Use Coordinates**")
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.metric("📍 Latitude", f"{st.session_state.gps_detected_lat:.6f}")
+                        with col2:
+                            st.metric("📍 Longitude", f"{st.session_state.gps_detected_lon:.6f}")
+                        
+                        if st.button("✅ Use These Coordinates to Find My Address", use_container_width=True, type="primary", key="use_gps_btn"):
+                            with st.spinner("🔍 Finding your location address..."):
+                                try:
+                                    ai_client = AIClient()
+                                    location_info = ai_client.get_location_from_coordinates(
+                                        st.session_state.gps_detected_lat, 
+                                        st.session_state.gps_detected_lon
+                                    )
+                                    
+                                    if location_info and 'address' in location_info:
+                                        # Save coordinates and location
+                                        st.session_state.temp_coordinates = {
+                                            'lat': st.session_state.gps_detected_lat, 
+                                            'lon': st.session_state.gps_detected_lon
+                                        }
+                                        st.session_state.temp_location_name = location_info.get('address', 
+                                            f"{st.session_state.gps_detected_lat}, {st.session_state.gps_detected_lon}")
+                                        
+                                        st.success("✅ **Location Found!**")
+                                        
+                                        # Show verification in a nice box
+                                        st.markdown("---")
+                                        st.markdown("**🔍 Please verify this is your farm location:**")
+                                        
+                                        with st.container():
+                                            st.markdown(f"**📍 Address:** {location_info.get('address', 'Unknown')}")
+                                            
+                                            if 'city' in location_info or 'state' in location_info or 'country' in location_info:
+                                                col1, col2, col3 = st.columns(3)
+                                                with col1:
+                                                    if 'city' in location_info:
+                                                        st.write(f"🏘️ {location_info.get('city', 'N/A')}")
+                                                with col2:
+                                                    if 'state' in location_info:
+                                                        st.write(f"🗺️ {location_info.get('state', 'N/A')}")
+                                                with col3:
+                                                    if 'country' in location_info:
+                                                        st.write(f"🌏 {location_info.get('country', 'N/A')}")
+                                        
+                                        st.info("✅ If this is correct, click 'Next' below to continue!")
+                                        st.rerun()
+                                    else:
+                                        st.error("❌ Could not determine location. Please try again or use manual entry.")
+                                except Exception as e:
+                                    st.error(f"❌ Error: {str(e)}")
+                    else:
+                        st.info("👆 Click the 'Detect My Location Now' button above to start")
+            
+            # Navigation buttons
+            st.markdown("---")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("← Back", use_container_width=True, key="step2_back"):
                     st.session_state.reg_step = 1
+                    st.session_state.temp_coordinates = None
+                    st.session_state.temp_location_name = None
                     st.rerun()
-                
-                if next_button:
+            
+            with col2:
+                if st.button("Next: Complete Registration →", use_container_width=True, type="primary", key="step2_next"):
                     # Validation
                     errors = []
-                    if not location or not location.strip():
-                        errors.append("Farm location is required")
+                    
                     if farm_size <= 0:
                         errors.append("Farm size must be greater than 0")
+                    
+                    if not st.session_state.temp_coordinates or not st.session_state.temp_location_name:
+                        errors.append("Please set your location and get GPS coordinates first")
                     
                     if errors:
                         for error in errors:
                             st.error(f"❌ {error}")
                     else:
-                        # Save step 2 data
-                        st.session_state.reg_data['location'] = location.strip()
+                        # Save all data including coordinates
+                        st.session_state.reg_data['location'] = st.session_state.temp_location_name
+                        st.session_state.reg_data['weather_location'] = st.session_state.temp_location_name
                         st.session_state.reg_data['farm_size'] = farm_size
                         st.session_state.reg_data['farm_unit'] = farm_unit
+                        st.session_state.reg_data['latitude'] = st.session_state.temp_coordinates['lat']
+                        st.session_state.reg_data['longitude'] = st.session_state.temp_coordinates['lon']
+                        
+                        # Clear temp data
+                        st.session_state.temp_coordinates = None
+                        st.session_state.temp_location_name = None
+                        
+                        # Move to completion step
                         st.session_state.reg_step = 3
                         st.rerun()
         
         # ========================================
-        # STEP 3: WEATHER SETUP
+        # STEP 3: ACCOUNT CREATION & COMPLETION
         # ========================================
         elif st.session_state.reg_step == 3:
-            st.markdown("#### 🌤️ Step 3: Weather Location Setup")
+            st.markdown("#### 🎉 Step 3: Create Your Account")
             
-            with st.form("step3_form"):
-                st.info("🌍 **Weather Integration** - We'll fetch weather forecasts for your location to help you plan farming activities")
-                
-                weather_location = st.text_input(
-                    "Weather Location *",
-                    placeholder="e.g., Pune, Maharashtra",
-                    help="City/District for weather forecasts (can be same as farm location)",
-                    value=st.session_state.reg_data.get('weather_location', st.session_state.reg_data.get('location', ''))
-                )
-                
-                st.info("💡 **Tip:** Use the same location as your farm, or specify a nearby major city for more accurate weather data")
-                
-                st.markdown("---")
-                col1, col2 = st.columns(2)
-                with col1:
-                    back_button = st.form_submit_button("← Back", use_container_width=True)
-                with col2:
-                    create_button = st.form_submit_button("🎉 Create My Account", use_container_width=True)
-                
-                if back_button:
+            st.info("✅ **Review your information before creating your account**")
+            
+            # Display collected information
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("**👤 Personal Information**")
+                st.text(f"Name: {st.session_state.reg_data.get('name', 'N/A')}")
+                st.text(f"Contact: {st.session_state.reg_data.get('contact', 'N/A')}")
+                st.text(f"Password: {'*' * len(st.session_state.reg_data.get('password', ''))}")
+            
+            with col2:
+                st.markdown("**🚜 Farm Information**")
+                st.text(f"Farm Size: {st.session_state.reg_data.get('farm_size', 0)} {st.session_state.reg_data.get('farm_unit', 'Acres')}")
+                st.text(f"Location: {st.session_state.reg_data.get('location', 'N/A')}")
+            
+            st.markdown("**📍 GPS Coordinates**")
+            st.text(f"Latitude: {st.session_state.reg_data.get('latitude', 0.0):.6f}")
+            st.text(f"Longitude: {st.session_state.reg_data.get('longitude', 0.0):.6f}")
+            
+            st.success("🗺️ **Your location is ready!** These coordinates will be used for weather, market prices, and location services.")
+            
+            st.markdown("---")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("← Back to Edit", use_container_width=True, key="step3_back"):
                     st.session_state.reg_step = 2
                     st.rerun()
-                
-                if create_button:
-                    if not weather_location or not weather_location.strip():
-                        st.error("❌ Weather location is required")
-                    else:
-                        st.session_state.reg_data['weather_location'] = weather_location.strip()
+            
+            with col2:
+                if st.button("🎉 Create My Account", use_container_width=True, type="primary", key="create_account_btn"):
+                    # Show progress
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    # Save to database
+                    status_text.text("💾 Creating your profile...")
+                    progress_bar.progress(50)
+                    
+                    farmer_data = (
+                        st.session_state.reg_data['name'],
+                        st.session_state.reg_data['location'],
+                        st.session_state.reg_data['farm_size'],
+                        st.session_state.reg_data['farm_unit'],
+                        st.session_state.reg_data['contact'],
+                        st.session_state.reg_data['weather_location'],
+                        st.session_state.reg_data['latitude'],
+                        st.session_state.reg_data['longitude'],
+                        st.session_state.reg_data['password']
+                    )
+                    
+                    try:
+                        add_data("farmers", farmer_data)
+                        progress_bar.progress(100)
+                        status_text.text("✅ Profile created successfully!")
                         
-                        # Show progress
-                        progress_bar = st.progress(0)
-                        status_text = st.empty()
-                        
-                        # Fetch coordinates
-                        status_text.text("📍 Getting coordinates for your location...")
-                        progress_bar.progress(30)
-                        
-                        latitude = None
-                        longitude = None
-                        
-                        try:
-                            ai_client = AIClient()
-                            coords = ai_client.get_coordinates_from_google_search(weather_location.strip())
-                            
-                            if coords:
-                                latitude = coords['lat']
-                                longitude = coords['lon']
-                                status_text.text(f"✅ Coordinates found: {latitude:.4f}, {longitude:.4f}")
-                                progress_bar.progress(60)
-                            else:
-                                status_text.text("⚠️ Could not fetch coordinates, saving without them")
-                                progress_bar.progress(60)
-                        except Exception as e:
-                            status_text.text(f"⚠️ Error: {str(e)}, saving without coordinates")
-                            progress_bar.progress(60)
-                        
-                        # Save to database
-                        status_text.text("💾 Creating your profile...")
-                        progress_bar.progress(80)
-                        
-                        farmer_data = (
-                            st.session_state.reg_data['name'],
-                            st.session_state.reg_data['location'],
-                            st.session_state.reg_data['farm_size'],
-                            st.session_state.reg_data['farm_unit'],
-                            st.session_state.reg_data['contact'],
-                            st.session_state.reg_data['weather_location'],
-                            latitude,
-                            longitude,
-                            st.session_state.reg_data['password']
-                        )
-                        
-                        try:
-                            add_data("farmers", farmer_data)
-                            progress_bar.progress(100)
-                            status_text.text("✅ Profile created successfully!")
-                            
-                            # Move to completion step
-                            st.session_state.reg_step = 4
-                            st.rerun()
-                        except Exception as e:
-                            st.error(f"❌ Error creating profile: {str(e)}")
-                            st.error("This name may already be registered. Please try a different name.")
+                        # Move to completion step
+                        st.session_state.reg_step = 4
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Error creating profile: {str(e)}")
+                        st.error("This name may already be registered. Please try a different name.")
         
         # ========================================
         # STEP 4: COMPLETION
@@ -615,11 +793,10 @@ def render_auth_page():
                 st.info(f"**📞 Contact:** {st.session_state.reg_data['contact']}")
             
             if st.button("🌱 Go to Login", use_container_width=True, type="primary"):
-                # Clear registration data
+                # Clear registration data and switch to login tab
                 st.session_state.reg_step = 1
                 st.session_state.reg_data = {}
-                st.success("✅ You can now login with your credentials!")
-                st.balloons()
+                st.session_state.auth_mode = "login"  # Switch to login tab
                 st.rerun()
     
     # ========================================
