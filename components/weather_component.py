@@ -156,9 +156,22 @@ def render_weather_component():
                             
                             # AI-Powered Weather Insights with Google Search Grounding
                             st.markdown("### 🤖 AI Weather Advisor (Powered by Gemini 2.5 Flash)")
-                            st.caption("Real-time analysis with Google Search grounding")
+                            st.caption("Step 1: Fetched from OpenWeather API ✅ | Step 2: Now analyzing with Google Search...")
                             
-                            with st.spinner("🔍 Analyzing weather conditions and searching for alerts..."):
+                            # Show OpenWeather data was fetched
+                            with st.expander("📊 OpenWeather API Data (Step 1 - Completed)", expanded=False):
+                                col1, col2, col3 = st.columns(3)
+                                with col1:
+                                    st.metric("🌡️ Temperature", f"{current['temp']:.1f}°C")
+                                    st.metric("💧 Humidity", f"{current['humidity']}%")
+                                with col2:
+                                    st.metric("💨 Wind Speed", f"{current['wind_speed']:.1f} km/h")
+                                    st.metric("☁️ Clouds", f"{current['clouds']}%")
+                                with col3:
+                                    st.metric("🌧️ Rain Prob", f"{current['pop']:.0%}")
+                                    st.metric("💦 Rainfall", f"{current['rain']:.1f} mm")
+                            
+                            with st.spinner("🔍 Step 2: Searching Google for alerts & comparing data..."):
                                 try:
                                     from weather.ai_client import AIClient
                                     ai_client = AIClient()
@@ -182,10 +195,12 @@ def render_weather_component():
                                     )
                                     
                                     # Display AI Analysis
+                                    st.success("✅ Step 2 Complete: Google Search done & data compared!")
+                                    
                                     st.markdown(f"""
                                     <div class='ai-insights-card'>
                                         <h4 style='margin: 0 0 12px 0; color: #1976D2;'>
-                                            🌤️ What This Weather Means for You
+                                            🌤️ Final Analysis (OpenWeather + Google Search)
                                         </h4>
                                     </div>
                                     """, unsafe_allow_html=True)
@@ -195,7 +210,7 @@ def render_weather_component():
                                     # Show sources if available
                                     if insights.get('sources') and len(insights['sources']) > 0:
                                         st.markdown("---")
-                                        st.markdown("**📚 Information Sources:**")
+                                        st.markdown("**📚 Google Search Sources Used:**")
                                         cols = st.columns(min(3, len(insights['sources'])))
                                         for idx, source in enumerate(insights['sources'][:6]):
                                             with cols[idx % 3]:
@@ -207,12 +222,12 @@ def render_weather_component():
                                     
                                     # Show search queries used (for transparency)
                                     if insights.get('search_queries'):
-                                        with st.expander("🔍 What AI searched for"):
+                                        with st.expander("🔍 What AI searched on Google"):
                                             for query in insights['search_queries']:
                                                 st.caption(f"• {query}")
                                     
                                 except Exception as e:
-                                    st.warning(f"⚠️ AI analysis unavailable. Showing basic recommendations.")
+                                    st.warning(f"⚠️ Step 2 failed. Showing analysis based on OpenWeather API only.")
                                     st.error(f"Error: {str(e)}")
                                     
                                     # Fallback to basic farming advice

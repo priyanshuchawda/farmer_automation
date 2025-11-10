@@ -113,19 +113,24 @@ GUIDELINES:
     
     def get_weather_insights_with_grounding(self, weather_data: dict, location: str) -> dict:
         """
-        Uses Gemini 2.5 Flash with Google Search grounding to analyze weather data
-        and provide comprehensive insights for farmers.
+        Uses Gemini 2.5 Flash with Google Search grounding to analyze weather data.
+        
+        Workflow:
+        1. Receives OpenWeather API data
+        2. Performs Google Search for real-time weather alerts
+        3. Analyzes both sources together
+        4. Provides comprehensive farmer-friendly insights
         
         Returns:
             dict with 'summary', 'analysis', 'sources' keys
         """
         language_instruction = self.get_language_instruction()
         
-        # Format weather data for the prompt
-        weather_summary = f"""
-Current Weather in {location}:
+        # Format OpenWeather API data for the prompt
+        openweather_summary = f"""
+📊 **OpenWeather API Data for {location}:**
 - Temperature: {weather_data.get('temp', 'N/A')}°C (Feels like: {weather_data.get('feels_like', 'N/A')}°C)
-- Weather: {weather_data.get('weather_desc', 'N/A')}
+- Weather Condition: {weather_data.get('weather_desc', 'N/A')}
 - Humidity: {weather_data.get('humidity', 'N/A')}%
 - Wind Speed: {weather_data.get('wind_speed', 'N/A')} km/h
 - Cloud Cover: {weather_data.get('clouds', 'N/A')}%
@@ -135,30 +140,40 @@ Current Weather in {location}:
         
         prompt = f"""You are an expert agricultural meteorologist helping Indian farmers understand weather conditions.
 
-{weather_summary}
+**STEP 1: OpenWeather API Data (Already fetched)**
+{openweather_summary}
 
-Search for current weather alerts, warnings, or important weather events in {location} region today. Then provide a comprehensive analysis:
+**STEP 2: Now search Google for:**
+1. Current weather alerts, warnings, or advisories for {location} region today
+2. Any severe weather events happening in {location} area
+3. Local weather updates from Indian Meteorological Department (IMD) for {location}
+4. Recent weather-related news affecting farming in {location}
 
-🌤️ **WHAT THIS WEATHER MEANS FOR YOU:**
-(In 2-3 simple sentences, explain what this weather actually means - is it good or bad for farming? Any risks?)
+**STEP 3: After seeing both OpenWeather API data AND Google Search results, provide comprehensive analysis:**
 
-⚠️ **IMPORTANT ALERTS & WARNINGS:**
-(List any weather warnings, advisories, or alerts for {location} region. If none, say "No weather warnings currently")
+🌤️ **WEATHER SUMMARY (Combining OpenWeather + Live Search):**
+(In 2-3 sentences, explain current weather combining both sources. Mention if Google search shows any different information than OpenWeather API)
 
-🌾 **TODAY'S FARMING IMPACT:**
-(Explain how this weather will affect:)
-• Field Work: (Can you work in the field today?)
-• Irrigation: (Do you need to water crops?)
-• Crop Health: (Any risks to crops?)
-• Harvesting: (Good time to harvest or not?)
+⚠️ **ALERTS & WARNINGS (From Google Search):**
+(List any official weather alerts, IMD warnings, or advisories found via Google Search for {location}. If none found, say "No official weather warnings currently")
+
+📊 **DATA COMPARISON:**
+(Briefly compare OpenWeather API data with what you found on Google Search. Are they consistent? Any discrepancies?)
+
+🌾 **FARMING IMPACT TODAY:**
+(Based on BOTH sources, explain how weather affects:)
+• Field Work: (Safe to work outdoors?)
+• Irrigation: (Need to water crops?)
+• Crop Protection: (Any weather risks to crops?)
+• Harvesting: (Good time or postpone?)
 
 📋 **RECOMMENDED ACTIONS:**
-(List 3-4 specific things farmers should do or avoid today)
+(List 3-4 specific actions based on combined analysis of both sources)
 
-🔮 **WHAT TO EXPECT NEXT:**
-(Based on current conditions, what weather is likely coming in next 6-12 hours?)
+🔮 **WHAT TO EXPECT NEXT (6-12 hours):**
+(Based on current conditions and any forecast info from Google Search)
 
-Keep advice practical, simple, and actionable for small farmers. Use bullet points.{language_instruction}"""
+Keep language simple and actionable for farmers. Use bullet points.{language_instruction}"""
         
         try:
             # Use Gemini 2.5 Flash with Google Search grounding
@@ -179,7 +194,8 @@ Keep advice practical, simple, and actionable for small farmers. Use bullet poin
             result = {
                 'summary': response.text,
                 'analysis': response.text,
-                'sources': []
+                'sources': [],
+                'openweather_data': weather_data
             }
             
             # Extract grounding metadata if available
@@ -209,9 +225,10 @@ Keep advice practical, simple, and actionable for small farmers. Use bullet poin
             print(f"Error getting weather insights with grounding: {e}")
             # Fallback to basic analysis without grounding
             return {
-                'summary': self.get_farmer_advice(weather_summary, location),
-                'analysis': "Unable to fetch real-time weather alerts. Showing basic analysis.",
-                'sources': []
+                'summary': self.get_farmer_advice(openweather_summary, location),
+                'analysis': "Unable to fetch real-time weather alerts. Showing analysis based on OpenWeather API only.",
+                'sources': [],
+                'openweather_data': weather_data
             }
 
     def get_coordinates_from_google_search(self, location: str) -> Optional[dict]:
