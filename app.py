@@ -286,14 +286,8 @@ st.markdown(f"""
 # --- REORGANIZED MENU STRUCTURE ---
 # ----------------------------------------
 # ----------------------------------------
-# --- NAVIGATION HISTORY (DOUBLY LINKED LIST APPROACH) ---
+# --- MENU STRUCTURE ---
 # ----------------------------------------
-# Initialize navigation history stack
-if 'nav_history' not in st.session_state:
-    st.session_state.nav_history = []
-if 'nav_forward' not in st.session_state:
-    st.session_state.nav_forward = []
-
 # Build menu based on user role - Define structure first
 user_role = st.session_state.get("role", "User")
 
@@ -409,13 +403,6 @@ if 'menu_selection' in st.session_state and st.session_state.menu_selection:
         "Database Check": "🗄️ Database Viewer"
     }
     mapped_selection = menu_map.get(st.session_state.menu_selection, st.session_state.menu_selection)
-    
-    # Add current page to history before navigation
-    if st.session_state.selected_menu != mapped_selection:
-        if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-        st.session_state.nav_forward = []  # Clear forward history on new navigation
-    
     st.session_state.selected_menu = mapped_selection
     st.session_state.menu_selection = None
 
@@ -439,12 +426,8 @@ with st.sidebar:
                         type="primary" if st.session_state.selected_menu == item else "secondary"):
                 # Add current page to history before navigation
                 if st.session_state.selected_menu != item:
-                    if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                        st.session_state.nav_history.append(st.session_state.selected_menu)
-                    st.session_state.nav_forward = []  # Clear forward history on new navigation
-                
-                st.session_state.selected_menu = item
-                st.rerun()
+                    st.session_state.selected_menu = item
+                    st.rerun()
         
         st.markdown("")  # Spacing between sections
     
@@ -461,32 +444,13 @@ with st.sidebar:
 menu = st.session_state.selected_menu
 
 # ----------------------------------------
-# --- BACK/FORWARD NAVIGATION BUTTONS ---
+# --- HOME NAVIGATION BUTTON ---
 # ----------------------------------------
-# Create navigation bar with back/forward buttons
-nav_col1, nav_col2, nav_col3 = st.columns([1, 8, 1])
-
-with nav_col1:
-    # Back button
-    if len(st.session_state.nav_history) > 0:
-        if st.button("⬅️ Back", width="stretch", help="Go to previous page"):
-            # Move current page to forward history
-            st.session_state.nav_forward.append(st.session_state.selected_menu)
-            # Get previous page from history
-            previous_page = st.session_state.nav_history.pop()
-            st.session_state.selected_menu = previous_page
-            st.rerun()
-
-with nav_col3:
-    # Forward button (if user went back)
-    if len(st.session_state.nav_forward) > 0:
-        if st.button("➡️", width="stretch", help="Go forward"):
-            # Move current page to history
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            # Get next page from forward history
-            next_page = st.session_state.nav_forward.pop()
-            st.session_state.selected_menu = next_page
-            st.rerun()
+# Simple home button to go back to dashboard
+if st.session_state.selected_menu != "🏠 Home":
+    if st.button("🏠 Home", use_container_width=True, help="Go to Home Dashboard"):
+        st.session_state.selected_menu = "🏠 Home"
+        st.rerun()
 
 st.markdown("---")
 

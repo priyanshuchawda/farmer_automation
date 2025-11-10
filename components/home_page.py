@@ -171,8 +171,8 @@ def render_home_page():
     
     # Worker Board Button - MOST PROMINENT
     if st.button("👷 WORKER BOARD - FIND WORKERS NOW!", key="worker_board_btn", use_container_width=True, type="primary"):
-        st.session_state.nav_history.append(st.session_state.selected_menu)
-        st.session_state.nav_forward = []
+        
+        
         st.session_state.selected_menu = "👷 Worker Board"
         st.rerun()
     
@@ -190,8 +190,8 @@ def render_home_page():
         </div>
         """, unsafe_allow_html=True)
         if st.button("View Prices", key="price_btn", use_container_width=True):
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
+            
+            
             st.session_state.selected_menu = "💰 Today's Market Price"
             st.rerun()
     
@@ -204,8 +204,8 @@ def render_home_page():
         </div>
         """, unsafe_allow_html=True)
         if st.button("Check Weather", key="weather_btn", use_container_width=True):
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
+            
+            
             st.session_state.selected_menu = "🌤️ Weather Forecast"
             st.rerun()
     
@@ -223,8 +223,8 @@ def render_home_page():
         </div>
         """, unsafe_allow_html=True)
         if st.button("Browse Now", key="browse_btn", use_container_width=True):
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
+            
+            
             st.session_state.selected_menu = "🛍️ Browse Listings"
             st.rerun()
     
@@ -237,8 +237,8 @@ def render_home_page():
         </div>
         """, unsafe_allow_html=True)
         if st.button("Post Listing", key="post_btn", use_container_width=True):
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
+            
+            
             st.session_state.selected_menu = "➕ Post Listing"
             st.rerun()
     
@@ -256,8 +256,8 @@ def render_home_page():
         </div>
         """, unsafe_allow_html=True)
         if st.button("Money Diary", key="money_btn_home", use_container_width=True):
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
+            
+            
             st.session_state.selected_menu = "💰 My Money Diary"
             st.rerun()
     
@@ -270,8 +270,8 @@ def render_home_page():
         </div>
         """, unsafe_allow_html=True)
         if st.button("Ask AI", key="ai_btn_home", use_container_width=True):
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
+            
+            
             st.session_state.selected_menu = "🤖 AI Chatbot"
             st.rerun()
     
@@ -316,8 +316,8 @@ def render_home_page():
             
             st.markdown("<div style='margin: 16px 0;'></div>", unsafe_allow_html=True)
             if st.button(f"📅 {t('View All Tasks')}", key="view_all_tasks", use_container_width=True):
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-                st.session_state.nav_forward = []
+                
+                
                 st.session_state.selected_menu = "📅 My Calendar"
                 st.rerun()
         else:
@@ -333,16 +333,16 @@ def render_home_page():
             """, unsafe_allow_html=True)
             st.markdown("<div style='margin: 12px 0;'></div>", unsafe_allow_html=True)
             if st.button(f"📅 {t('Visit Calendar to plan your day')}", key="add_task_home", use_container_width=True, type="primary"):
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-                st.session_state.nav_forward = []
+                
+                
                 st.session_state.selected_menu = "📅 My Calendar"
                 st.rerun()
     except Exception as e:
         st.info(f"📅 {t('Visit Calendar to plan your day')}")
         st.markdown("<div style='margin: 12px 0;'></div>", unsafe_allow_html=True)
         if st.button(f"📅 {t('Open Calendar')}", key="calendar_error", use_container_width=True, type="primary"):
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
+            
+            
             st.session_state.selected_menu = "📅 My Calendar"
             st.rerun()
     
@@ -404,8 +404,8 @@ def render_home_page():
         
         st.markdown("<div style='margin: 20px 0;'></div>", unsafe_allow_html=True)
         if st.button(f"👁️ {t('View My Listings')}", key="view_listings_btn", use_container_width=True):
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
+            
+            
             st.session_state.selected_menu = "📦 My Listings"
             st.rerun()
     else:
@@ -424,8 +424,8 @@ def render_home_page():
         """, unsafe_allow_html=True)
         st.markdown("<div style='margin: 16px 0;'></div>", unsafe_allow_html=True)
         if st.button(f"➕ {t('Create First Listing')}", key="first_listing_btn", use_container_width=True, type="primary"):
-            st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
+            
+            
             st.session_state.selected_menu = "➕ Post Listing"
             st.rerun()
     
