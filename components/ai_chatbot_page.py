@@ -247,30 +247,10 @@ Now answer the farmer's question clearly and helpfully:"""
                 st.error(f"❌ Error: {str(e)}")
                 st.info("💡 Tip: Make sure your AI API key is valid and has quota available.")
     
-    # Usage tips
-    with st.expander("ℹ️ How to use the AI Assistant"):
-        st.markdown("""
-        ### Tips for getting the best answers:
-        
-        - **Be specific**: Instead of "crop problems", ask "yellow spots on tomato leaves, what's wrong?"
-        - **Provide context**: Mention your location, season, or crop type
-        - **Ask follow-up questions**: The AI remembers the conversation context
-        - **Use quick questions**: Click the suggestion buttons for common queries
-        
-        ### What can you ask about:
-        - 🌾 Crop selection and rotation
-        - 💧 Irrigation and water management
-        - 🐛 Pest and disease identification
-        - 🌱 Seed selection and planting
-        - 🌤️ Weather-based farming decisions
-        - 💰 Market strategies and pricing
-        - 🏛️ Government schemes and subsidies
-        - 📊 Farm finance and record keeping
-        """)
-    
     # Stats
     if st.session_state.chat_history:
         st.markdown("---")
         st.caption(f"💬 Chat messages: {len(st.session_state.chat_history)} | Last updated: {datetime.now().strftime('%I:%M %p')}")
+
 
 
