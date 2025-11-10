@@ -63,90 +63,112 @@ init_notifications()
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
     body { 
-        font-family: 'Roboto', sans-serif;
-        background-color: #f5f5f5;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8f9fa;
     }
     h1,h2,h3 { 
         color:#2E8B57; 
         text-align:center; 
-        font-weight:700; 
+        font-weight:600; 
+        letter-spacing: -0.02em;
     }
     .stApp {
-        background-color: #f5f5f5;
+        background-color: #f8f9fa;
     }
     [data-testid="stSidebar"] { 
         background-color:#FFFFFF; 
-        border-right:2px solid #E0E0E0; 
-        padding-top:20px; 
+        border-right:1px solid #E8E8E8; 
+        padding-top:20px;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.04);
     }
     
     /* Button Styling */
     .stButton>button { 
         background-color:#2E8B57; 
         color:white; 
-        border-radius:8px; 
-        padding:10px 20px; 
-        font-weight:bold; 
+        border-radius:10px; 
+        padding:12px 24px; 
+        font-weight:600; 
         border:none; 
-        box-shadow:0 2px 4px rgba(0,0,0,0.1); 
+        box-shadow:0 2px 8px rgba(46,139,87,0.15); 
         width:100%; 
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 15px;
     }
     .stButton>button:hover { 
         background-color:#3CB371; 
-        box-shadow:0 4px 8px rgba(0,0,0,0.2);
+        box-shadow:0 4px 16px rgba(46,139,87,0.25);
         transform: translateY(-2px);
+    }
+    
+    /* Primary Button */
+    .stButton>button[kind="primary"] {
+        background: linear-gradient(135deg, #4CAF50 0%, #2E8B57 100%);
+        box-shadow:0 4px 12px rgba(46,139,87,0.3);
     }
     
     /* Card Styling */
     .card { 
         background-color:#ffffff; 
-        padding:30px; 
-        margin-bottom:25px; 
-        border-radius:15px; 
-        box-shadow:0 8px 16px rgba(0,0,0,0.1); 
-        border-left:7px solid #2E8B57; 
+        padding:28px; 
+        margin-bottom:20px; 
+        border-radius:12px; 
+        box-shadow:0 2px 12px rgba(0,0,0,0.08); 
+        border-left:4px solid #4CAF50; 
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        box-shadow:0 4px 20px rgba(0,0,0,0.12);
     }
     
     footer { 
         visibility:hidden; 
     }
     .stDataFrame, .stDataEditor { 
-        border:1px solid #E0E0E0; 
+        border:1px solid #E8E8E8; 
         border-radius:10px; 
-        padding:10px; 
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        padding:12px; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    
+    /* Input styling */
+    .stTextInput>div>div>input, .stSelectbox>div>div>select, .stTextArea>div>div>textarea {
+        border-radius: 8px;
+        border: 1px solid #E0E0E0;
+        padding: 10px;
+        font-size: 15px;
     }
     
     /* Mobile Responsive Styles */
     @media (max-width: 768px) {
         /* Adjust titles for mobile */
         h1 { 
-            font-size: 1.8rem !important; 
+            font-size: 1.75rem !important; 
             padding: 10px 5px !important;
         }
         h2 { 
-            font-size: 1.5rem !important; 
+            font-size: 1.4rem !important; 
         }
         h3 { 
-            font-size: 1.3rem !important; 
+            font-size: 1.2rem !important; 
         }
         
         /* Card padding adjustment */
         .card { 
-            padding: 15px !important; 
-            margin-bottom: 15px !important;
+            padding: 18px !important; 
+            margin-bottom: 16px !important;
             border-radius: 10px !important;
-            border-left-width: 5px !important;
+            border-left-width: 3px !important;
         }
         
         /* Button adjustments */
         .stButton>button { 
-            padding: 8px 15px !important; 
-            font-size: 0.9rem !important;
+            padding: 10px 18px !important; 
+            font-size: 14px !important;
         }
         
         /* Sidebar adjustments */
