@@ -18,7 +18,6 @@ from database.db_functions import (
     get_onboarding_progress, update_onboarding_progress
 )
 from components.auth_page import render_auth_page
-from components.welcome_screen import render_welcome_screen
 from components.home_page import render_home_page, render_db_check
 from components.tool_listings import render_tool_listing, render_tool_management
 from components.crop_listings import render_crop_listing, render_crop_management
@@ -271,19 +270,6 @@ if 'logged_in' not in st.session_state or not st.session_state.logged_in:
     # Show authentication page
     render_auth_page()
     st.stop()  # Stop execution here if not logged in
-
-# ----------------------------------------
-# --- FIRST-TIME USER WELCOME SCREEN (OPTIONAL) ---
-# ----------------------------------------
-# Skip welcome screen - go directly to home page after login
-# Welcome screen can be accessed via a separate menu item if needed
-# if st.session_state.get('role') == 'Farmer':
-#     if 'show_welcome' not in st.session_state:
-#         st.session_state.show_welcome = True
-#     
-#     if st.session_state.get('show_welcome', False):
-#         render_welcome_screen()
-#         st.stop()
 
 # ----------------------------------------
 # --- MAIN APPLICATION (After Login) ---
