@@ -48,6 +48,26 @@ def render_weather_component():
     # Mobile responsive CSS for weather component
     st.markdown("""
     <style>
+    /* Weather insights card */
+    .ai-insights-card {
+        background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+        padding: 24px;
+        border-radius: 12px;
+        border-left: 4px solid #1976D2;
+        margin: 20px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .source-chip {
+        display: inline-block;
+        background: white;
+        padding: 6px 12px;
+        border-radius: 16px;
+        margin: 4px;
+        font-size: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    
     /* Mobile responsive for weather metrics */
     @media (max-width: 768px) {
         [data-testid="stMetricLabel"] {
@@ -68,6 +88,9 @@ def render_weather_component():
         .streamlit-expanderHeader {
             font-size: 0.9rem !important;
             padding: 10px !important;
+        }
+        .ai-insights-card {
+            padding: 16px;
         }
     }
     @media (max-width: 480px) {
@@ -129,23 +152,85 @@ def render_weather_component():
                             # Weather description
                             st.info(f"☁️ {current['weather_desc'].title()} | Cloud Cover: {current['clouds']}%")
                             
-                            # Farming Recommendations
-                            st.markdown("### 🌾 Smart Farming Recommendations")
-                            advice_list = get_farming_advice(
-                                current['temp'], 
-                                current['rain'], 
-                                current['humidity'], 
-                                current['wind_speed']
-                            )
+                            st.divider()
                             
-                            # Display advice with listen buttons
-                            from components.text_to_speech_widget import speak_button
-                            for idx, advice in enumerate(advice_list):
-                                col1, col2 = st.columns([10, 1])
-                                with col1:
-                                    st.markdown(f"- {advice}")
-                                with col2:
-                                    speak_button(advice, "🔊", key_suffix=f"advice_{idx}")
+                            # AI-Powered Weather Insights with Google Search Grounding
+                            st.markdown("### 🤖 AI Weather Advisor (Powered by Gemini 2.5 Flash)")
+                            st.caption("Real-time analysis with Google Search grounding")
+                            
+                            with st.spinner("🔍 Analyzing weather conditions and searching for alerts..."):
+                                try:
+                                    from weather.ai_client import AIClient
+                                    ai_client = AIClient()
+                                    
+                                    # Prepare weather data for AI analysis
+                                    weather_data_dict = {
+                                        'temp': current['temp'],
+                                        'feels_like': current['feels_like'],
+                                        'humidity': current['humidity'],
+                                        'wind_speed': current['wind_speed'],
+                                        'pop': current['pop'],
+                                        'rain': current['rain'],
+                                        'clouds': current['clouds'],
+                                        'weather_desc': current['weather_desc']
+                                    }
+                                    
+                                    # Get AI insights with Google Search grounding
+                                    insights = ai_client.get_weather_insights_with_grounding(
+                                        weather_data_dict, 
+                                        farmer_profile['weather_location']
+                                    )
+                                    
+                                    # Display AI Analysis
+                                    st.markdown(f"""
+                                    <div class='ai-insights-card'>
+                                        <h4 style='margin: 0 0 12px 0; color: #1976D2;'>
+                                            🌤️ What This Weather Means for You
+                                        </h4>
+                                    </div>
+                                    """, unsafe_allow_html=True)
+                                    
+                                    st.markdown(insights['summary'])
+                                    
+                                    # Show sources if available
+                                    if insights.get('sources') and len(insights['sources']) > 0:
+                                        st.markdown("---")
+                                        st.markdown("**📚 Information Sources:**")
+                                        cols = st.columns(min(3, len(insights['sources'])))
+                                        for idx, source in enumerate(insights['sources'][:6]):
+                                            with cols[idx % 3]:
+                                                st.markdown(f"""
+                                                <a href="{source['uri']}" target="_blank" class="source-chip">
+                                                    🔗 {source['title'][:30]}...
+                                                </a>
+                                                """, unsafe_allow_html=True)
+                                    
+                                    # Show search queries used (for transparency)
+                                    if insights.get('search_queries'):
+                                        with st.expander("🔍 What AI searched for"):
+                                            for query in insights['search_queries']:
+                                                st.caption(f"• {query}")
+                                    
+                                except Exception as e:
+                                    st.warning(f"⚠️ AI analysis unavailable. Showing basic recommendations.")
+                                    st.error(f"Error: {str(e)}")
+                                    
+                                    # Fallback to basic farming advice
+                                    st.markdown("### 🌾 Smart Farming Recommendations")
+                                    advice_list = get_farming_advice(
+                                        current['temp'], 
+                                        current['rain'], 
+                                        current['humidity'], 
+                                        current['wind_speed']
+                                    )
+                                    
+                                    from components.text_to_speech_widget import speak_button
+                                    for idx, advice in enumerate(advice_list):
+                                        col1, col2 = st.columns([10, 1])
+                                        with col1:
+                                            st.markdown(f"- {advice}")
+                                        with col2:
+                                            speak_button(advice, "🔊", key_suffix=f"advice_{idx}")
                             
                             st.divider()
                             

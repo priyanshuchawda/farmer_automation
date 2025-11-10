@@ -110,6 +110,109 @@ GUIDELINES:
                 continue
         
         return "Unable to generate farming advice at this time."
+    
+    def get_weather_insights_with_grounding(self, weather_data: dict, location: str) -> dict:
+        """
+        Uses Gemini 2.5 Flash with Google Search grounding to analyze weather data
+        and provide comprehensive insights for farmers.
+        
+        Returns:
+            dict with 'summary', 'analysis', 'sources' keys
+        """
+        language_instruction = self.get_language_instruction()
+        
+        # Format weather data for the prompt
+        weather_summary = f"""
+Current Weather in {location}:
+- Temperature: {weather_data.get('temp', 'N/A')}°C (Feels like: {weather_data.get('feels_like', 'N/A')}°C)
+- Weather: {weather_data.get('weather_desc', 'N/A')}
+- Humidity: {weather_data.get('humidity', 'N/A')}%
+- Wind Speed: {weather_data.get('wind_speed', 'N/A')} km/h
+- Cloud Cover: {weather_data.get('clouds', 'N/A')}%
+- Rain Probability: {weather_data.get('pop', 0) * 100:.0f}%
+- Rainfall: {weather_data.get('rain', 0)} mm
+"""
+        
+        prompt = f"""You are an expert agricultural meteorologist helping Indian farmers understand weather conditions.
+
+{weather_summary}
+
+Search for current weather alerts, warnings, or important weather events in {location} region today. Then provide a comprehensive analysis:
+
+🌤️ **WHAT THIS WEATHER MEANS FOR YOU:**
+(In 2-3 simple sentences, explain what this weather actually means - is it good or bad for farming? Any risks?)
+
+⚠️ **IMPORTANT ALERTS & WARNINGS:**
+(List any weather warnings, advisories, or alerts for {location} region. If none, say "No weather warnings currently")
+
+🌾 **TODAY'S FARMING IMPACT:**
+(Explain how this weather will affect:)
+• Field Work: (Can you work in the field today?)
+• Irrigation: (Do you need to water crops?)
+• Crop Health: (Any risks to crops?)
+• Harvesting: (Good time to harvest or not?)
+
+📋 **RECOMMENDED ACTIONS:**
+(List 3-4 specific things farmers should do or avoid today)
+
+🔮 **WHAT TO EXPECT NEXT:**
+(Based on current conditions, what weather is likely coming in next 6-12 hours?)
+
+Keep advice practical, simple, and actionable for small farmers. Use bullet points.{language_instruction}"""
+        
+        try:
+            # Use Gemini 2.5 Flash with Google Search grounding
+            grounding_tool = types.Tool(
+                google_search=types.GoogleSearch()
+            )
+            
+            config = types.GenerateContentConfig(
+                tools=[grounding_tool]
+            )
+            
+            response = self.client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config=config,
+            )
+            
+            result = {
+                'summary': response.text,
+                'analysis': response.text,
+                'sources': []
+            }
+            
+            # Extract grounding metadata if available
+            if hasattr(response, 'candidates') and len(response.candidates) > 0:
+                candidate = response.candidates[0]
+                if hasattr(candidate, 'grounding_metadata') and candidate.grounding_metadata:
+                    metadata = candidate.grounding_metadata
+                    
+                    # Extract web search queries used
+                    if hasattr(metadata, 'web_search_queries') and metadata.web_search_queries:
+                        result['search_queries'] = metadata.web_search_queries
+                    
+                    # Extract source URLs
+                    if hasattr(metadata, 'grounding_chunks') and metadata.grounding_chunks:
+                        sources = []
+                        for chunk in metadata.grounding_chunks:
+                            if hasattr(chunk, 'web') and chunk.web:
+                                sources.append({
+                                    'title': chunk.web.title if hasattr(chunk.web, 'title') else 'Source',
+                                    'uri': chunk.web.uri if hasattr(chunk.web, 'uri') else ''
+                                })
+                        result['sources'] = sources
+            
+            return result
+            
+        except Exception as e:
+            print(f"Error getting weather insights with grounding: {e}")
+            # Fallback to basic analysis without grounding
+            return {
+                'summary': self.get_farmer_advice(weather_summary, location),
+                'analysis': "Unable to fetch real-time weather alerts. Showing basic analysis.",
+                'sources': []
+            }
 
     def get_coordinates_from_google_search(self, location: str) -> Optional[dict]:
         """
