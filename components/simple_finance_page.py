@@ -266,21 +266,10 @@ def render_simple_finance_page():
                 key="in_amount"
             )
             
-            in_reason = st.selectbox(
+            in_reason = st.text_input(
                 t("What for?"),
-                [
-                    t("Sold Tomatoes"),
-                    t("Sold Wheat"),
-                    t("Sold Rice"),
-                    t("Sold Onions"),
-                    t("Sold Cotton"),
-                    t("Sold Vegetables"),
-                    t("Sold Milk"),
-                    t("Rented Tool"),
-                    t("Government Subsidy"),
-                    t("Loan Received"),
-                    t("Other Income")
-                ],
+                placeholder=t("e.g., Sold Tomatoes, Sold Wheat, Rented Tool"),
+                help=t("Describe where the money came from"),
                 key="in_reason"
             )
             
@@ -292,9 +281,12 @@ def render_simple_finance_page():
             )
             
             if st.form_submit_button("💚 " + t("SAVE Money In"), use_container_width=True, type="primary"):
-                add_money_entry(farmer_name, "Money In", in_amount, in_reason, in_date.strftime("%Y-%m-%d"))
-                st.success(f"✅ {t('Saved!')} ₹{in_amount:,.0f} - {in_reason}")
-                st.rerun()
+                if in_reason and in_reason.strip():
+                    add_money_entry(farmer_name, "Money In", in_amount, in_reason.strip(), in_date.strftime("%Y-%m-%d"))
+                    st.success(f"✅ {t('Saved!')} ₹{in_amount:,.0f} - {in_reason}")
+                    st.rerun()
+                else:
+                    st.error(f"⚠️ {t('Please enter a reason')}")
     
     with col2:
         with st.form("add_money_out"):
@@ -308,21 +300,10 @@ def render_simple_finance_page():
                 key="out_amount"
             )
             
-            out_reason = st.selectbox(
+            out_reason = st.text_input(
                 t("What for?"),
-                [
-                    t("Bought Seeds"),
-                    t("Bought Fertilizer"),
-                    t("Bought Pesticides"),
-                    t("Paid Workers"),
-                    t("Tractor Fuel"),
-                    t("Electricity Bill"),
-                    t("Water Bill"),
-                    t("Tool Repair"),
-                    t("Loan Repayment"),
-                    t("Family Expense"),
-                    t("Other Expense")
-                ],
+                placeholder=t("e.g., Bought Seeds, Paid Workers, Tool Repair"),
+                help=t("Describe where the money went"),
                 key="out_reason"
             )
             
@@ -334,9 +315,12 @@ def render_simple_finance_page():
             )
             
             if st.form_submit_button("❤️ " + t("SAVE Money Out"), use_container_width=True, type="secondary"):
-                add_money_entry(farmer_name, "Money Out", out_amount, out_reason, out_date.strftime("%Y-%m-%d"))
-                st.success(f"✅ {t('Saved!')} ₹{out_amount:,.0f} - {out_reason}")
-                st.rerun()
+                if out_reason and out_reason.strip():
+                    add_money_entry(farmer_name, "Money Out", out_amount, out_reason.strip(), out_date.strftime("%Y-%m-%d"))
+                    st.success(f"✅ {t('Saved!')} ₹{out_amount:,.0f} - {out_reason}")
+                    st.rerun()
+                else:
+                    st.error(f"⚠️ {t('Please enter a reason')}")
     
     st.markdown("---")
     

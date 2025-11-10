@@ -5,6 +5,7 @@ Part of Phase 1: Authentication Overhaul
 """
 
 import streamlit as st
+from components.translation_utils import t
 
 def render_welcome_screen():
     """Render welcome screen for first-time users"""
