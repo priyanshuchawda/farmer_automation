@@ -138,52 +138,56 @@ Now answer the farmer's question clearly and helpfully:"""
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🌾 Best crops for my region", width="stretch"):
+        if st.button("🌾 Best crops for my region", key="btn_crops", use_container_width=True):
             st.session_state.quick_question = f"What are the best crops to grow in {location}?"
+            st.rerun()
     
     with col2:
-        if st.button("🐛 Pest control tips", width="stretch"):
+        if st.button("🐛 Pest control tips", key="btn_pest", use_container_width=True):
             st.session_state.quick_question = "What are effective organic pest control methods?"
+            st.rerun()
     
     with col3:
-        if st.button("💰 Market timing advice", width="stretch"):
+        if st.button("💰 Market timing advice", key="btn_market", use_container_width=True):
             st.session_state.quick_question = "When is the best time to sell my crops?"
+            st.rerun()
     
     col4, col5, col6 = st.columns(3)
     
     with col4:
-        if st.button("🌧️ Monsoon preparation", width="stretch"):
+        if st.button("🌧️ Monsoon preparation", key="btn_monsoon", use_container_width=True):
             st.session_state.quick_question = "How should I prepare my farm for monsoon season?"
+            st.rerun()
     
     with col5:
-        if st.button("🏛️ Government schemes", width="stretch"):
+        if st.button("🏛️ Government schemes", key="btn_schemes", use_container_width=True):
             st.session_state.quick_question = "What government schemes are available for farmers?"
+            st.rerun()
     
     with col6:
-        if st.button("📊 Farm budgeting", width="stretch"):
+        if st.button("📊 Farm budgeting", key="btn_budget", use_container_width=True):
             st.session_state.quick_question = "How can I better manage my farm finances?"
+            st.rerun()
     
     st.markdown("---")
     
-    # Chat input
+    # Chat input - use quick_question if available
+    default_value = st.session_state.pop('quick_question', '')
+    
     user_input = st.text_input(
         "Ask your question:", 
-        value=st.session_state.get('quick_question', ''),
+        value=default_value,
         key="chat_input",
         placeholder="E.g., What fertilizer is best for wheat in winter?"
     )
     
-    # Clear quick question after using it
-    if 'quick_question' in st.session_state:
-        del st.session_state.quick_question
-    
     col_send, col_clear = st.columns([3, 1])
     
     with col_send:
-        send_button = st.button("📤 Send", width="stretch", type="primary")
+        send_button = st.button("📤 Send", key="send_btn", use_container_width=True, type="primary")
     
     with col_clear:
-        if st.button("🗑️ Clear Chat", width="stretch"):
+        if st.button("🗑️ Clear Chat", key="clear_btn", use_container_width=True):
             st.session_state.chat_history = []
             st.rerun()
     
