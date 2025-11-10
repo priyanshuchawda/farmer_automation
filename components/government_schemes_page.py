@@ -68,73 +68,120 @@ class GovernmentSchemesHelper:
         try:
             # Build search query with structured output format
             if crop_type:
-                search_query = f"""Search for current government agricultural schemes for {crop_type} farmers in {location}, India.
+                search_query = f"""Search and compile current Indian government agricultural schemes for {crop_type} farmers in {location}.
 
-**Search the web and provide a well-structured response for farmers:**
+SEARCH FOCUS:
+- Prioritize official government websites (.gov.in, .nic.in)
+- Include both central and state-level schemes
+- Find current eligibility criteria and application processes
+- Verify active schemes (not discontinued ones)
+
+OUTPUT STRUCTURE (use this exact format):
 
 ## 🇮🇳 CENTRAL GOVERNMENT SCHEMES
-List 3-4 major central schemes (PM-KISAN, PMFBY, Kisan Credit Card, etc.)
-For each scheme:
-- **Scheme Name & Full Form**
-- **Key Benefits** (in simple terms)
-- **Who Can Apply** (eligibility in simple terms)
-- **How to Apply** (step-by-step process)
-- **Official Website/Helpline**
 
-## 🏛️ STATE SCHEMES FOR {location.upper()}
-List 2-3 state-specific schemes for {location}
-For each scheme:
-- **Scheme Name**
-- **Special Benefits for {crop_type} Farmers**
-- **Who Can Apply**
-- **Application Process**
-- **Contact Details**
+For each of 3-4 major schemes (PM-KISAN, PMFBY, KCC, etc.):
 
-## 💡 IMPORTANT TIPS
-- Best time to apply
-- Required documents
-- Common mistakes to avoid
-
-Format everything in bullet points and use simple language that farmers can understand.{lang_instruction}"""
-            else:
-                search_query = f"""Search for current government agricultural schemes available in {location}, India.
-
-**Provide a farmer-friendly structured response:**
-
-## 🇮🇳 MAJOR CENTRAL GOVERNMENT SCHEMES
-
-List 4-5 major schemes like:
-- PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)
-- PMFBY (Pradhan Mantri Fasal Bima Yojana)
-- Kisan Credit Card (KCC)
-- PM Kisan Maandhan Yojana
-- Soil Health Card Scheme
-
-For each scheme:
-- **Benefits:** (what farmers get)
-- **Who Can Apply:** (eligibility)
-- **How to Apply:** (step-by-step)
-- **Website/Helpline:** (contact info)
+**1. [Scheme Name]** ([Full Form])
+- **Financial Benefit:** [Exact amount/coverage - e.g., ₹6000/year, 90% premium subsidy]
+- **Eligibility:** [Who qualifies - land size, income limits, age]
+- **How to Apply:** 
+  1. [Step 1 with specific action]
+  2. [Step 2 with where/how]
+  3. [Step 3 with timeline]
+- **Contact:** [Official website URL] | Helpline: [phone number]
 
 ## 🏛️ {location.upper()} STATE SCHEMES
 
-List state-specific schemes with:
-- Scheme name and benefits
-- Eligibility criteria
-- Application method
-- Local contact numbers
+For each of 2-3 state schemes:
 
-## 📞 HELPLINE & SUPPORT
-- Kisan Call Center: 1800-180-1551
-- State Agriculture Helpline
-- Online Portal Links
+**1. [State Scheme Name]**
+- **Special for {crop_type}:** [Specific benefits for this crop]
+- **Benefit Amount:** [₹ amount or percentage]
+- **Who Can Apply:** [Simple eligibility in 1-2 points]
+- **Application:** [Where to apply - office/online, deadline if any]
+- **Local Contact:** [District agriculture office/helpline]
 
-## ⚠️ IMPORTANT NOTES
-- Documents needed: Aadhar, Bank Account, Land Records
-- Application deadlines
-- Tips for successful application
+## 💡 APPLICATION ESSENTIALS
 
-Use simple language and bullet points. Make it easy for farmers to understand and act.{lang_instruction}"""
+**Required Documents (carry these):**
+- Document 1 (e.g., Aadhar card)
+- Document 2 (e.g., Bank passbook/cancelled cheque)
+- Document 3 (e.g., Land records - 7/12 extract)
+
+**Best Time:** [When to apply for maximum benefit]
+
+**Common Mistakes to Avoid:**
+- Mistake 1 with correction
+- Mistake 2 with correction
+
+**Quick Help:** Kisan Call Center 1800-180-1551 (Toll-Free)
+
+Use simple farmer language. Include specific ₹ amounts, phone numbers, and URLs.{lang_instruction}"""
+            else:
+                search_query = f"""Search and compile current Indian government agricultural schemes for farmers in {location}.
+
+SEARCH REQUIREMENTS:
+- Find official government sources (.gov.in, agricoop.nic.in, state agriculture websites)
+- Verify schemes are currently active (2024-2025)
+- Include central + state level schemes
+- Get exact benefit amounts, eligibility, and application methods
+
+OUTPUT STRUCTURE:
+
+## 🇮🇳 TOP CENTRAL SCHEMES
+
+List 5 major schemes in this format:
+
+**1. PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)**
+- **You Get:** ₹6000/year in 3 installments of ₹2000
+- **Who Qualifies:** All landholding farmers (no income limit from Feb 2019)
+- **Apply:** 
+  1. Visit pmkisan.gov.in
+  2. Click "New Farmer Registration"
+  3. Enter Aadhar + bank details
+  4. Submit + wait for SMS confirmation
+- **Help:** pmkisan.gov.in | 155261 / 1800115526
+
+[Repeat for PMFBY, KCC, PM-KMY, Soil Health Card]
+
+## 🏛️ {location.upper()} STATE SCHEMES
+
+List 3 state schemes:
+
+**1. [State Scheme Name]**
+- **Benefit:** [₹ amount or subsidy %]
+- **For:** [Type of farmers - small/marginal/all]
+- **Apply At:** [District agriculture office/website]
+- **Deadline:** [If any application window]
+- **Phone:** [Local helpline]
+
+## 📞 EMERGENCY HELPLINES
+
+- **Kisan Call Center:** 1800-180-1551 (24x7, Toll-Free)
+- **{location} Agriculture:** [State helpline number]
+- **PM-KISAN:** 155261
+- **Crop Insurance:** 1800-200-7710
+
+## 📄 DOCUMENTS CHECKLIST
+
+Before visiting office, carry:
+✓ Aadhar card (original + photocopy)
+✓ Bank passbook (with IFSC code visible)
+✓ Land records (7/12 extract or Khatauni)
+✓ Passport-size photos (2 copies)
+✓ Mobile number (registered on Aadhar)
+
+## ⚠️ PRO TIPS
+
+**Best Application Time:** [Month/season when schemes open]
+
+**Avoid These Mistakes:**
+1. Wrong bank account details → payment fails
+2. Aadhar not linked to mobile → no SMS updates
+3. Missing documents → application rejected
+
+Write in simple language farmers understand. Include all ₹ amounts and phone numbers.{lang_instruction}"""
 
             # Use AI with Google Search grounding
             response = self.client.models.generate_content(

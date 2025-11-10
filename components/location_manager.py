@@ -27,17 +27,26 @@ class LocationManager:
         """
         Get GPS coordinates from location name using Gemini with Google Search
         """
-        prompt = f"""Find the GPS coordinates for: {location}
+        prompt = f"""Search and return GPS coordinates for: {location}, India
 
-IMPORTANT: You MUST respond in EXACTLY this format, nothing else:
-LAT: [latitude]
-LON: [longitude]
+TASK: Find precise latitude and longitude using Google Search.
 
-Example response format:
-LAT: 18.553516
-LON: 73.930104
+REQUIRED OUTPUT FORMAT (exactly 2 lines, no extra text):
+LAT: [decimal latitude]
+LON: [decimal longitude]
 
-Do not add any explanations, notes, or additional text. Just the two lines above."""
+EXAMPLES:
+
+Query: "Pune, Maharashtra"
+LAT: 18.5204
+LON: 73.8567
+
+Query: "Nashik"
+LAT: 19.9975
+LON: 73.7898
+
+Now find for: {location}
+Output only LAT and LON lines."""
         
         models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash"]
         
@@ -81,17 +90,22 @@ Do not add any explanations, notes, or additional text. Just the two lines above
         """
         Get full address from GPS coordinates using Gemini with Google Maps Grounding
         """
-        prompt = f"""What is the complete address and location details for these GPS coordinates?
+        prompt = f"""Reverse geocode these GPS coordinates to get full address details.
+
+COORDINATES:
 Latitude: {latitude}
 Longitude: {longitude}
 
-Please provide:
-- Full address
-- City
-- State/Province
-- Country
-- Postal code (if available)
-- Nearby landmarks"""
+REQUIRED OUTPUT (provide all available information):
+- Full Address: [complete street address]
+- City/Village: [name]
+- District: [if in India]
+- State/Province: [name]
+- Country: [name]
+- Postal Code: [if available]
+- Nearby Landmark: [prominent nearby location]
+
+Be specific and accurate. Use Google Maps data."""
         
         try:
             response = self.client.models.generate_content(

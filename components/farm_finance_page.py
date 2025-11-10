@@ -125,28 +125,45 @@ class FinanceAI:
         
         language_instruction = self.get_language_instruction()
         
-        prompt = f"""Analyze this farm's financial performance for {period}:
+        prompt = f"""Analyze farm financial performance and provide actionable advice.
 
-**Income:**
-- Total Income: ₹{total_income:,.2f}
-- Number of transactions: {len(income_data)}
-- Income categories: {', '.join(set([t['category'] for t in income_data]))}
+PERIOD: {period}
 
-**Expenses:**
-- Total Expenses: ₹{total_expense:,.2f}
-- Number of transactions: {len(expense_data)}
-- Expense categories: {', '.join(set([t['category'] for t in expense_data]))}
+FINANCIAL SUMMARY:
+Income:
+- Total: ₹{total_income:,.2f} from {len(income_data)} transactions
+- Sources: {', '.join(set([t['category'] for t in income_data]))}
 
-**Profit/Loss:** ₹{profit:,.2f}
+Expenses:
+- Total: ₹{total_expense:,.2f} from {len(expense_data)} transactions  
+- Categories: {', '.join(set([t['category'] for t in expense_data]))}
 
-Provide:
-1. Overall financial health assessment
-2. Key insights and patterns
-3. Cost optimization suggestions
-4. Revenue improvement recommendations
-5. Seasonal planning advice
+Net Profit/Loss: ₹{profit:,.2f} ({'+' if profit >= 0 else ''}{(profit/total_income*100):.1f}% margin)
 
-Keep response concise and actionable for farmers.{language_instruction}"""
+REQUIRED ANALYSIS (provide 5 sections):
+
+1. FINANCIAL HEALTH VERDICT
+[Is farm profitable? Compare to typical farm margins. 1-2 sentences.]
+
+2. KEY PATTERNS IDENTIFIED
+- Pattern 1: [Highest expense category and % of total - is it normal?]
+- Pattern 2: [Income source analysis - diversified or single crop?]
+- Pattern 3: [Cash flow insight - seasonal patterns visible?]
+
+3. COST REDUCTION OPPORTUNITIES
+- Action 1: [Specific expense to reduce with ₹ saving estimate]
+- Action 2: [Bulk buying or timing optimization]
+- Action 3: [Equipment sharing or alternative method]
+
+4. REVENUE GROWTH STRATEGIES
+- Strategy 1: [New crop/product with market potential]
+- Strategy 2: [Value addition opportunity - processing, grading]
+- Strategy 3: [Market timing or selling location change]
+
+5. SEASONAL PLANNING
+[Next 3 months outlook and preparation advice]
+
+Keep advice practical for Indian small farmers.{language_instruction}"""
 
         try:
             response = self.client.models.generate_content(
@@ -160,20 +177,40 @@ Keep response concise and actionable for farmers.{language_instruction}"""
     
     def suggest_investments(self, budget, current_equipment, farm_size, crop_type):
         """Get AI suggestions for farm investments."""
-        prompt = f"""Suggest smart farm investments for:
+        prompt = f"""Recommend smart farm investments for maximum ROI.
+
+FARMER PROFILE:
 - Available Budget: ₹{budget:,.2f}
 - Farm Size: {farm_size}
 - Current Equipment: {current_equipment}
-- Crop Type: {crop_type}
+- Primary Crop: {crop_type}
 
-Provide 5 prioritized investment suggestions with:
-1. Item name
-2. Estimated cost
-3. ROI timeline
-4. Priority level (High/Medium/Low)
-5. Reason for recommendation
+TASK:
+Search current Indian market and suggest 5 prioritized investments.
 
-Search for current market prices and best options in India."""
+For each investment, provide:
+
+**[Equipment/Tool Name]**
+- **Cost:** ₹[amount] (search current 2024-25 prices in India)
+- **ROI Timeline:** [X months/years to recover investment]
+- **Priority:** [HIGH/MEDIUM/LOW]
+- **Annual Benefit:** ₹[estimated savings or extra income]
+- **Why This:** [2-3 sentence justification with data]
+
+EVALUATION CRITERIA:
+1. Fits within budget or slightly above (financing option)
+2. Addresses gap in current equipment
+3. Suitable for farm size
+4. Relevant for crop type
+5. Good ROI (< 2-3 years payback)
+6. Available in Indian market
+
+SEARCH FOCUS:
+- IndiaMART, Tractor Junction, local agricultural equipment dealers
+- Government subsidy schemes (mention if applicable)
+- Second-hand options if budget is tight
+
+Prioritize practical, high-impact investments for small Indian farms."""
 
         try:
             response = self.client.models.generate_content(
@@ -190,19 +227,51 @@ Search for current market prices and best options in India."""
     
     def insurance_recommendations(self, location, crop_type, farm_size):
         """Get crop insurance recommendations."""
-        prompt = f"""Recommend crop insurance options for Indian farmers:
-- Location: {location}
+        prompt = f"""Search and recommend best crop insurance options for this Indian farmer.
+
+FARMER DETAILS:
+- Location: {location}, India
 - Crop Type: {crop_type}
 - Farm Size: {farm_size}
 
-Provide:
-1. Top 3 insurance schemes (government + private)
-2. Coverage details
-3. Premium estimates
-4. Claim process overview
-5. Key benefits
+SEARCH REQUIREMENTS:
+- Find active insurance schemes for 2024-2025
+- Include PMFBY (Pradhan Mantri Fasal Bima Yojana) details
+- Search state-specific schemes for {location}
+- Include private insurance alternatives
 
-Search for latest insurance schemes in India 2024-2025."""
+OUTPUT FORMAT:
+
+## TOP 3 INSURANCE OPTIONS
+
+**1. [Scheme Name]** (Government/Private)
+- **Coverage:** [What losses covered - drought, flood, pest, hail, etc.]
+- **Sum Insured:** ₹[amount per acre/hectare]
+- **Premium:** ₹[farmer pays] (Government subsidizes: [X]%)
+- **Eligibility:** [Who can apply - land ownership requirements]
+- **Claim Process:** [3-4 step process]
+- **Claim Timeline:** [Days to receive payout]
+- **Best For:** [Type of farmer/situation]
+- **How to Apply:** [Specific steps with website/office]
+
+[Repeat for 2nd and 3rd options]
+
+## COMPARISON TABLE
+
+| Feature | Scheme 1 | Scheme 2 | Scheme 3 |
+|---------|----------|----------|----------|
+| Premium | ₹X | ₹Y | ₹Z |
+| Coverage | [%] | [%] | [%] |
+| Subsidy | [%] | [%] | [%] |
+
+## KEY RECOMMENDATIONS
+
+- **Best Value:** [Which scheme offers best coverage-to-cost ratio]
+- **Deadline:** [Last date to enroll - usually before sowing]
+- **Required Documents:** [List - Aadhar, land records, bank details]
+- **Pro Tip:** [One important tip for claiming successfully]
+
+Search official insurance websites and recent agriculture ministry updates."""
 
         try:
             response = self.client.models.generate_content(

@@ -22,14 +22,15 @@ from components.welcome_screen import render_welcome_screen
 from components.home_page import render_home_page, render_db_check
 from components.tool_listings import render_tool_listing, render_tool_management
 from components.crop_listings import render_crop_listing, render_crop_management
+from components.labor_board import render_labor_board
 from components.profiles_page import render_profiles_page
 from components.view_profile_page import render_view_profile_page
 from components.weather_component import render_weather_component
 from components.market_price_scraper import render_market_price
-from components.price_prediction_page import render_price_prediction_page
+from components.simple_price_advisor import render_simple_price_advisor
 from components.cache_admin_page import render_cache_admin_page
 from components.government_schemes_page import render_government_schemes_page
-from components.farm_finance_page import render_farm_finance_page
+from components.simple_finance_page import render_simple_finance_page
 from components.translation_utils import render_language_selector, t
 from components.pwa_component import inject_pwa_code
 from components.offline_manager import render_offline_status
@@ -289,28 +290,59 @@ if 'nav_forward' not in st.session_state:
 user_role = st.session_state.get("role", "User")
 
 if user_role == "Farmer":
-    # Farmer Menu - Organized by sections
+    # Farmer Menu - SIMPLIFIED for better UX (hiding advanced features temporarily)
+    # Core features that farmers use daily
     menu_structure = [
-        ("🏠 DASHBOARD", ["🏠 Home"]),
-        ("👤 MY ACCOUNT", ["👤 My Profile", "📦 My Listings"]),
-        ("🛍️ MARKETPLACE", ["🛍️ Browse Listings", "➕ Create New Listing"]),
-        ("📊 PLANNING & INSIGHTS", ["📅 Farming Calendar", "🌤️ Weather Forecast", "💰 Market Prices", "🤖 AI Price Prediction"]),
-        ("🗺️ LOCATION SERVICES", ["🗺️ Nearby Places & Services"]),
-        ("🏛️ GOVERNMENT", ["🏛️ Government Schemes"]),
-        ("💰 FINANCE", ["💰 Farm Finance Management"]),
-        ("🤖 ASSISTANCE", ["🤖 AI Chatbot", "🔔 Notifications & Alerts"])
+        ("🏠 DAILY ESSENTIALS", [
+            "🏠 Home",
+            "💰 Today's Market Price",
+            "🤔 Should I Sell?",
+            "🌤️ Weather Forecast", 
+            "📅 My Calendar",
+            "📒 My Money Diary"
+        ]),
+        ("🛍️ MARKETPLACE", [
+            "🛍️ Browse Listings",
+            "➕ Post Listing",
+            "🎤 Voice Listing (NEW)"
+        ]),
+        ("👤 MY ACCOUNT", [
+            "👤 My Profile",
+            "📦 My Listings"
+        ]),
+        ("🤖 HELP & ADVICE", [
+            "🤖 AI Chatbot",
+            "🏛️ Government Schemes"
+        ])
+        # TEMPORARILY HIDDEN (advanced features):
+        # - AI Price Prediction (too complex for daily use)
+        # - Nearby Places (not critical)
+        # - Farm Finance (needs simplification first)
+        # - Notifications (redundant for now)
     ]
 else:
-    # Admin Menu - Same as farmer but with admin section added
+    # Admin Menu - Keep full access for administrators
     menu_structure = [
         ("🏠 DASHBOARD", ["🏠 Home"]),
         ("👨‍💼 ADMIN TOOLS", ["👥 Manage Farmers", "🗄️ Database Viewer", "💾 Cache Management"]),
-        ("👤 MY ACCOUNT", ["👤 My Profile", "📦 My Listings"]),
-        ("🛍️ MARKETPLACE", ["🛍️ Browse Listings", "➕ Create New Listing"]),
-        ("📊 PLANNING & INSIGHTS", ["📅 Farming Calendar", "🌤️ Weather Forecast", "💰 Market Prices", "🤖 AI Price Prediction"]),
-        ("🗺️ LOCATION SERVICES", ["🗺️ Nearby Places & Services"]),
-        ("🏛️ GOVERNMENT", ["🏛️ Schemes & Financial Tools"]),
-        ("💰 FINANCE", ["💰 Farm Finance Management"])
+        ("🏠 DAILY ESSENTIALS", [
+            "💰 Today's Market Price",
+            "🌤️ Weather Forecast", 
+            "📅 My Calendar"
+        ]),
+        ("🛍️ MARKETPLACE", [
+            "🛍️ Browse Listings",
+            "➕ Post Listing",
+            "🎤 Voice Listing (NEW)"
+        ]),
+        ("👤 MY ACCOUNT", [
+            "👤 My Profile",
+            "📦 My Listings"
+        ]),
+        ("🤖 HELP & ADVICE", [
+            "🤖 AI Chatbot",
+            "🏛️ Government Schemes"
+        ])
     ]
 
 # ----------------------------------------
@@ -502,7 +534,7 @@ elif menu == "📦 My Listings":
                 if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                     st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
-                st.session_state.selected_menu = "➕ Create New Listing"
+                st.session_state.selected_menu = "➕ Post Listing"
                 st.rerun()
     
     with tab2:
@@ -516,21 +548,37 @@ elif menu == "📦 My Listings":
                 if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
                     st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
-                st.session_state.selected_menu = "➕ Create New Listing"
+                st.session_state.selected_menu = "➕ Post Listing"
                 st.rerun()
 
-elif menu == "🛍️ Browse Listings":
-    st.header("🛍️ Browse Marketplace")
-    st.markdown("Explore tools and crops available in your area")
-    
-    tab1, tab2 = st.tabs(["🔧 Tools for Rent", "🌾 Crops for Sale"])
-    
-    with tab1:
-        render_tool_management(st.session_state.tools, st.session_state.get("farmer_name", None))
-    with tab2:
-        render_crop_management(st.session_state.crops, st.session_state.get("farmer_name", None))
+elif menu == "👷 Worker Board":
+    render_labor_board()
 
-elif menu == "➕ Create New Listing":
+elif menu == "🛍️ Browse Listings":
+    # Check if showing detail view
+    if st.session_state.get('show_listing_detail', False) and st.session_state.get('selected_listing'):
+        from components.listing_detail_page import render_listing_detail
+        
+        listing_info = st.session_state.selected_listing
+        render_listing_detail(listing_info['type'], listing_info['data'])
+        
+        # Reset detail view flag when done
+        if st.button("⬅️ Back to Listings", key="back_to_listings"):
+            st.session_state.show_listing_detail = False
+            st.session_state.selected_listing = None
+            st.rerun()
+    else:
+        st.header("🛍️ Browse Marketplace")
+        st.markdown("Explore tools and crops available in your area")
+        
+        tab1, tab2 = st.tabs(["🔧 Tools for Rent", "🌾 Crops for Sale"])
+        
+        with tab1:
+            render_tool_management(st.session_state.tools, st.session_state.get("farmer_name", None))
+        with tab2:
+            render_crop_management(st.session_state.crops, st.session_state.get("farmer_name", None))
+
+elif menu == "➕ Create New Listing" or menu == "➕ Post Listing":
     st.header("➕ Create a New Listing")
     st.markdown("List your tools or crops to connect with other farmers")
     
@@ -541,7 +589,11 @@ elif menu == "➕ Create New Listing":
     with tab_crop:
         render_crop_listing(st.session_state.get("farmer_name", ""))
 
-elif menu == "📅 Farming Calendar":
+elif menu == "🎤 Voice Listing (NEW)":
+    from components.voice_listing_creator import render_voice_listing_creator
+    render_voice_listing_creator(st.session_state.get("farmer_name", ""))
+
+elif menu == "📅 Farming Calendar" or menu == "📅 My Calendar":
     from components.calendar_integration import render_integrated_calendar
     
     if st.session_state.get("logged_in") and st.session_state.get("farmer_name"):
@@ -553,11 +605,11 @@ elif menu == "📅 Farming Calendar":
 elif menu == "🌤️ Weather Forecast":
     render_weather_component()
 
-elif menu == "💰 Market Prices":
+elif menu == "💰 Market Prices" or menu == "💰 Today's Market Price":
     render_market_price()
 
-elif menu == "🤖 AI Price Prediction":
-    render_price_prediction_page()
+elif menu == "🤖 AI Price Prediction" or menu == "🤔 Should I Sell?":
+    render_simple_price_advisor()
 
 elif menu == "🗺️ Nearby Places & Services":
     from components.location_services_page import render_location_services_page
@@ -578,8 +630,8 @@ elif menu == "🏛️ Government Schemes":
 elif menu == "🏛️ Schemes & Financial Tools":
     render_government_schemes_page()
 
-elif menu == "💰 Farm Finance Management":
-    render_farm_finance_page()
+elif menu == "💰 Farm Finance Management" or menu == "💰 My Money Diary":
+    render_simple_finance_page()
 
 elif menu == "🤖 AI Chatbot":
     from components.ai_chatbot_page import render_ai_chatbot_page

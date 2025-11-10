@@ -14,23 +14,29 @@ def init_db():
 
     # Create Tools Table
     c.execute("""CREATE TABLE IF NOT EXISTS tools (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         Farmer TEXT,
         Location TEXT,
         Tool TEXT,
         Rate REAL,
         Contact TEXT,
-        Notes TEXT
+        Notes TEXT,
+        Photo TEXT,
+        Created_Date TEXT DEFAULT CURRENT_TIMESTAMP
     )""")
 
     # Create Crops Table
     c.execute("""CREATE TABLE IF NOT EXISTS crops (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         Farmer TEXT,
         Location TEXT,
         Crop TEXT,
         Quantity TEXT,
         Expected_Price REAL,
         Contact TEXT,
-        Listing_Date TEXT
+        Listing_Date TEXT,
+        Photo TEXT,
+        Created_Date TEXT DEFAULT CURRENT_TIMESTAMP
     )""")
 
     # Create Farmers Table
@@ -43,7 +49,23 @@ def init_db():
         weather_location TEXT,
         latitude REAL,
         longitude REAL,
-        password TEXT DEFAULT 'farmer123'
+        password TEXT DEFAULT 'farmer123',
+        created_date TEXT DEFAULT CURRENT_TIMESTAMP,
+        total_ratings INTEGER DEFAULT 0,
+        avg_rating REAL DEFAULT 0.0
+    )""")
+    
+    # Create Ratings Table
+    c.execute("""CREATE TABLE IF NOT EXISTS ratings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        listing_type TEXT NOT NULL,
+        listing_id INTEGER NOT NULL,
+        seller_name TEXT NOT NULL,
+        rater_name TEXT NOT NULL,
+        stars INTEGER NOT NULL,
+        comment TEXT,
+        created_date TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (seller_name) REFERENCES farmers(name)
     )""")
     
     # Create Calendar Events Table
@@ -57,6 +79,37 @@ def init_db():
         weather_alert TEXT,
         created_at TEXT,
         FOREIGN KEY (farmer_name) REFERENCES farmers(name)
+    )""")
+    
+    # Create Labor/Worker Jobs Table
+    c.execute("""CREATE TABLE IF NOT EXISTS labor_jobs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        posted_by TEXT NOT NULL,
+        location TEXT NOT NULL,
+        work_type TEXT NOT NULL,
+        workers_needed INTEGER NOT NULL,
+        duration_days INTEGER NOT NULL,
+        wage_per_day REAL NOT NULL,
+        contact TEXT NOT NULL,
+        description TEXT,
+        start_date TEXT,
+        status TEXT DEFAULT 'Open',
+        created_date TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (posted_by) REFERENCES farmers(name)
+    )""")
+    
+    # Create Worker Availability Table
+    c.execute("""CREATE TABLE IF NOT EXISTS worker_availability (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        worker_name TEXT NOT NULL,
+        location TEXT NOT NULL,
+        skills TEXT NOT NULL,
+        wage_expected REAL NOT NULL,
+        contact TEXT NOT NULL,
+        experience_years INTEGER,
+        availability_status TEXT DEFAULT 'Available',
+        description TEXT,
+        created_date TEXT DEFAULT CURRENT_TIMESTAMP
     )""")
     
     # Create User Onboarding Progress Table
@@ -81,13 +134,25 @@ def add_data(table_name, data_tuple):
     c = conn.cursor()
     
     if table_name == "tools":
-        sql = "INSERT INTO tools (Farmer, Location, Tool, Rate, Contact, Notes) VALUES (?, ?, ?, ?, ?, ?)"
+        # Updated to include photo - backward compatible (photo can be None)
+        if len(data_tuple) == 7:
+            sql = "INSERT INTO tools (Farmer, Location, Tool, Rate, Contact, Notes, Photo) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        else:
+            sql = "INSERT INTO tools (Farmer, Location, Tool, Rate, Contact, Notes) VALUES (?, ?, ?, ?, ?, ?)"
     elif table_name == "crops":
-        sql = "INSERT INTO crops (Farmer, Location, Crop, Quantity, Expected_Price, Contact, Listing_Date) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        # Updated to include photo - backward compatible
+        if len(data_tuple) == 8:
+            sql = "INSERT INTO crops (Farmer, Location, Crop, Quantity, Expected_Price, Contact, Listing_Date, Photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        else:
+            sql = "INSERT INTO crops (Farmer, Location, Crop, Quantity, Expected_Price, Contact, Listing_Date) VALUES (?, ?, ?, ?, ?, ?, ?)"
     elif table_name == "farmers":
         sql = "INSERT OR REPLACE INTO farmers (name, location, farm_size, farm_unit, contact, weather_location, latitude, longitude, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
     elif table_name == "calendar_events":
         sql = "INSERT INTO calendar_events (farmer_name, event_date, event_time, event_title, event_description, weather_alert, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    elif table_name == "labor_jobs":
+        sql = "INSERT INTO labor_jobs (posted_by, location, work_type, workers_needed, duration_days, wage_per_day, contact, description, start_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    elif table_name == "worker_availability":
+        sql = "INSERT INTO worker_availability (worker_name, location, skills, wage_expected, contact, experience_years, availability_status, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         
     c.execute(sql, data_tuple)
     conn.commit()
@@ -242,11 +307,116 @@ def update_farmer_location(farmer_name, location, latitude, longitude):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("""
-        UPDATE farmers 
+        UPDATE farmers
         SET location = ?, weather_location = ?, latitude = ?, longitude = ?
         WHERE LOWER(name) = LOWER(?)
     """, (location, location, latitude, longitude, farmer_name))
     conn.commit()
     conn.close()
+
+
+# ========================================
+# RATING SYSTEM FUNCTIONS
+# ========================================
+
+def add_rating(listing_type, listing_id, seller_name, rater_name, stars, comment=""):
+    """Add a rating for a listing/seller."""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("""
+        INSERT INTO ratings (listing_type, listing_id, seller_name, rater_name, stars, comment)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (listing_type, listing_id, seller_name, rater_name, stars, comment))
+    conn.commit()
+    
+    # Update farmer's average rating
+    update_farmer_rating(seller_name)
+    conn.close()
+
+
+def get_ratings_for_seller(seller_name):
+    """Get all ratings for a specific seller."""
+    conn = sqlite3.connect(DB_NAME)
+    df = pd.read_sql_query("""
+        SELECT * FROM ratings 
+        WHERE LOWER(seller_name) = LOWER(?) 
+        ORDER BY created_date DESC
+    """, conn, params=(seller_name,))
+    conn.close()
+    return df
+
+
+def get_ratings_for_listing(listing_type, listing_id):
+    """Get all ratings for a specific listing."""
+    conn = sqlite3.connect(DB_NAME)
+    df = pd.read_sql_query("""
+        SELECT * FROM ratings 
+        WHERE listing_type = ? AND listing_id = ? 
+        ORDER BY created_date DESC
+    """, conn, params=(listing_type, listing_id))
+    conn.close()
+    return df
+
+
+def update_farmer_rating(farmer_name):
+    """Update farmer's average rating based on all their ratings."""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    
+    # Calculate average rating
+    c.execute("""
+        SELECT COUNT(*) as total, AVG(stars) as avg 
+        FROM ratings 
+        WHERE LOWER(seller_name) = LOWER(?)
+    """, (farmer_name,))
+    
+    result = c.fetchone()
+    total_ratings = result[0] if result else 0
+    avg_rating = result[1] if result else 0.0
+    
+    # Update farmer profile
+    c.execute("""
+        UPDATE farmers 
+        SET total_ratings = ?, avg_rating = ? 
+        WHERE LOWER(name) = LOWER(?)
+    """, (total_ratings, avg_rating, farmer_name))
+    
+    conn.commit()
+    conn.close()
+
+
+def get_farmer_rating(farmer_name):
+    """Get farmer's rating statistics."""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("""
+        SELECT total_ratings, avg_rating 
+        FROM farmers 
+        WHERE LOWER(name) = LOWER(?)
+    """, (farmer_name,))
+    
+    result = c.fetchone()
+    conn.close()
+    
+    if result:
+        return {
+            'total_ratings': result[0] if result[0] else 0,
+            'avg_rating': result[1] if result[1] else 0.0
+        }
+    return {'total_ratings': 0, 'avg_rating': 0.0}
+
+
+def has_user_rated_listing(rater_name, listing_type, listing_id):
+    """Check if user has already rated a listing."""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("""
+        SELECT COUNT(*) FROM ratings 
+        WHERE LOWER(rater_name) = LOWER(?) 
+        AND listing_type = ? AND listing_id = ?
+    """, (rater_name, listing_type, listing_id))
+    count = c.fetchone()[0]
+    conn.close()
+    return count > 0
 
 

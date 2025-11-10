@@ -14,24 +14,40 @@ class AIService:
         self.model_name = 'gemini-2.5-flash'
     
     def generate_farming_plan(self, user_prompt, language):
-        """Generate a farming plan using AI AI"""
-        AI_prompt = f"""
-        As a farming expert, create a concise, practical plan for the following task. 
-        Provide the output in a single, valid JSON object.
-        The plan should be in {language} language.
-        
-        The JSON object must have two keys: 'heading' and 'plan'.
-        - 'heading': A short, clear title for the task (less than 5 words)
-        - 'plan': A list of steps, where each step has: 'step_number', 'title', and 'description'
-        
-        Make the plan practical, specific, and easy to follow for farmers.
-        Include timing, quantities, and important warnings when relevant.
-        
-        Example output format:
-        {json.dumps(PROMPT_EXAMPLES[language], indent=4, ensure_ascii=False)}
-        
-        Farmer's Task: {user_prompt}
-        """
+        """Generate a farming plan using Gemini AI"""
+        AI_prompt = f"""Generate a step-by-step farming task plan in {language} language.
+
+FARMER REQUEST:
+{user_prompt}
+
+OUTPUT REQUIREMENTS:
+Return a single valid JSON object with this exact structure:
+
+{{
+  "heading": "Short task title (max 5 words)",
+  "plan": [
+    {{
+      "step_number": 1,
+      "title": "Step title",
+      "description": "Detailed instructions with timing, quantities, tools needed"
+    }}
+  ]
+}}
+
+PLAN QUALITY STANDARDS:
+1. Practical: Include specific timings (e.g., "7 AM", "after 3 days"), quantities (e.g., "2 kg seeds per acre"), tools
+2. Safety: Add warnings for pesticides, heavy equipment, weather precautions
+3. Sequential: Each step builds on previous ones logically
+4. Farmer-friendly: Use simple {language} language, avoid technical jargon
+5. Regional: Consider Indian agricultural practices and seasons
+6. Complete: Cover preparation, execution, and follow-up
+
+EXAMPLE OUTPUT IN {language}:
+{json.dumps(PROMPT_EXAMPLES[language], indent=2, ensure_ascii=False)}
+
+Generate plan for: {user_prompt}
+
+Output only the JSON object, no additional text."""
         
         try:
             response = self.client.models.generate_content(

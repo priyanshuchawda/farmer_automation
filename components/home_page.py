@@ -9,42 +9,66 @@ from components.translation_utils import t
 
 def render_home_page():
     """
-    Personalized dashboard for logged-in farmers
-    Shows quick actions, today's tasks, weather alerts, and recent activity
+    SIMPLIFIED dashboard for farmers - Clean, Big buttons, Easy to understand
     """
-    # Mobile responsive CSS for home page
+    # Enhanced CSS for farmer-friendly design
     st.markdown("""
     <style>
-    /* Home page mobile responsiveness */
-    @media (max-width: 768px) {
-        /* Quick action buttons - stack on mobile */
-        [data-testid="column"] {
-            min-width: 100% !important;
-            margin-bottom: 10px;
-        }
-        
-        /* Smaller captions */
-        .stCaption {
-            font-size: 0.75rem !important;
-        }
-        
-        /* Header adjustments */
-        h2 {
-            font-size: 1.5rem !important;
-        }
-        
-        h3 {
-            font-size: 1.2rem !important;
-        }
+    /* Big Button Cards */
+    .big-action-card {
+        background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        border: 3px solid #4CAF50;
+        margin: 10px 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
     
-    @media (max-width: 480px) {
-        h2 {
-            font-size: 1.3rem !important;
-        }
+    .big-action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        border-color: #2E8B57;
+    }
+    
+    .big-action-emoji {
+        font-size: 60px;
+        margin-bottom: 10px;
+    }
+    
+    .big-action-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2E8B57;
+        margin: 10px 0;
+    }
+    
+    .big-action-desc {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    /* Info Cards */
+    .info-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 5px solid #2E8B57;
+        margin: 15px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .big-action-emoji { font-size: 50px; }
+        .big-action-title { font-size: 20px; }
+        .big-action-desc { font-size: 12px; }
         
-        h3 {
-            font-size: 1.1rem !important;
+        [data-testid="column"] {
+            min-width: 100% !important;
+            margin-bottom: 15px;
         }
     }
     </style>
@@ -52,9 +76,8 @@ def render_home_page():
     
     farmer_name = st.session_state.get("farmer_name", "Farmer")
     farmer_profile = st.session_state.get("farmer_profile", {})
-    user_role = st.session_state.get("role", "Farmer")
     
-    # Personalized Welcome Header
+    # Personalized Welcome Header - Simpler
     current_hour = datetime.now().hour
     if current_hour < 12:
         greeting = t("Good Morning")
@@ -66,160 +89,171 @@ def render_home_page():
         greeting = t("Good Evening")
         emoji = "🌙"
     
-    # Greeting with listen button
-    col1, col2 = st.columns([5, 1])
-    with col1:
-        st.markdown(f"## {emoji} {greeting}, {farmer_name}!")
-    with col2:
-        from components.text_to_speech_widget import speak_button
-        speak_button(f"{greeting} {farmer_name}", "🔊", key_suffix="greeting")
-    
-    # Location and basic info
+    # Simple welcome banner
+    from components.translation_utils import translate_location, convert_numbers_to_local
     location = farmer_profile.get('location', 'Not set')
-    farm_size = farmer_profile.get('farm_size', 'N/A')
-    farm_unit = farmer_profile.get('farm_unit', '')
+    localized_location = translate_location(location)
     
-    col1, col2, col3 = st.columns([2, 2, 2])
-    with col1:
-        from components.translation_utils import translate_location
-        localized_location = translate_location(location)
-        st.markdown(f"📍 **{t('Location')}:** {localized_location}")
-    with col2:
-        from components.translation_utils import convert_numbers_to_local
-        translated_unit = t(farm_unit) if farm_unit else farm_unit
-        localized_farm_size = convert_numbers_to_local(str(farm_size))
-        st.markdown(f"🚜 **{t('Farm Size')}:** {localized_farm_size} {translated_unit}")
-    with col3:
-        from components.translation_utils import format_date_localized
-        localized_date = format_date_localized(datetime.now())
-        localized_date = convert_numbers_to_local(localized_date)
-        st.markdown(f"📅 **{t('Today')}:** {localized_date}")
+    st.markdown(f"""
+    <div style='background: linear-gradient(135deg, #4CAF50 0%, #2E8B57 100%); 
+                padding: 25px; border-radius: 15px; color: white; text-align: center; 
+                margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);'>
+        <h2 style='color: white; margin: 0;'>{emoji} {greeting}, {farmer_name}!</h2>
+        <p style='margin: 10px 0 0 0; font-size: 16px; opacity: 0.95;'>
+            📍 {localized_location} • {datetime.now().strftime('%d %B %Y')}
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # BIG ACTION BUTTONS - What farmers need DAILY
+    st.markdown(f"## 🎯 {t('What do you need today?')}")
+    
+    # URGENT FEATURE HIGHLIGHT - Worker Board
+    st.markdown("""
+    <div style='background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); 
+                padding: 20px; border-radius: 12px; margin: 15px 0; 
+                border: 3px solid #E65100; text-align: center;'>
+        <h3 style='color: white; margin: 0;'>🔥 NEW! MOST NEEDED FEATURE 🔥</h3>
+        <p style='color: white; margin: 10px 0 5px 0; font-size: 18px; font-weight: bold;'>
+            👷 FIND WORKERS / POST JOBS
+        </p>
+        <p style='color: white; margin: 0; font-size: 14px;'>
+            Harvest time? Need workers? Workers need jobs? Click below! ⬇️
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Worker Board Button - MOST PROMINENT
+    if st.button("👷 WORKER BOARD - FIND WORKERS NOW!", key="worker_board_btn", use_container_width=True, type="primary"):
+        st.session_state.nav_history.append(st.session_state.selected_menu)
+        st.session_state.nav_forward = []
+        st.session_state.selected_menu = "👷 Worker Board"
+        st.rerun()
     
     st.markdown("---")
-    
-    # Quick Actions Section
-    st.markdown(f"### 🚀 {t('Quick Actions')}")
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button(f"📝 {t('List Tool')}", width="stretch", type="primary"):
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
-            st.session_state.selected_menu = "➕ Create New Listing"
-            st.rerun()
-        st.caption(t("Add tools for rent"))
-    
-    with col2:
-        if st.button(f"🌾 {t('List Crop')}", width="stretch", type="primary"):
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
-            st.session_state.selected_menu = "➕ Create New Listing"
-            st.rerun()
-        st.caption(t("Post crops for sale"))
-    
-    with col3:
-        if st.button(f"📅 {t('Plan Day')}", width="stretch", type="primary"):
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
-            st.session_state.selected_menu = "📅 Farming Calendar"
-            st.rerun()
-        st.caption(t("Schedule activities"))
-    
-    with col4:
-        if st.button(f"🛍️ {t('Browse Market')}", width="stretch", type="primary"):
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
-            st.session_state.selected_menu = "🛍️ Browse Listings"
-            st.rerun()
-        st.caption(t("View all listings"))
-    
     st.markdown("")
     
-    # Voice input section - Disabled due to mic_recorder compatibility issues
-    # from components.voice_button import render_voice_quick_input
-    # render_voice_quick_input()
+    # Row 1: Most critical daily actions
+    col1, col2 = st.columns(2)
     
-    st.divider()
+    with col1:
+        if st.button("💰", key="price_btn", use_container_width=True):
+            st.session_state.nav_history.append(st.session_state.selected_menu)
+            st.session_state.nav_forward = []
+            st.session_state.selected_menu = "💰 Today's Market Price"
+            st.rerun()
+        st.markdown(f"<div class='big-action-title'>{t('Check Today Price')}</div>", unsafe_allow_html=True)
+        st.caption(t("See mandi prices now"))
     
-    # Two column layout for tasks and weather
-    col_left, col_right = st.columns([3, 2])
-    
-    with col_left:
-        # Today's Tasks Section
-        st.markdown(f"### 📋 {t('Today\'s Tasks')}")
-        
-        try:
-            today = datetime.now().date()
-            events = get_events_for_date(farmer_name, today)
-            
-            if events and len(events) > 0:
-                for event in events[:5]:  # Show up to 5 tasks
-                    event_time = event.get('time', 'All day')
-                    event_title = event.get('title', 'Untitled task')
-                    event_type = event.get('type', 'general')
-                    
-                    # Choose emoji based on event type
-                    if 'irrigation' in event_title.lower():
-                        icon = "💧"
-                    elif 'fertilizer' in event_title.lower() or 'fertiliz' in event_title.lower():
-                        icon = "🌱"
-                    elif 'harvest' in event_title.lower():
-                        icon = "🌾"
-                    elif 'plant' in event_title.lower():
-                        icon = "🌿"
-                    else:
-                        icon = "📌"
-                    
-                    st.markdown(f"{icon} **{event_time}** - {event_title}")
-            else:
-                st.info(f"📅 {t('No tasks scheduled for today.')}\n\n{t('Visit the Calendar to plan your farming activities!')}")
-                if st.button(f"📅 {t('Open Calendar')}", key="add_task_home", width="stretch", type="primary"):
-                    # Add to navigation history
-                    if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                        st.session_state.nav_history.append(st.session_state.selected_menu)
-                    st.session_state.nav_forward = []
-                    st.session_state.selected_menu = "📅 Farming Calendar"
-                    st.rerun()
-        except Exception as e:
-            st.info(f"📅 {t('No tasks scheduled for today.')}\n\n{t('Visit the Calendar to plan your farming activities!')}")
-            if st.button(f"📅 {t('Open Calendar')}", key="add_task_error", width="stretch", type="primary"):
-                # Add to navigation history
-                if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                    st.session_state.nav_history.append(st.session_state.selected_menu)
-                st.session_state.nav_forward = []
-                st.session_state.selected_menu = "📅 Farming Calendar"
-                st.rerun()
-    
-    with col_right:
-        # Weather Section
-        st.markdown(f"### 🌤️ {t('Weather Update')}")
-        
-        weather_location = farmer_profile.get('weather_location', location)
-        localized_weather_location = translate_location(weather_location)
-        
-        st.info(f"📍 {localized_weather_location}\n\n{t('Visit Weather section for detailed forecast')}")
-        
-        if st.button(f"🌤️ {t('View Weather Forecast')}", key="weather_home", width="stretch", type="primary"):
-            # Add to navigation history
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
+    with col2:
+        if st.button("🌤️", key="weather_btn", use_container_width=True):
+            st.session_state.nav_history.append(st.session_state.selected_menu)
             st.session_state.nav_forward = []
             st.session_state.selected_menu = "🌤️ Weather Forecast"
             st.rerun()
+        st.markdown(f"<div class='big-action-title'>{t('Weather Forecast')}</div>", unsafe_allow_html=True)
+        st.caption(t("Plan your farm work"))
     
-    st.markdown("---")
+    st.markdown("")
     
-    # My Activity Section
-    st.markdown(f"### 📊 {t('My Activity')}")
+    # Row 2: Secondary actions
+    col1, col2 = st.columns(2)
     
-    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("🛍️", key="browse_btn", use_container_width=True):
+            st.session_state.nav_history.append(st.session_state.selected_menu)
+            st.session_state.nav_forward = []
+            st.session_state.selected_menu = "🛍️ Browse Listings"
+            st.rerun()
+        st.markdown(f"<div class='big-action-title'>{t('Browse Market')}</div>", unsafe_allow_html=True)
+        st.caption(t("See tools and crops"))
     
-    # Count user's listings
+    with col2:
+        if st.button("➕", key="post_btn", use_container_width=True):
+            st.session_state.nav_history.append(st.session_state.selected_menu)
+            st.session_state.nav_forward = []
+            st.session_state.selected_menu = "➕ Post Listing"
+            st.rerun()
+        st.markdown(f"<div class='big-action-title'>{t('Sell/Rent')}</div>", unsafe_allow_html=True)
+        st.caption(t("List your crop or tool"))
+    
+    st.markdown("")
+    
+    # Row 3: Money tracker and Help
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("📒", key="money_btn_home", use_container_width=True):
+            st.session_state.nav_history.append(st.session_state.selected_menu)
+            st.session_state.nav_forward = []
+            st.session_state.selected_menu = "💰 My Money Diary"
+            st.rerun()
+        st.markdown(f"<div class='big-action-title'>{t('My Money')}</div>", unsafe_allow_html=True)
+        st.caption(t("Track income/expense"))
+    
+    with col2:
+        if st.button("🤖", key="ai_btn_home", use_container_width=True):
+            st.session_state.nav_history.append(st.session_state.selected_menu)
+            st.session_state.nav_forward = []
+            st.session_state.selected_menu = "🤖 AI Chatbot"
+            st.rerun()
+        st.markdown(f"<div class='big-action-title'>{t('Ask AI Advisor')}</div>", unsafe_allow_html=True)
+        st.caption(t("Find benefits for you"))
+    
+    st.divider()
+    
+    # Today's Tasks - Always visible, NO dropdown/expander
+    st.markdown(f"## 📋 {t('Today Tasks & Reminders')}")
+    
+    try:
+        today = datetime.now().date()
+        events = get_events_for_date(farmer_name, today)
+        
+        if events and len(events) > 0:
+            for event in events[:3]:  # Show only 3 tasks
+                event_time = event.get('time', 'All day')
+                event_title = event.get('title', 'Untitled task')
+                
+                # Choose emoji based on event type
+                if 'irrigation' in event_title.lower() or 'water' in event_title.lower():
+                    icon = "💧"
+                elif 'fertilizer' in event_title.lower():
+                    icon = "🌱"
+                elif 'harvest' in event_title.lower():
+                    icon = "🌾"
+                elif 'plant' in event_title.lower():
+                    icon = "🌿"
+                else:
+                    icon = "📌"
+                
+                st.markdown(f"{icon} **{event_time}** - {event_title}")
+            
+            st.markdown("")
+            if st.button(f"📅 {t('View All Tasks')}", key="view_all_tasks", use_container_width=True):
+                st.session_state.nav_history.append(st.session_state.selected_menu)
+                st.session_state.nav_forward = []
+                st.session_state.selected_menu = "📅 My Calendar"
+                st.rerun()
+        else:
+            st.info(f"✅ {t('No tasks scheduled for today. You are all set!')}")
+            st.markdown("")
+            if st.button(f"📅 {t('Visit Calendar to plan your day')}", key="add_task_home", use_container_width=True, type="primary"):
+                st.session_state.nav_history.append(st.session_state.selected_menu)
+                st.session_state.nav_forward = []
+                st.session_state.selected_menu = "📅 My Calendar"
+                st.rerun()
+    except Exception as e:
+        st.info(f"📅 {t('Visit Calendar to plan your day')}")
+        st.markdown("")
+        if st.button(f"📅 {t('Open Calendar')}", key="calendar_error", use_container_width=True, type="primary"):
+            st.session_state.nav_history.append(st.session_state.selected_menu)
+            st.session_state.nav_forward = []
+            st.session_state.selected_menu = "📅 My Calendar"
+            st.rerun()
+    
+    st.divider()
+    
+    # My Listings Summary - Simple metrics
     tools_df = st.session_state.get('tools', pd.DataFrame())
     crops_df = st.session_state.get('crops', pd.DataFrame())
     
@@ -233,69 +267,33 @@ def render_home_page():
     else:
         my_crops = 0
     
-    with col1:
-        st.metric(f"🔧 {t('My Tools Listed')}", my_tools)
-        if st.button(t("View My Tools"), key="my_tools_btn"):
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
+    total_listings = my_tools + my_crops
+    
+    if total_listings > 0:
+        st.markdown(f"""
+        <div class='info-card'>
+            <h3 style='margin: 0 0 10px 0; color: #2E8B57;'>📦 {t('My Listings')}</h3>
+            <p style='font-size: 18px; margin: 5px 0;'>
+                🔧 {my_tools} {t('Tools')} • 🌾 {my_crops} {t('Crops')} • 
+                <strong>Total: {total_listings}</strong>
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if st.button(f"👁️ {t('View My Listings')}", key="view_listings_btn", use_container_width=True):
+            st.session_state.nav_history.append(st.session_state.selected_menu)
             st.session_state.nav_forward = []
             st.session_state.selected_menu = "📦 My Listings"
             st.rerun()
-    
-    with col2:
-        st.metric(f"🌾 {t('My Crops Listed')}", my_crops)
-        if st.button(t("View My Crops"), key="my_crops_btn"):
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
+    else:
+        st.info(f"📝 {t('You have not listed anything yet. Start selling or renting now!')}")
+        if st.button(f"➕ {t('Create First Listing')}", key="first_listing_btn", use_container_width=True, type="primary"):
+            st.session_state.nav_history.append(st.session_state.selected_menu)
             st.session_state.nav_forward = []
-            st.session_state.selected_menu = "📦 My Listings"
-            st.rerun()
-    
-    with col3:
-        total_listings = my_tools + my_crops
-        st.metric(f"📦 {t('Total Listings')}", total_listings)
-        if st.button(t("Create New Listing"), key="new_listing_btn"):
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
-            st.session_state.selected_menu = "➕ Create New Listing"
+            st.session_state.selected_menu = "➕ Post Listing"
             st.rerun()
     
     st.markdown("")
-    
-    # Help Section
-    st.markdown(f"### 💡 {t('Need Help?')}")
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.info(f"**📖 {t('How to Use')}**\n\n{t('New to the platform? Check out our guide!')}")
-        if st.button(f"📖 {t('View Profile')}", key="guide_btn", width="stretch"):
-            # Add to navigation history
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
-            st.session_state.selected_menu = "👤 My Profile"
-            st.rerun()
-    
-    with col2:
-        st.success(f"**🤖 {t('AI Assistant')}**\n\n{t('Get farming tips from our AI calendar!')}")
-        if st.button(f"🤖 {t('Open AI Chat')}", key="ai_btn", width="stretch"):
-            # Add to navigation history
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
-            st.session_state.selected_menu = "🤖 AI Chatbot"
-            st.rerun()
-    
-    with col3:
-        st.warning(f"**💰 {t('Market Prices')}**\n\n{t('Check current rates before selling!')}")
-        if st.button(f"💰 {t('View Prices')}", key="prices_btn", width="stretch"):
-            # Add to navigation history
-            if not st.session_state.nav_history or st.session_state.nav_history[-1] != st.session_state.selected_menu:
-                st.session_state.nav_history.append(st.session_state.selected_menu)
-            st.session_state.nav_forward = []
-            st.session_state.selected_menu = "💰 Market Prices"
-            st.rerun()
 
 
 def render_db_check():

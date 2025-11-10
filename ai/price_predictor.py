@@ -165,21 +165,55 @@ class PricePredictor:
         print(f"   🌐 Fetching fresh market data for {crop_name} in {location}...")
         
         try:
-            search_prompt = f"""Find the current market information for {crop_name} in {location}, India:
+            # System instruction for market search
+            search_system = """You are a market research specialist for Indian agricultural commodities.
+Your expertise: Real-time price data, mandi rates, government policies, and supply chain analysis.
+Always provide factual data with specific numbers, dates, and verified sources."""
+            
+            # Structured search prompt with clear requirements
+            search_prompt = f"""Find current market intelligence for {crop_name} in {location}, India.
 
-1. What is the current wholesale/mandi price of {crop_name} in rupees per quintal?
-2. What recent news or developments affect {crop_name} farming or prices in this region?
-3. Are there any supply or demand issues currently affecting {crop_name}?
-4. Any government policies, MSP announcements, or schemes for {crop_name}?
+Today: {datetime.now().strftime('%A, %d %B %Y')}
 
-Provide specific prices with sources."""
+SEARCH REQUIREMENTS (in order of priority):
+
+1. CURRENT MARKET PRICE
+   Priority: Government mandi/APMC rates > Wholesale > Retail
+   Required: Price in ₹/quintal, date of price, market name
+   
+2. PRICE TREND (Last 7 days)
+   Required: Direction (rising/falling/stable), percentage change, key drivers
+   
+3. SUPPLY-DEMAND STATUS
+   Required: Current supply level, demand indicators, any shortages/surplus
+   Indicators: Harvest status, arrivals data, storage levels
+   
+4. GOVERNMENT POLICY
+   Required: MSP rate (if applicable), procurement updates
+   Optional: New schemes, export restrictions, import changes
+
+5. MARKET DISRUPTIONS
+   Check for: Transport issues, weather impacts, festival demand
+
+TRUSTED SOURCES (search these first):
+- agmarknet.gov.in (official mandi rates)
+- agricoop.nic.in (government agriculture data)
+- commodity.com (international prices)
+- State agriculture department websites
+
+RESPONSE FORMAT:
+Provide structured data with specific numbers.
+Cite source URLs for verification.
+Date all information clearly."""
 
             # Use proper grounding with Google Search
             response = self.client.models.generate_content(
                 model=self.model_with_search,
                 contents=search_prompt,
                 config=types.GenerateContentConfig(
-                    tools=[types.Tool(google_search=types.GoogleSearch())]
+                    system_instruction=search_system,
+                    tools=[types.Tool(google_search=types.GoogleSearch())],
+                    temperature=0.1  # Very low for factual retrieval
                 )
             )
             
@@ -335,51 +369,116 @@ ONLINE MARKET INTELLIGENCE (Real-time Google Search):
 - Market Conditions: {online_data.get('market_conditions', 'N/A')}
 - Policy Updates: {online_data.get('policy_updates', 'N/A')}{sources_info}"""
         
-        prompt = f"""You are an expert agricultural market analyst with access to real-time data.
+        # System instruction - role and expertise
+        system_instruction = """You are an agricultural economist specializing in Indian commodity markets.
+Your expertise includes:
+- Price forecasting using supply-demand fundamentals
+- Weather impact on crop yields and quality
+- Seasonal price patterns for Indian crops
+- Government policy effects (MSP, procurement, exports)
+- Storage economics and perishability factors
 
-TASK: Predict {crop_name} prices for the next {days_ahead} days based on comprehensive data analysis.
+Your predictions must be:
+- Data-driven and realistic (avoid extreme predictions)
+- Based on multiple factors, not just one indicator
+- Actionable for farmers with specific timing advice
+- Honest about confidence levels and risks"""
 
-CROP DETAILS:
-- Crop: {crop_name}
-- User's Reference Price: ₹{current_price} per quintal
-- Location: {location}
-- Analysis Date: {datetime.now().strftime('%Y-%m-%d')}
+        # Task prompt - structured analysis with methodology
+        task_prompt = f"""Forecast {crop_name} prices for the next {days_ahead} days using multi-factor analysis.
+
+INPUT DATA:
+Crop: {crop_name}
+Current Baseline Price: ₹{current_price} per quintal
+Location: {location}, India
+Analysis Date: {datetime.now().strftime('%A, %d %B %Y')}
+Forecast Period: Next {days_ahead} days
 
 {weather_context}
 
 {market_intelligence}
 
-ANALYSIS INSTRUCTIONS:
-1. Use the ACTUAL CURRENT MARKET PRICE from online data if available, not the user's reference price
-2. Factor in current weather conditions and forecast for crop health and harvest
-3. Consider recent news and market conditions
-4. Analyze how weather (rain, temperature, humidity) will affect supply
-5. Account for seasonal factors, demand patterns, and supply chain
-6. Consider policy updates and their market impact
+ANALYSIS METHODOLOGY:
+Evaluate each factor and explain its price impact:
 
-PROVIDE PREDICTION IN THIS EXACT FORMAT:
-DAY_7_PRICE: [predicted price in rupees]
-DAY_15_PRICE: [predicted price in rupees]
-DAY_30_PRICE: [predicted price in rupees]
+Factor 1: VERIFIED MARKET PRICE BASELINE
+- Compare online market price vs reference price vs MSP
+- Determine starting point for predictions
+- Impact: Sets baseline, MSP acts as floor price
+
+Factor 2: WEATHER CONDITIONS (5-day forecast impact)
+- Rain → transport disruption → temporary price spike
+- Good weather during harvest → supply surge → price drop
+- Extreme heat/cold → storage challenges → spoilage → quality drop
+- Quantify expected impact: e.g., "20% rain probability = 5-8% price increase"
+
+Factor 3: SEASONAL SUPPLY PATTERNS
+- Current month ({datetime.now().strftime('%B')}) typical behavior for {crop_name}
+- Is harvest season starting? (supply +30-50% → prices -15-25%)
+- Is this off-season? (supply -20-40% → prices +20-35%)
+- Historical pattern strength (strong/moderate/weak)
+
+Factor 4: DEMAND & MARKET CONDITIONS
+- Government procurement status (active procurement → stable/higher prices)
+- Festival/wedding season demand (Diwali, harvest festivals)
+- Export opportunities or restrictions
+- Supply chain status (normal/disrupted)
+
+Factor 5: PERISHABILITY & STORAGE ECONOMICS
+- Storage duration: {crop_name} specific (e.g., tomato: 3-5 days, wheat: 6+ months)
+- Storage cost vs price appreciation rate
+- Quality degradation rate (daily % loss)
+- Farmer's urgency vs market conditions
+
+REQUIRED OUTPUT FORMAT (use exact structure):
+
+DAY_7_PRICE: [₹ amount]
+DAY_15_PRICE: [₹ amount]
+DAY_30_PRICE: [₹ amount]
 TREND: [UPWARD/DOWNWARD/STABLE]
 CONFIDENCE: [HIGH/MEDIUM/LOW]
-PEAK_DAY: [day number 1-30 when price will be highest]
-LOWEST_DAY: [day number 1-30 when price will be lowest]
-KEY_FACTORS:
-- [Factor 1 based on weather/news/market data]
-- [Factor 2]
-- [Factor 3]
-- [Factor 4]
-- [Factor 5]
-RECOMMENDATION: [Specific actionable advice for farmer based on all data]
+PEAK_DAY: [1-30]
+LOWEST_DAY: [1-30]
 
-Be realistic and data-driven. If online price differs from user's reference, explain why in recommendation."""
+KEY_FACTORS:
+- Factor 1: [Weather] - [Specific data and ₹ impact]
+- Factor 2: [Supply/Season] - [Specific data and % change]
+- Factor 3: [Demand/Policy] - [Specific evidence and direction]
+- Factor 4: [Storage/Quality] - [Timeline and urgency level]
+- Factor 5: [Risk/Uncertainty] - [Main risk to forecast]
+
+RECOMMENDATION: [2-3 sentences: specific action (sell X% on day Y), reasoning with data, risk warning]
+
+EXAMPLE (Tomato in harvest season):
+DAY_7_PRICE: 2200
+DAY_15_PRICE: 1900
+DAY_30_PRICE: 1600
+TREND: DOWNWARD
+CONFIDENCE: HIGH
+PEAK_DAY: 3
+LOWEST_DAY: 28
+
+KEY_FACTORS:
+- Factor 1: Rain on Days 2-4 (70% probability) will disrupt mandi transport, creating temporary 12-15% price spike to ₹2300-2400
+- Factor 2: Harvest season peak starting Day 8 - historical data shows 35% supply increase in Week 2-3 drops prices 20-25% 
+- Factor 3: Online market price ₹2100 already 18% below last month, confirming oversupply; no government MSP support for tomatoes
+- Factor 4: Tomatoes perishable - 15% quality loss per 3 days without cold storage; forces sales within 5-7 days
+- Factor 5: Main risk is weather - unexpected rain extension beyond Day 5 could keep prices elevated longer
+
+RECOMMENDATION: Sell 70% immediately on Days 2-4 during rain-induced price spike (₹2300-2400 range) to capture 10-15% premium. Store remaining 30% only with refrigeration, sell by Day 7. Do not wait beyond Day 10 - harvest flood will push prices below ₹2000 with high certainty.
+
+Now generate prediction for {crop_name}:"""
 
         try:
             print("🤖 AI is analyzing all data and generating predictions...")
             response = self.client.models.generate_content(
                 model=self.model,
-                contents=prompt
+                contents=task_prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_instruction,
+                    temperature=0.2,  # Low for consistent, reliable predictions
+                    max_output_tokens=800
+                )
             )
             prediction = self._parse_prediction_response(response.text, current_price)
             
@@ -513,36 +612,64 @@ Be realistic and data-driven. If online price differs from user's reference, exp
         if harvest_date:
             harvest_info = f"Expected harvest date: {harvest_date}"
         
-        prompt = f"""You are an agricultural marketing expert specializing in Indian markets.
+        prompt = f"""You are an agricultural market timing expert for Indian farmers.
+Your goal: Maximize farmer profit by identifying the optimal selling window.
 
-TASK: Advise farmer on BEST TIME TO SELL their crop.
-
-CROP DETAILS:
-- Crop: {crop_name}
-- Current Market Price: ₹{current_price} per quintal
+FARMER SITUATION:
+Crop: {crop_name}
+Current Market Rate: ₹{current_price} per quintal
 {harvest_info}
-- Current Date: {datetime.now().strftime('%Y-%m-%d')}
+Today: {datetime.now().strftime('%A, %d %B %Y')}
 
-ANALYSIS REQUIRED:
-Consider these factors:
-1. Seasonal demand peaks (festivals, wedding season, holidays)
-2. Historical price patterns for {crop_name}
-3. Storage costs vs price appreciation
-4. Market surplus/shortage periods
-5. Weather patterns affecting supply
+REQUIRED ANALYSIS:
+Evaluate 5 key timing factors:
 
-PROVIDE ADVICE IN THIS EXACT FORMAT:
-BEST_MONTH: [month name]
-BEST_REASON: [2-3 sentences why]
-SELL_NOW_SCORE: [0-10 score]
-WAIT_SCORE: [0-10 score]
-STORAGE_ADVICE: [practical storage tips]
-EXPECTED_PEAK_PRICE: [estimated price]
-RISK_FACTORS: [3 bullet points]
-ACTION: [SELL_NOW/WAIT_FOR_BETTER_PRICE/SELL_PARTIALLY]
-TIMELINE: [specific timeframe recommendation]
+1. SEASONAL DEMAND CURVE
+   - When does {crop_name} demand peak? (festivals, weddings, specific months)
+   - Historical price premium during peak demand months
+   - How far are we from next demand peak?
 
-Be practical and consider farmer's perspective (storage costs, urgent cash needs, perishability)."""
+2. SUPPLY CYCLE POSITION
+   - Is harvest season ongoing, ending, or months away?
+   - Expected supply level in coming weeks (increasing/stable/decreasing)
+   - Regional harvest calendar for {crop_name}
+
+3. STORAGE ECONOMICS
+   - {crop_name} storage duration capability (perishable vs storable)
+   - Monthly storage cost vs expected price appreciation
+   - Break-even point: when storage costs exceed price gains
+
+4. WEATHER & QUALITY RISK
+   - Monsoon timing and crop quality degradation
+   - Temperature effects on storage
+   - Pest/spoilage risk over time
+
+5. FARMER FINANCIAL URGENCY
+   - Typical cash flow needs (loan EMIs, family expenses, next crop inputs)
+   - Trade-off: Immediate cash vs waiting for better price
+   - Partial sale strategy to balance both needs
+
+RESPONSE FORMAT (use exact structure):
+
+BEST_MONTH: [specific month name]
+BEST_REASON: [2-3 clear sentences with specific data/percentages why this month is optimal]
+
+SELL_NOW_SCORE: [0-10 numeric score]
+WAIT_SCORE: [0-10 numeric score]
+
+STORAGE_ADVICE: [Specific practical steps: temperature, humidity, pest control, duration limit]
+EXPECTED_PEAK_PRICE: ₹[specific amount] per quintal
+
+RISK_FACTORS:
+- Risk 1: [Specific risk with probability/impact]
+- Risk 2: [Specific risk with timing]
+- Risk 3: [Specific risk with mitigation]
+
+ACTION: [Choose one: SELL_NOW / WAIT_FOR_BETTER_PRICE / SELL_PARTIALLY]
+TIMELINE: [Precise recommendation: "Sell 60% now, hold 40% until [specific date/event]" OR "Wait until [specific month/week] for [specific reason]"]
+
+Consider farmer's real constraints: storage costs, cash urgency, perishability.
+Be specific with dates, percentages, and monetary estimates."""
 
         try:
             response = self.client.models.generate_content(
@@ -645,21 +772,34 @@ Be practical and consider farmer's perspective (storage costs, urgent cash needs
         profit_percentage = ((actual_price - expected_price) / expected_price) * 100 if expected_price > 0 else 0
         
         # Get AI analysis for context
-        prompt = f"""You are a farm business analyst.
+        prompt = f"""Analyze this farmer's crop sale transaction and provide actionable insights.
 
-TRANSACTION ANALYSIS:
-- Crop: {crop_name}
-- Expected Price: ₹{expected_price} per {unit}
-- Actual Price: ₹{actual_price} per {unit}
-- Quantity: {quantity} {unit}
-- Profit/Loss: ₹{profit_loss}
-- Percentage: {profit_percentage:.2f}%
+TRANSACTION DETAILS:
+Crop Sold: {crop_name}
+Expected Selling Price: ₹{expected_price} per {unit}
+Actual Selling Price: ₹{actual_price} per {unit}
+Quantity: {quantity} {unit}
 
-Provide brief analysis in this format:
-VERDICT: [GOOD_DEAL/FAIR_DEAL/POOR_DEAL/LOSS]
-ANALYSIS: [2-3 sentences explaining the result]
-MARKET_CONTEXT: [Was market up/down? Why?]
-LEARNING: [One key lesson for future]"""
+FINANCIAL OUTCOME:
+Total Expected Revenue: ₹{expected_revenue:.2f}
+Total Actual Revenue: ₹{actual_revenue:.2f}
+Net Profit/Loss: ₹{profit_loss:.2f}
+Variance: {profit_percentage:.2f}%
+
+TASK:
+Evaluate this transaction and provide learning insights for future sales.
+
+OUTPUT FORMAT (exact structure required):
+
+VERDICT: [Choose one: EXCELLENT_DEAL / GOOD_DEAL / FAIR_DEAL / POOR_DEAL / SIGNIFICANT_LOSS]
+
+ANALYSIS: [2-3 sentences explaining: Did farmer time the market well? Was price above/below regional average? What was the market context?]
+
+MARKET_CONTEXT: [1-2 sentences: What was happening in market - harvest season/festival demand/weather impact/policy change that affected this price?]
+
+LEARNING: [One specific, actionable lesson for next transaction - e.g., "Wait for festival demand in October" or "Sell 50% early, hold 50% for monsoon shortage"]
+
+Be constructive and educational, not judgmental. Focus on decisions farmer can control."""
 
         try:
             response = self.client.models.generate_content(
