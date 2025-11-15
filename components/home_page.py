@@ -216,8 +216,8 @@ def render_home_page():
             audio = mic_recorder(
                 start_prompt="🎤",
                 stop_prompt="⏹️",
-                just_once=False,
-use_container_width=True,
+                just_once=True,
+                use_container_width=True,
                 key="hero_mic"
             )
         
