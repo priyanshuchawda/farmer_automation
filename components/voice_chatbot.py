@@ -240,7 +240,7 @@ def render_voice_chatbot():
     with st.expander("📍 Location Settings", expanded=False):
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("🌍 Detect My Location", width="stretch"):
+            if st.button("🌍 Detect My Location", use_container_width=True):
                 st.info("Please enable location access in your browser when prompted")
                 st.session_state.request_location = True
         
@@ -308,7 +308,7 @@ Now answer the farmer's question clearly and helpfully:"""
             start_prompt=f"🔴 {t('Start Recording')}",
             stop_prompt=f"⏹️ {t('Stop Recording')}",
             just_once=False,
-            width="stretch",
+            use_container_width=True,
             key="voice_chatbot_recorder"
         )
     
@@ -326,7 +326,7 @@ Now answer the farmer's question clearly and helpfully:"""
     if audio:
         st.success(f"✅ {t('Audio recorded!')} ({len(audio['bytes'])} bytes)")
         
-        if st.button(f"🤖 {t('Process & Send')}", width="stretch", type="primary"):
+        if st.button(f"🤖 {t('Process & Send')}", use_container_width=True, type="primary"):
             with st.spinner(f"🔄 {t('Converting speech to text...')}"):
                 transcribed_text = transcribe_voice_to_text(audio['bytes'], lang_select)
                 
@@ -380,34 +380,34 @@ Now answer the farmer's question clearly and helpfully:"""
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🌾 Best crops", key="qbtn1", width="stretch"):
+        if st.button("🌾 Best crops", key="qbtn1", use_container_width=True):
             st.session_state.quick_voice_question = f"What are the best crops for {location}?"
             st.rerun()
     
     with col2:
-        if st.button("🐛 Pest control", key="qbtn2", width="stretch"):
+        if st.button("🐛 Pest control", key="qbtn2", use_container_width=True):
             st.session_state.quick_voice_question = "Organic pest control methods?"
             st.rerun()
     
     with col3:
-        if st.button("💰 Market timing", key="qbtn3", width="stretch"):
+        if st.button("💰 Market timing", key="qbtn3", use_container_width=True):
             st.session_state.quick_voice_question = "Best time to sell crops?"
             st.rerun()
     
     col4, col5, col6 = st.columns(3)
     
     with col4:
-        if st.button("🏪 Nearby shops", key="qbtn4", width="stretch"):
+        if st.button("🏪 Nearby shops", key="qbtn4", use_container_width=True):
             st.session_state.quick_voice_question = "Where can I find agricultural shops near me?"
             st.rerun()
     
     with col5:
-        if st.button("🏛️ Govt schemes", key="qbtn5", width="stretch"):
+        if st.button("🏛️ Govt schemes", key="qbtn5", use_container_width=True):
             st.session_state.quick_voice_question = "Available government schemes?"
             st.rerun()
     
     with col6:
-        if st.button("🌧️ Weather prep", key="qbtn6", width="stretch"):
+        if st.button("🌧️ Weather prep", key="qbtn6", use_container_width=True):
             st.session_state.quick_voice_question = "How to prepare for monsoon?"
             st.rerun()
     
@@ -434,14 +434,14 @@ Now answer the farmer's question clearly and helpfully:"""
     col_send, col_clear = st.columns([3, 1])
     
     with col_send:
-        send_button = st.button("📤 Send Message", key="voice_send_btn", width="stretch", type="primary")
+        send_button = st.button("📤 Send Message", key="voice_send_btn", use_container_width=True, type="primary")
         # Auto-send if voice was transcribed
         if st.session_state.get('auto_send_voice'):
             send_button = True
             st.session_state.auto_send_voice = False
     
     with col_clear:
-        if st.button("🗑️ Clear", key="voice_clear_btn", width="stretch"):
+        if st.button("🗑️ Clear", key="voice_clear_btn", use_container_width=True):
             st.session_state.voice_chat_history = []
             st.rerun()
     

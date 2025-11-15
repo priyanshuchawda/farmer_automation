@@ -177,7 +177,7 @@ def render_tool_management(tools_df, farmer_name):
             with col2:
                 st.markdown("")
                 st.markdown("")
-                if st.button(f"👁️ {t('View')}", key=f"view_tool_{idx}", width="stretch"):
+                if st.button(f"👁️ {t('View')}", key=f"view_tool_{idx}", use_container_width=True):
                     # Store listing data in session state for detailed view
                     st.session_state.selected_listing = {
                         'type': 'tool',
@@ -199,7 +199,7 @@ def render_tool_management(tools_df, farmer_name):
             updated_tools_df = st.data_editor(
                 editable_for_display,
                 key="tool_editor",
-                width="stretch",
+                use_container_width=True,
                 num_rows="dynamic"
             )
             st.session_state.tools.loc[updated_tools_df.index, updated_tools_df.columns] = updated_tools_df.values

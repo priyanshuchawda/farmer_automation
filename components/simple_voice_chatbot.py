@@ -100,7 +100,7 @@ Be concise (3-5 sentences), practical, and provide actionable advice."""
             start_prompt="🔴 Start Recording",
             stop_prompt="⏹️ Stop Recording",
             just_once=False,
-            width="stretch",
+            use_container_width=True,
             key="simple_mic"
         )
     
@@ -114,7 +114,7 @@ Be concise (3-5 sentences), practical, and provide actionable advice."""
         )
     
     # Process audio
-    if audio and st.button("🤖 Process Voice", width="stretch", type="primary"):
+    if audio and st.button("🤖 Process Voice", use_container_width=True, type="primary"):
         with st.spinner("Converting speech..."):
             transcribed = transcribe_voice(audio['bytes'], lang_code)
             if transcribed:
@@ -160,7 +160,7 @@ Be concise (3-5 sentences), practical, and provide actionable advice."""
     col_send, col_clear = st.columns([3, 1])
     
     with col_send:
-        if st.button("📤 Send", width="stretch", type="primary") and user_input.strip():
+        if st.button("📤 Send", use_container_width=True, type="primary") and user_input.strip():
             # Add user message
             st.session_state.simple_chat_history.append({
                 "role": "user",
@@ -191,6 +191,6 @@ Be concise (3-5 sentences), practical, and provide actionable advice."""
                     st.error(f"Error: {str(e)}")
     
     with col_clear:
-        if st.button("🗑️ Clear", width="stretch"):
+        if st.button("🗑️ Clear", use_container_width=True):
             st.session_state.simple_chat_history = []
             st.rerun()

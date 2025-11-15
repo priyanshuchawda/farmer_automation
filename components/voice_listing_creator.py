@@ -421,7 +421,7 @@ def render_voice_listing_creator(farmer_name):
         start_prompt=f"🔴 {t('Start Recording')}",
         stop_prompt=f"⏹️ {t('Stop Recording')}",
         just_once=False,
-        width="stretch",
+        use_container_width=True,
         key="voice_listing_recorder"
     )
     
@@ -430,7 +430,7 @@ def render_voice_listing_creator(farmer_name):
         st.success(f"✅ {t('Audio recorded successfully!')} ({len(audio['bytes'])} bytes)")
         
         # Add a process button
-        if st.button(f"🤖 {t('Process Audio with AI')}", width="stretch"):
+        if st.button(f"🤖 {t('Process Audio with AI')}", use_container_width=True):
             with st.spinner(f"🔄 {t('AI is processing your speech...')}"):
                 result = transcribe_and_extract_listing(
                     audio['bytes'],
@@ -505,7 +505,7 @@ def render_voice_listing_creator(farmer_name):
                 
                 col1, col2 = st.columns(2)
                 with col1:
-                    if st.form_submit_button(f"✅ {t('Confirm and Add Listing')}", width="stretch"):
+                    if st.form_submit_button(f"✅ {t('Confirm and Add Listing')}", use_container_width=True):
                         if farmer_name_val and location_val and tool_type_val and rent_rate_val > 0 and contact_val:
                             tool_data = (farmer_name_val, location_val, tool_type_val, rent_rate_val, contact_val, notes_val)
                             add_data("tools", tool_data)
@@ -519,7 +519,7 @@ def render_voice_listing_creator(farmer_name):
                             st.error(t("Please fill in all required fields."))
                 
                 with col2:
-                    if st.form_submit_button(f"🔄 {t('Record Again')}", width="stretch"):
+                    if st.form_submit_button(f"🔄 {t('Record Again')}", use_container_width=True):
                         del st.session_state.voice_listing_result
                         del st.session_state.voice_listing_type
                         st.rerun()
@@ -571,7 +571,7 @@ def render_voice_listing_creator(farmer_name):
                 
                 col1, col2 = st.columns(2)
                 with col1:
-                    if st.form_submit_button(f"✅ {t('Confirm and Add Listing')}", width="stretch"):
+                    if st.form_submit_button(f"✅ {t('Confirm and Add Listing')}", use_container_width=True):
                         if farmer_name_val and location_val and crop_name_val and quantity_val > 0 and price_val > 0 and contact_val:
                             listing_date = date.today().strftime("%Y-%m-%d")
                             quantity_str = f"{quantity_val} {unit_val}"
@@ -587,7 +587,7 @@ def render_voice_listing_creator(farmer_name):
                             st.error(t("Please fill in all required fields."))
                 
                 with col2:
-                    if st.form_submit_button(f"🔄 {t('Record Again')}", width="stretch"):
+                    if st.form_submit_button(f"🔄 {t('Record Again')}", use_container_width=True):
                         del st.session_state.voice_listing_result
                         del st.session_state.voice_listing_type
                         st.rerun()
@@ -650,7 +650,7 @@ def render_voice_listing_creator(farmer_name):
                 
                 col1, col2 = st.columns(2)
                 with col1:
-                    if st.form_submit_button(f"✅ {t('Confirm and Add Listing')}", width="stretch"):
+                    if st.form_submit_button(f"✅ {t('Confirm and Add Listing')}", use_container_width=True):
                         if posted_by_val and location_val and work_type_val and workers_val > 0 and duration_val > 0 and wage_val > 0 and contact_val:
                             labor_data = (
                                 posted_by_val, location_val, work_type_val, workers_val,
@@ -668,7 +668,7 @@ def render_voice_listing_creator(farmer_name):
                             st.error(t("Please fill in all required fields."))
                 
                 with col2:
-                    if st.form_submit_button(f"🔄 {t('Record Again')}", width="stretch"):
+                    if st.form_submit_button(f"🔄 {t('Record Again')}", use_container_width=True):
                         del st.session_state.voice_listing_result
                         del st.session_state.voice_listing_type
                         st.rerun()

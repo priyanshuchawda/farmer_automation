@@ -128,7 +128,7 @@ def render_sustainability_tracker():
                     value=500
                 )
         
-        submitted = st.form_submit_button("🔍 Analyze Sustainability", type="primary", width="stretch")
+        submitted = st.form_submit_button("🔍 Analyze Sustainability", type="primary", use_container_width=True)
         
         if submitted:
             with st.spinner("🤖 AI is analyzing your sustainability metrics..."):
@@ -346,12 +346,12 @@ def display_analysis(analysis, inputs):
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("🔄 Analyze Different Season", width="stretch"):
+        if st.button("🔄 Analyze Different Season", use_container_width=True):
             del st.session_state.sustainability_analysis
             del st.session_state.sustainability_inputs
             st.rerun()
     
     with col2:
-        if st.button("🌾 Get Climate-Smart Crops", width="stretch"):
+        if st.button("🌾 Get Climate-Smart Crops", use_container_width=True):
             st.session_state.selected_menu = "🌾 Climate-Smart Crops"
             st.rerun()

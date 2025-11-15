@@ -460,8 +460,6 @@ use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
         if st.button("View Prices", key="price_btn", width="stretch"):
-            
-            
             st.session_state.selected_menu = "💰 Today's Market Price"
             st.rerun()
     
@@ -474,8 +472,6 @@ use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
         if st.button("Check Weather", key="weather_btn", width="stretch"):
-            
-            
             st.session_state.selected_menu = "🌤️ Weather Forecast"
             st.rerun()
     
@@ -493,8 +489,6 @@ use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
         if st.button("Browse Now", key="browse_btn", width="stretch"):
-            
-            
             st.session_state.selected_menu = "🛍️ Browse Listings"
             st.rerun()
     
@@ -507,8 +501,6 @@ use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
         if st.button("Post Listing", key="post_btn", width="stretch"):
-            
-            
             st.session_state.selected_menu = "➕ Post Listing"
             st.rerun()
     
@@ -526,8 +518,6 @@ use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
         if st.button("Money Diary", key="money_btn_home", width="stretch"):
-            
-            
             st.session_state.selected_menu = "💰 My Money Diary"
             st.rerun()
     
@@ -540,8 +530,6 @@ use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
         if st.button("Open Calendar", key="calendar_btn_home", width="stretch"):
-            
-            
             st.session_state.selected_menu = "📅 My Calendar"
             st.rerun()
     
