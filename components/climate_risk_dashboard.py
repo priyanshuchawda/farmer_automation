@@ -73,7 +73,7 @@ def render_climate_risk_dashboard():
     # Refresh button
     col1, col2 = st.columns([3, 1])
     with col2:
-        if st.button("🔄 Refresh Analysis", width="stretch"):
+        if st.button("🔄 Refresh Analysis", use_container_width=True):
             st.rerun()
     
     # Analyze climate risks

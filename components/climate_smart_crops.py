@@ -106,7 +106,7 @@ def render_climate_smart_crops():
         st.metric("Your Location", location)
     
     # Analyze button
-    if st.button("🤖 Get AI Crop Recommendations", type="primary", width="stretch"):
+    if st.button("🤖 Get AI Crop Recommendations", type="primary", use_container_width=True):
         with st.spinner("🔍 Analyzing climate conditions and recommending crops..."):
             
             # Get climate analysis
@@ -273,7 +273,7 @@ def display_recommendations(recommendations, season, farmer_name, location):
             """, unsafe_allow_html=True)
         
         # Adopt button
-        if st.button(f"📌 Adopt {crop.crop_name}", key=f"adopt_{i}", width="stretch"):
+        if st.button(f"📌 Adopt {crop.crop_name}", key=f"adopt_{i}", use_container_width=True):
             try:
                 adoption_data = (
                     farmer_name,
@@ -312,12 +312,12 @@ def display_recommendations(recommendations, season, farmer_name, location):
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("🔄 Try Different Season", width="stretch"):
+        if st.button("🔄 Try Different Season", use_container_width=True):
             del st.session_state.crop_recommendations
             del st.session_state.crop_season
             st.rerun()
     
     with col2:
-        if st.button("📊 View Climate Risk Details", width="stretch"):
+        if st.button("📊 View Climate Risk Details", use_container_width=True):
             st.session_state.selected_menu = "🌡️ Climate Risk Dashboard"
             st.rerun()

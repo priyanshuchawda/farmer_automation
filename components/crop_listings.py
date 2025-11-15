@@ -184,7 +184,7 @@ def render_crop_management(crops_df, farmer_name):
             with col2:
                 st.markdown("")
                 st.markdown("")
-                if st.button(f"👁️ {t('View')}", key=f"view_crop_{idx}", width="stretch"):
+                if st.button(f"👁️ {t('View')}", key=f"view_crop_{idx}", use_container_width=True):
                     # Store listing data in session state for detailed view
                     st.session_state.selected_listing = {
                         'type': 'crop',
@@ -207,7 +207,7 @@ def render_crop_management(crops_df, farmer_name):
             updated_crops_df = st.data_editor(
                 editable_for_display,
                 key="crop_editor",
-                width="stretch",
+                use_container_width=True,
                 num_rows="dynamic"
             )
             st.session_state.crops.loc[updated_crops_df.index, updated_crops_df.columns] = updated_crops_df.values

@@ -280,7 +280,7 @@ def render_simple_finance_page():
                 key="in_date"
             )
             
-            if st.form_submit_button("💚 " + t("SAVE Money In"), width="stretch", type="primary"):
+            if st.form_submit_button("💚 " + t("SAVE Money In"), use_container_width=True, type="primary"):
                 if in_reason and in_reason.strip():
                     add_money_entry(farmer_name, "Money In", in_amount, in_reason.strip(), in_date.strftime("%Y-%m-%d"))
                     st.success(f"✅ {t('Saved!')} ₹{in_amount:,.0f} - {in_reason}")
@@ -314,7 +314,7 @@ def render_simple_finance_page():
                 key="out_date"
             )
             
-            if st.form_submit_button("❤️ " + t("SAVE Money Out"), width="stretch", type="secondary"):
+            if st.form_submit_button("❤️ " + t("SAVE Money Out"), use_container_width=True, type="secondary"):
                 if out_reason and out_reason.strip():
                     add_money_entry(farmer_name, "Money Out", out_amount, out_reason.strip(), out_date.strftime("%Y-%m-%d"))
                     st.success(f"✅ {t('Saved!')} ₹{out_amount:,.0f} - {out_reason}")

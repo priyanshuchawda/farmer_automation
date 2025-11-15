@@ -217,7 +217,7 @@ def render_home_page():
                 start_prompt="🎤",
                 stop_prompt="⏹️",
                 just_once=False,
-                width="stretch",
+use_container_width=True,
                 key="hero_mic"
             )
         
