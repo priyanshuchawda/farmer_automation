@@ -35,6 +35,7 @@ from components.pwa_component import inject_pwa_code
 from components.offline_manager import render_offline_status
 from components.performance_optimizer import init_performance_optimizations
 from components.notification_manager import init_notifications
+from components.voice_chatbot import render_voice_chatbot
 from calender.calendar_component import render_calendar
 from calender.config import TRANSLATIONS
 from calender.utils import get_events_for_date
@@ -303,6 +304,11 @@ if user_role == "Farmer":
             "📅 My Calendar",
             "📒 My Money Diary"
         ]),
+        ("🌍 CLIMATE & SUSTAINABILITY", [
+            "🌡️ Climate Risk Dashboard",
+            "🌾 Climate-Smart Crops",
+            "💧 Water & Carbon Tracker"
+        ]),
         ("🛍️ MARKETPLACE", [
             "🛍️ Browse Listings",
             "➕ Post Listing",
@@ -313,7 +319,7 @@ if user_role == "Farmer":
             "📦 My Listings"
         ]),
         ("🤖 HELP & ADVICE", [
-            "🤖 AI Chatbot",
+            "🗣️ Ask Advisor",
             "🏛️ Government Schemes"
         ])
         # TEMPORARILY HIDDEN (advanced features):
@@ -342,7 +348,7 @@ else:
             "📦 My Listings"
         ]),
         ("🤖 HELP & ADVICE", [
-            "🤖 AI Chatbot",
+            "🗣️ Ask Advisor",
             "🏛️ Government Schemes"
         ])
     ]
@@ -583,6 +589,18 @@ elif menu == "💰 Market Prices" or menu == "💰 Today's Market Price":
 elif menu == "🤖 AI Price Prediction" or menu == "🤔 Should I Sell?":
     render_simple_price_advisor()
 
+elif menu == "🌡️ Climate Risk Dashboard":
+    from components.climate_risk_dashboard import render_climate_risk_dashboard
+    render_climate_risk_dashboard()
+
+elif menu == "🌾 Climate-Smart Crops":
+    from components.climate_smart_crops import render_climate_smart_crops
+    render_climate_smart_crops()
+
+elif menu == "💧 Water & Carbon Tracker":
+    from components.sustainability_tracker import render_sustainability_tracker
+    render_sustainability_tracker()
+
 elif menu == "🗺️ Nearby Places & Services":
     from components.location_services_page import render_location_services_page
     render_location_services_page()
@@ -608,6 +626,9 @@ elif menu == "💰 Farm Finance Management" or menu == "💰 My Money Diary":
 elif menu == "🤖 AI Chatbot":
     from components.ai_chatbot_page import render_ai_chatbot_page
     render_ai_chatbot_page()
+
+elif menu == "🗣️ Ask Advisor":
+    render_voice_chatbot()
 
 # Voice Assistant removed due to microphone compatibility issues
 # elif menu == "🎤 Voice Assistant":

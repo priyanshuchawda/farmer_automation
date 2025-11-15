@@ -98,6 +98,59 @@ def init_db():
         FOREIGN KEY (posted_by) REFERENCES farmers(name)
     )""")
     
+    # NEW: Climate Risk History Table
+    c.execute("""CREATE TABLE IF NOT EXISTS climate_risk_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        farmer_name TEXT NOT NULL,
+        date TEXT NOT NULL,
+        location TEXT NOT NULL,
+        overall_risk INTEGER,
+        drought_risk INTEGER,
+        flood_risk INTEGER,
+        heat_stress INTEGER,
+        days_without_rain INTEGER,
+        soil_moisture INTEGER,
+        actions_recommended TEXT,
+        actions_taken TEXT,
+        FOREIGN KEY (farmer_name) REFERENCES farmers(name)
+    )""")
+    
+    # NEW: Sustainability Metrics Table
+    c.execute("""CREATE TABLE IF NOT EXISTS sustainability_metrics (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        farmer_name TEXT NOT NULL,
+        season TEXT,
+        year INTEGER,
+        water_usage REAL,
+        water_optimal REAL,
+        carbon_emissions REAL,
+        irrigation_method TEXT,
+        fertilizer_type TEXT,
+        energy_source TEXT,
+        crop_type TEXT,
+        recorded_date TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (farmer_name) REFERENCES farmers(name)
+    )""")
+    
+    # NEW: Climate-Smart Crop Adoptions Table
+    c.execute("""CREATE TABLE IF NOT EXISTS crop_adoptions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        farmer_name TEXT NOT NULL,
+        crop_name TEXT,
+        season TEXT,
+        year INTEGER,
+        climate_risk_score INTEGER,
+        drought_tolerance INTEGER,
+        water_requirement TEXT,
+        reason_for_selection TEXT,
+        expected_yield REAL,
+        actual_yield REAL,
+        profit_expected REAL,
+        profit_actual REAL,
+        adopted_date TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (farmer_name) REFERENCES farmers(name)
+    )""")
+    
     # Create Worker Availability Table
     c.execute("""CREATE TABLE IF NOT EXISTS worker_availability (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

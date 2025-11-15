@@ -4,10 +4,15 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from google import genai
 import pandas as pd
+import os
 
-# Initialize AI AI
+# Initialize AI Client
 try:
-    ai_client = genai.Client()
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if api_key:
+        ai_client = genai.Client(api_key=api_key)
+    else:
+        ai_client = None
 except Exception as e:
     ai_client = None
 
