@@ -657,13 +657,7 @@ elif menu == "🔔 Notifications & Alerts":
 st.markdown(f"""
 <hr style='border-top: 2px solid #1976D2; margin-top: 30px;'>
 <div style='text-align:center; padding:15px; background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); border-radius: 10px;'>
-    <p style='color: #0D47A1; margin: 0 0 5px 0; font-weight: 600; font-size: 15px;'>
-        🌍 AI Climate-Smart Agriculture Platform
-    </p>
-    <p style='color: #1565C0; margin: 0; font-size: 13px;'>
-        🎯 SDG 13: Climate Action | 🤖 Multi-Modal AI | 🛰️ Satellite Integration
-    </p>
-    <small style='color: #1976D2; font-size: 12px;'>
+    <small style='color: #1976D2; font-size: 13px;'>
         © 2025 {t("Prototype by Team AgroLink")} | Helping farmers adapt to climate change
     </small>
 </div>
