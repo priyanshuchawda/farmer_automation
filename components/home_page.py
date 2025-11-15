@@ -121,11 +121,11 @@ def render_home_page():
                 
                 col1, col2 = st.columns([3, 2])
                 with col1:
-                    if st.button("📊 View Full Climate Analysis", type="primary", width="stretch"):
+                    if st.button("📊 View Full Climate Analysis", type="primary", use_container_width=True):
                         st.session_state.selected_menu = "🌡️ Climate Risk Dashboard"
                         st.rerun()
                 with col2:
-                    if st.button("🌾 Get Climate-Smart Crops", width="stretch"):
+                    if st.button("🌾 Get Climate-Smart Crops", use_container_width=True):
                         st.session_state.selected_menu = "🌾 Climate-Smart Crops"
                         st.rerun()
                 
@@ -281,7 +281,7 @@ use_container_width=True,
         
         # Clear button
         if st.session_state.chat_messages:
-            if st.button("🗑️ Clear Chat", width="stretch"):
+            if st.button("🗑️ Clear Chat", use_container_width=True):
                 st.session_state.chat_messages = []
                 st.rerun()
     else:
@@ -397,7 +397,7 @@ use_container_width=True,
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("🔍 Check My Farm Risk", key="climate_risk_btn", width="stretch", type="primary"):
+        if st.button("🔍 Check My Farm Risk", key="climate_risk_btn", use_container_width=True, type="primary"):
             st.session_state.selected_menu = "🌡️ Climate Risk Dashboard"
             st.rerun()
     
@@ -414,7 +414,7 @@ use_container_width=True,
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("🌱 Get Crop Recommendations", key="smart_crops_btn", width="stretch", type="primary"):
+        if st.button("🌱 Get Crop Recommendations", key="smart_crops_btn", use_container_width=True, type="primary"):
             st.session_state.selected_menu = "🌾 Climate-Smart Crops"
             st.rerun()
     
@@ -436,7 +436,7 @@ use_container_width=True,
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("📊 Track My Impact", key="sustainability_btn", width="stretch"):
+        if st.button("📊 Track My Impact", key="sustainability_btn", use_container_width=True):
             st.session_state.selected_menu = "💧 Water & Carbon Tracker"
             st.rerun()
     
@@ -459,7 +459,7 @@ use_container_width=True,
             <div class='action-desc'>{t('See mandi prices now')}</div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("View Prices", key="price_btn", width="stretch"):
+        if st.button("View Prices", key="price_btn", use_container_width=True):
             st.session_state.selected_menu = "💰 Today's Market Price"
             st.rerun()
     
@@ -471,7 +471,7 @@ use_container_width=True,
             <div class='action-desc'>{t('Plan your farm work')}</div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Check Weather", key="weather_btn", width="stretch"):
+        if st.button("Check Weather", key="weather_btn", use_container_width=True):
             st.session_state.selected_menu = "🌤️ Weather Forecast"
             st.rerun()
     
@@ -488,7 +488,7 @@ use_container_width=True,
             <div class='action-desc'>{t('See tools and crops')}</div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Browse Now", key="browse_btn", width="stretch"):
+        if st.button("Browse Now", key="browse_btn", use_container_width=True):
             st.session_state.selected_menu = "🛍️ Browse Listings"
             st.rerun()
     
@@ -500,7 +500,7 @@ use_container_width=True,
             <div class='action-desc'>{t('List your crop or tool')}</div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Post Listing", key="post_btn", width="stretch"):
+        if st.button("Post Listing", key="post_btn", use_container_width=True):
             st.session_state.selected_menu = "➕ Post Listing"
             st.rerun()
     
@@ -517,7 +517,7 @@ use_container_width=True,
             <div class='action-desc'>{t('Track income/expense')}</div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Money Diary", key="money_btn_home", width="stretch"):
+        if st.button("Money Diary", key="money_btn_home", use_container_width=True):
             st.session_state.selected_menu = "💰 My Money Diary"
             st.rerun()
     
@@ -529,7 +529,7 @@ use_container_width=True,
             <div class='action-desc'>{t('View farm schedule')}</div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Open Calendar", key="calendar_btn_home", width="stretch"):
+        if st.button("Open Calendar", key="calendar_btn_home", use_container_width=True):
             st.session_state.selected_menu = "📅 My Calendar"
             st.rerun()
     
@@ -573,7 +573,7 @@ use_container_width=True,
                 """, unsafe_allow_html=True)
             
             st.markdown("<div style='margin: 10px 0;'></div>", unsafe_allow_html=True)
-            if st.button(f"📅 {t('View All Tasks')}", key="view_all_tasks", width="stretch"):
+            if st.button(f"📅 {t('View All Tasks')}", key="view_all_tasks", use_container_width=True):
                 st.session_state.selected_menu = "📅 My Calendar"
                 st.rerun()
         else:
@@ -586,13 +586,13 @@ use_container_width=True,
             </div>
             """, unsafe_allow_html=True)
             st.markdown("<div style='margin: 10px 0;'></div>", unsafe_allow_html=True)
-            if st.button(f"📅 {t('Visit Calendar to plan your day')}", key="add_task_home", width="stretch", type="primary"):
+            if st.button(f"📅 {t('Visit Calendar to plan your day')}", key="add_task_home", use_container_width=True, type="primary"):
                 st.session_state.selected_menu = "📅 My Calendar"
                 st.rerun()
     except Exception as e:
         st.info(f"📅 {t('Visit Calendar to plan your day')}")
         st.markdown("<div style='margin: 10px 0;'></div>", unsafe_allow_html=True)
-        if st.button(f"📅 {t('Open Calendar')}", key="calendar_error", width="stretch", type="primary"):
+        if st.button(f"📅 {t('Open Calendar')}", key="calendar_error", use_container_width=True, type="primary"):
             st.session_state.selected_menu = "📅 My Calendar"
             st.rerun()
     
@@ -635,7 +635,7 @@ use_container_width=True,
         """, unsafe_allow_html=True)
         
         st.markdown("<div style='margin: 10px 0;'></div>", unsafe_allow_html=True)
-        if st.button(f"👁️ {t('View My Listings')}", key="view_listings_btn", width="stretch"):
+        if st.button(f"👁️ {t('View My Listings')}", key="view_listings_btn", use_container_width=True):
             st.session_state.selected_menu = "📦 My Listings"
             st.rerun()
     else:
@@ -651,7 +651,7 @@ use_container_width=True,
         </div>
         """, unsafe_allow_html=True)
         st.markdown("<div style='margin: 10px 0;'></div>", unsafe_allow_html=True)
-        if st.button(f"➕ {t('Create First Listing')}", key="first_listing_btn", width="stretch", type="primary"):
+        if st.button(f"➕ {t('Create First Listing')}", key="first_listing_btn", use_container_width=True, type="primary"):
             st.session_state.selected_menu = "➕ Post Listing"
             st.rerun()
     

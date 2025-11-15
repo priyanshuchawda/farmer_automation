@@ -439,19 +439,18 @@ with st.sidebar:
             translated_item = f"{item_emoji} {t(item_text)}"
             
             # Create button for each menu item
-            if st.button(translated_item, key=f"menu_{item}", width="stretch", 
+            if st.button(translated_item, key=f"menu_{item}", use_container_width=True, 
                         type="primary" if st.session_state.selected_menu == item else "secondary"):
-                # Add current page to history before navigation
-                if st.session_state.selected_menu != item:
-                    st.session_state.selected_menu = item
-                    st.rerun()
+                # Update menu selection
+                st.session_state.selected_menu = item
+                st.rerun()
         
         st.markdown("")  # Spacing between sections
     
     st.markdown("---")
     
     # Logout button at bottom
-    if st.button(f"🔐 {t('Logout')}", width="stretch", type="secondary"):
+    if st.button(f"🔐 {t('Logout')}", use_container_width=True, type="secondary"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.success("✅ Logged out successfully!")
