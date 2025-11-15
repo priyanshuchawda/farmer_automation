@@ -177,7 +177,7 @@ def render_tool_management(tools_df, farmer_name):
             with col2:
                 st.markdown("")
                 st.markdown("")
-                if st.button(f"👁️ {t('View')}", key=f"view_tool_{idx}", use_container_width=True):
+                if st.button(f"👁️ {t('View')}", key=f"view_tool_{idx}", width="stretch"):
                     # Store listing data in session state for detailed view
                     st.session_state.selected_listing = {
                         'type': 'tool',

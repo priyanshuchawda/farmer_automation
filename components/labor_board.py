@@ -155,7 +155,7 @@ def render_job_postings():
         
         with col2:
             st.markdown("<br>" * 2, unsafe_allow_html=True)
-            if st.button(f"📞 {t('Call Now')}", key=f"job_call_{idx}", use_container_width=True):
+            if st.button(f"📞 {t('Call Now')}", key=f"job_call_{idx}", width="stretch"):
                 st.markdown(f"""
                 <a href="tel:{job['contact']}" target="_blank" style="text-decoration: none;">
                     <button style="width: 100%; padding: 10px; background: #4CAF50; color: white; 
@@ -165,7 +165,7 @@ def render_job_postings():
                 </a>
                 """, unsafe_allow_html=True)
             
-            if st.button(f"💬 WhatsApp", key=f"job_wa_{idx}", use_container_width=True):
+            if st.button(f"💬 WhatsApp", key=f"job_wa_{idx}", width="stretch"):
                 message = f"Hi! I saw your job posting for {job['work_type']} work in {job['location']}. I'm interested!"
                 wa_link = f"https://wa.me/91{job['contact'].replace('+91', '').replace('-', '')}?text={message}"
                 st.markdown(f'<a href="{wa_link}" target="_blank">Open WhatsApp</a>', unsafe_allow_html=True)
@@ -242,7 +242,7 @@ def render_worker_listings():
         
         with col2:
             st.markdown("<br>" * 2, unsafe_allow_html=True)
-            if st.button(f"📞 {t('Call Now')}", key=f"worker_call_{idx}", use_container_width=True):
+            if st.button(f"📞 {t('Call Now')}", key=f"worker_call_{idx}", width="stretch"):
                 st.markdown(f"""
                 <a href="tel:{worker['contact']}" target="_blank" style="text-decoration: none;">
                     <button style="width: 100%; padding: 10px; background: #2E8B57; color: white; 
@@ -252,7 +252,7 @@ def render_worker_listings():
                 </a>
                 """, unsafe_allow_html=True)
             
-            if st.button(f"💬 WhatsApp", key=f"worker_wa_{idx}", use_container_width=True):
+            if st.button(f"💬 WhatsApp", key=f"worker_wa_{idx}", width="stretch"):
                 message = f"Hi {worker['worker_name']}! I need workers for farm work in {worker['location']}. Are you available?"
                 wa_link = f"https://wa.me/91{worker['contact'].replace('+91', '').replace('-', '')}?text={message}"
                 st.markdown(f'<a href="{wa_link}" target="_blank">Open WhatsApp</a>', unsafe_allow_html=True)

@@ -465,7 +465,7 @@ menu = st.session_state.selected_menu
 # ----------------------------------------
 # Simple home button to go back to dashboard
 if st.session_state.selected_menu != "🏠 Home":
-    if st.button("🏠 Home", use_container_width=True, help="Go to Home Dashboard"):
+    if st.button("🏠 Home", width="stretch", help="Go to Home Dashboard"):
         st.session_state.selected_menu = "🏠 Home"
         st.rerun()
 

@@ -138,34 +138,34 @@ Now answer the farmer's question clearly and helpfully:"""
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🌾 Best crops for my region", key="btn_crops", use_container_width=True):
+        if st.button("🌾 Best crops for my region", key="btn_crops", width="stretch"):
             st.session_state.quick_question = f"What are the best crops to grow in {location}?"
             st.rerun()
     
     with col2:
-        if st.button("🐛 Pest control tips", key="btn_pest", use_container_width=True):
+        if st.button("🐛 Pest control tips", key="btn_pest", width="stretch"):
             st.session_state.quick_question = "What are effective organic pest control methods?"
             st.rerun()
     
     with col3:
-        if st.button("💰 Market timing advice", key="btn_market", use_container_width=True):
+        if st.button("💰 Market timing advice", key="btn_market", width="stretch"):
             st.session_state.quick_question = "When is the best time to sell my crops?"
             st.rerun()
     
     col4, col5, col6 = st.columns(3)
     
     with col4:
-        if st.button("🌧️ Monsoon preparation", key="btn_monsoon", use_container_width=True):
+        if st.button("🌧️ Monsoon preparation", key="btn_monsoon", width="stretch"):
             st.session_state.quick_question = "How should I prepare my farm for monsoon season?"
             st.rerun()
     
     with col5:
-        if st.button("🏛️ Government schemes", key="btn_schemes", use_container_width=True):
+        if st.button("🏛️ Government schemes", key="btn_schemes", width="stretch"):
             st.session_state.quick_question = "What government schemes are available for farmers?"
             st.rerun()
     
     with col6:
-        if st.button("📊 Farm budgeting", key="btn_budget", use_container_width=True):
+        if st.button("📊 Farm budgeting", key="btn_budget", width="stretch"):
             st.session_state.quick_question = "How can I better manage my farm finances?"
             st.rerun()
     
@@ -184,10 +184,10 @@ Now answer the farmer's question clearly and helpfully:"""
     col_send, col_clear = st.columns([3, 1])
     
     with col_send:
-        send_button = st.button("📤 Send", key="send_btn", use_container_width=True, type="primary")
+        send_button = st.button("📤 Send", key="send_btn", width="stretch", type="primary")
     
     with col_clear:
-        if st.button("🗑️ Clear Chat", key="clear_btn", use_container_width=True):
+        if st.button("🗑️ Clear Chat", key="clear_btn", width="stretch"):
             st.session_state.chat_history = []
             st.rerun()
     
@@ -212,7 +212,7 @@ Now answer the farmer's question clearly and helpfully:"""
                 full_prompt = conversation_history.strip()
                 
                 # Try models in order: 2.5-flash, 2.0-flash, 1.5-flash
-                models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
+                models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash']
                 response_text = None
                 
                 for model_name in models_to_try:

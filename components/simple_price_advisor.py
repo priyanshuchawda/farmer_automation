@@ -340,7 +340,7 @@ def render_simple_price_advisor():
     st.markdown("---")
     
     # Get advice button
-    if st.button(f"🤖 {t('GET AI ADVICE NOW')}", type="primary", use_container_width=True):
+    if st.button(f"🤖 {t('GET AI ADVICE NOW')}", type="primary", width="stretch"):
         if not market_days:
             st.error(f"⚠️ {t('Please select at least one market day!')}")
             return
@@ -420,12 +420,12 @@ def render_simple_price_advisor():
         col1, col2 = st.columns(2)
         
         with col1:
-            if st.button(f"🔄 {t('Check Another Crop')}", use_container_width=True):
+            if st.button(f"🔄 {t('Check Another Crop')}", width="stretch"):
                 del st.session_state.price_advice
                 st.rerun()
         
         with col2:
-            if st.button(f"🌤️ {t('Check Weather')}", use_container_width=True):
+            if st.button(f"🌤️ {t('Check Weather')}", width="stretch"):
                 st.session_state.nav_history.append(st.session_state.selected_menu)
                 st.session_state.nav_forward = []
                 st.session_state.selected_menu = "🌤️ Weather Forecast"

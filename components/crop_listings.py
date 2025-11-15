@@ -184,7 +184,7 @@ def render_crop_management(crops_df, farmer_name):
             with col2:
                 st.markdown("")
                 st.markdown("")
-                if st.button(f"👁️ {t('View')}", key=f"view_crop_{idx}", use_container_width=True):
+                if st.button(f"👁️ {t('View')}", key=f"view_crop_{idx}", width="stretch"):
                     # Store listing data in session state for detailed view
                     st.session_state.selected_listing = {
                         'type': 'crop',
