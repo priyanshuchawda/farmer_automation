@@ -134,31 +134,34 @@ def render_home_page():
             print(f"Climate alert error: {e}")
             # Silently fail - don't disrupt user experience
     
-    # AI FEATURE HERO SECTION - Farm + Tech Hybrid
+    # CLIMATE INTELLIGENCE HERO SECTION
     import streamlit.components.v1 as components
     
     # Hero section with visual design
     st.markdown("""
     <style>
     .ai-hero-section {
-        background: linear-gradient(135deg, #2E8B57 0%, #3CB371 100%);
+        background: linear-gradient(135deg, #1976D2 0%, #2196F3 100%);
         padding: 30px 20px 20px 20px;
         border-radius: 15px;
         margin: 20px 0;
         text-align: center;
+        border: 2px solid #1565C0;
     }
     
     .hero-heading {
         color: white;
         font-size: 28px;
-        font-weight: 600;
-        margin: 0 0 10px 0;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     
     .hero-subheading {
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 15px;
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 16px;
         margin: 0 0 20px 0;
+        font-weight: 500;
     }
     
     .chat-input-box {
@@ -177,9 +180,9 @@ def render_home_page():
     </style>
     
     <div class="ai-hero-section">
-        <h1 class="hero-heading">🌾 Smart Farming Assistant</h1>
+        <h1 class="hero-heading">🌍 AI Climate-Smart Farming Platform</h1>
         <p class="hero-subheading">
-            Get instant help with crops, weather, and farming decisions
+            🤖 Multi-Modal AI • 🛰️ Satellite Analysis • 🌡️ Climate Risk Detection • 🎤 Voice Intelligence
         </p>
         <div class="chat-input-box">
     """, unsafe_allow_html=True)
@@ -364,10 +367,185 @@ def render_home_page():
     
     st.markdown("<div style='margin: 24px 0;'></div>", unsafe_allow_html=True)
     
+    # CLIMATE INTELLIGENCE SECTION - TOP PRIORITY
+    st.markdown(f"""
+    <div style='background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); 
+                padding: 20px; border-radius: 12px; margin: 20px 0; 
+                border-left: 5px solid #1976D2;'>
+        <h2 style='color: #0D47A1; font-size: 22px; font-weight: 700; margin: 0 0 12px 0;'>
+            🌍 Climate Intelligence & AI Tools
+        </h2>
+        <p style='color: #1565C0; font-size: 14px; margin: 0;'>
+            Advanced AI for climate adaptation, crop optimization, and sustainable farming
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Climate-focused action cards
+    col1, col2 = st.columns(2, gap="medium")
+    
+    with col1:
+        st.markdown("""
+        <div style='background: white; padding: 18px; border-radius: 10px; 
+                    border-left: 4px solid #D32F2F; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
+            <div style='font-size: 32px; margin-bottom: 8px;'>🌡️</div>
+            <div style='font-size: 16px; font-weight: 600; color: #D32F2F; margin-bottom: 4px;'>
+                Climate Risk Analysis
+            </div>
+            <div style='font-size: 13px; color: #666;'>
+                AI analyzes weather, soil, satellite data for drought/flood/pest risks
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("🔍 Check My Farm Risk", key="climate_risk_btn", use_container_width=True, type="primary"):
+            st.session_state.selected_menu = "🌡️ Climate Risk Dashboard"
+            st.rerun()
+    
+    with col2:
+        st.markdown("""
+        <div style='background: white; padding: 18px; border-radius: 10px; 
+                    border-left: 4px solid #388E3C; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
+            <div style='font-size: 32px; margin-bottom: 8px;'>🌾</div>
+            <div style='font-size: 16px; font-weight: 600; color: #388E3C; margin-bottom: 4px;'>
+                Climate-Smart Crops
+            </div>
+            <div style='font-size: 13px; color: #666;'>
+                AI recommends drought/heat resistant crops for your climate
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("🌱 Get Crop Recommendations", key="smart_crops_btn", use_container_width=True, type="primary"):
+            st.session_state.selected_menu = "🌾 Climate-Smart Crops"
+            st.rerun()
+    
+    st.markdown("<div style='margin: 12px 0;'></div>", unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2, gap="medium")
+    
+    with col1:
+        st.markdown("""
+        <div style='background: white; padding: 18px; border-radius: 10px; 
+                    border-left: 4px solid #0288D1; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
+            <div style='font-size: 32px; margin-bottom: 8px;'>💧</div>
+            <div style='font-size: 16px; font-weight: 600; color: #0288D1; margin-bottom: 4px;'>
+                Water & Carbon Tracker
+            </div>
+            <div style='font-size: 13px; color: #666;'>
+                Track sustainability metrics, save water, reduce emissions
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("📊 Track My Impact", key="sustainability_btn", use_container_width=True):
+            st.session_state.selected_menu = "💧 Water & Carbon Tracker"
+            st.rerun()
+    
+    with col2:
+        st.markdown("""
+        <div style='background: white; padding: 18px; border-radius: 10px; 
+                    border-left: 4px solid #7B1FA2; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
+            <div style='font-size: 32px; margin-bottom: 8px;'>📸</div>
+            <div style='font-size: 16px; font-weight: 600; color: #7B1FA2; margin-bottom: 4px;'>
+                AI Crop Vision
+            </div>
+            <div style='font-size: 13px; color: #666;'>
+                Upload leaf photo - AI detects disease & stress instantly
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("📷 Analyze Crop Photo", key="vision_btn", use_container_width=True):
+            if 'show_vision_demo' not in st.session_state:
+                st.session_state.show_vision_demo = True
+            st.rerun()
+    
+    # Computer Vision Demo Section
+    if st.session_state.get('show_vision_demo', False):
+        st.markdown("<div style='margin: 20px 0;'></div>", unsafe_allow_html=True)
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%); 
+                    padding: 20px; border-radius: 12px; border-left: 5px solid #7B1FA2;'>
+            <h3 style='color: #4A148C; margin: 0 0 10px 0;'>📸 AI Computer Vision - Crop Doctor</h3>
+            <p style='color: #6A1B9A; font-size: 14px; margin: 0;'>
+                Upload a photo of your crop leaf. AI will analyze health, detect diseases, pests, or nutrient deficiencies.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("<div style='margin: 12px 0;'></div>", unsafe_allow_html=True)
+        
+        uploaded_image = st.file_uploader(
+            "📷 Upload crop/leaf image (JPG, PNG)",
+            type=['jpg', 'jpeg', 'png'],
+            key="vision_uploader",
+            help="Take a clear photo of the leaf or crop"
+        )
+        
+        if uploaded_image:
+            col1, col2 = st.columns([1, 1])
+            
+            with col1:
+                st.image(uploaded_image, caption="Your Image", use_container_width=True)
+            
+            with col2:
+                with st.spinner("🔍 AI analyzing image..."):
+                    try:
+                        from google import genai
+                        import PIL.Image
+                        
+                        api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+                        if api_key:
+                            client = genai.Client(api_key=api_key)
+                            
+                            # Open image
+                            image = PIL.Image.open(uploaded_image)
+                            
+                            # AI Vision Analysis
+                            prompt = """You are an expert agricultural scientist and plant pathologist. 
+Analyze this crop/plant image and provide:
+
+1. **Plant/Crop Identified**: What plant is this?
+2. **Health Status**: Healthy / Stressed / Diseased (with confidence %)
+3. **Issues Detected**: Any diseases, pests, nutrient deficiency, or stress
+4. **Severity**: Low / Medium / High / Critical
+5. **Recommendations**: 2-3 specific actions farmer should take
+6. **Climate Connection**: How climate conditions (drought, heat, excess rain) might be affecting this
+
+Be specific, practical, and use simple language. If it's not a plant, say so."""
+
+                            response = client.models.generate_content(
+                                model="gemini-2.0-flash-exp",
+                                contents=[prompt, image]
+                            )
+                            
+                            if response and response.text:
+                                st.markdown(f"""
+                                <div style='background: white; padding: 16px; border-radius: 8px; 
+                                            border: 2px solid #7B1FA2; margin-top: 10px;'>
+                                    <h4 style='color: #7B1FA2; margin: 0 0 10px 0;'>🤖 AI Analysis Result</h4>
+                                    <div style='color: #333; font-size: 14px; line-height: 1.6;'>
+                                        {response.text.replace('\n', '<br>')}
+                                    </div>
+                                </div>
+                                """, unsafe_allow_html=True)
+                                
+                                st.success("✅ Analysis complete! This is multi-modal AI in action.")
+                            else:
+                                st.warning("No response from AI. Please try again.")
+                        else:
+                            st.error("⚠️ AI API key not configured")
+                    except Exception as e:
+                        st.error(f"❌ Error: {str(e)}")
+                        st.info("💡 This feature uses Gemini Vision API for real-time crop disease detection")
+        
+        if st.button("❌ Close Vision Demo", use_container_width=True):
+            st.session_state.show_vision_demo = False
+            st.rerun()
+        
+        st.markdown("<div style='margin: 20px 0;'><hr style='border: none; border-top: 2px solid #e0e0e0;'></div>", unsafe_allow_html=True)
+    
     st.markdown(f"""
     <div style='margin: 24px 0 16px 0;'>
         <h2 style='color: #2E8B57; font-size: 20px; font-weight: 600; margin: 0;'>
-            🎯 {t('Quick Actions')}
+            🎯 {t('Daily Farming Tools')}
         </h2>
     </div>
     """, unsafe_allow_html=True)

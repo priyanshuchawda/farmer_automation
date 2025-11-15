@@ -51,7 +51,12 @@ if 'db_initialized' not in st.session_state:
     st.session_state.db_initialized = True
 
 # 2. Page Config
-st.set_page_config(page_title="Smart Farmer Marketplace", page_icon="favicon.ico", layout="wide")
+st.set_page_config(
+    page_title="AI Climate-Smart Agriculture", 
+    page_icon="🌍", 
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 # 2.5 Inject PWA Support
 inject_pwa_code()
@@ -275,11 +280,18 @@ if 'logged_in' not in st.session_state or not st.session_state.logged_in:
 # ----------------------------------------
 # --- MAIN APPLICATION (After Login) ---
 # ----------------------------------------
-st.title(t("Smart Farmer Marketplace"))
+st.title("🌍 AI Climate-Smart Agriculture Platform")
 
-st.markdown(f"""
-<div style='background-color:#E8F5E9;padding:12px;border-radius:10px;text-align:center;margin-bottom:20px;border: 1px dashed #3CB371;'>
-    <h4>{t("Empowering Farmers, Connecting Communities")}</h4>
+st.markdown("""
+<div style='background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 20px; 
+            border: 2px solid #1976D2; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
+    <h4 style='color: #0D47A1; margin: 0 0 8px 0; font-weight: 700;'>
+        🤖 Multi-Modal AI • 🌡️ Climate Risk Detection • 🛰️ Satellite Integration • SDG 13 Aligned
+    </h4>
+    <p style='color: #1565C0; margin: 0; font-size: 14px;'>
+        Helping farmers adapt to climate change through intelligent agriculture technology
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -293,62 +305,64 @@ st.markdown(f"""
 user_role = st.session_state.get("role", "User")
 
 if user_role == "Farmer":
-    # Farmer Menu - SIMPLIFIED for better UX (hiding advanced features temporarily)
-    # Core features that farmers use daily
+    # Farmer Menu - CLIMATE-FIRST ORGANIZATION
     menu_structure = [
-        ("🏠 DAILY ESSENTIALS", [
+        ("🌍 CLIMATE INTELLIGENCE", [
             "🏠 Home",
-            "💰 Today's Market Price",
-            "🤔 Should I Sell?",
-            "🌤️ Weather Forecast", 
-            "📅 My Calendar",
-            "📒 My Money Diary"
-        ]),
-        ("🌍 CLIMATE & SUSTAINABILITY", [
             "🌡️ Climate Risk Dashboard",
             "🌾 Climate-Smart Crops",
             "💧 Water & Carbon Tracker"
         ]),
+        ("🤖 AI TOOLS", [
+            "🗣️ Ask Advisor",
+            "🌤️ Weather Forecast",
+            "💰 Today's Market Price",
+            "🤔 Should I Sell?"
+        ]),
         ("🛍️ MARKETPLACE", [
             "🛍️ Browse Listings",
             "➕ Post Listing",
             "🎤 Voice Listing (NEW)"
         ]),
-        ("👤 MY ACCOUNT", [
+        ("📅 MY FARM", [
+            "📅 My Calendar",
+            "📒 My Money Diary",
             "👤 My Profile",
             "📦 My Listings"
         ]),
-        ("🤖 HELP & ADVICE", [
-            "🗣️ Ask Advisor",
+        ("ℹ️ HELP", [
             "🏛️ Government Schemes"
         ])
-        # TEMPORARILY HIDDEN (advanced features):
-        # - AI Price Prediction (too complex for daily use)
-        # - Nearby Places (not critical)
-        # - Farm Finance (needs simplification first)
-        # - Notifications (redundant for now)
     ]
 else:
-    # Admin Menu - Keep full access for administrators
+    # Admin Menu - Keep climate focus for admins too
     menu_structure = [
         ("🏠 DASHBOARD", ["🏠 Home"]),
-        ("👨‍💼 ADMIN TOOLS", ["👥 Manage Farmers", "🗄️ Database Viewer", "💾 Cache Management"]),
-        ("🏠 DAILY ESSENTIALS", [
+        ("🌍 CLIMATE TOOLS", [
+            "🌡️ Climate Risk Dashboard",
+            "🌾 Climate-Smart Crops",
+            "💧 Water & Carbon Tracker"
+        ]),
+        ("🤖 AI TOOLS", [
+            "🗣️ Ask Advisor",
+            "🌤️ Weather Forecast",
             "💰 Today's Market Price",
-            "🌤️ Weather Forecast", 
-            "📅 My Calendar"
+            "🤔 Should I Sell?"
+        ]),
+        ("👨‍💼 ADMIN TOOLS", [
+            "👥 Manage Farmers", 
+            "🗄️ Database Viewer", 
+            "💾 Cache Management"
         ]),
         ("🛍️ MARKETPLACE", [
             "🛍️ Browse Listings",
-            "➕ Post Listing",
-            "🎤 Voice Listing (NEW)"
+            "➕ Post Listing"
         ]),
         ("👤 MY ACCOUNT", [
             "👤 My Profile",
             "📦 My Listings"
         ]),
-        ("🤖 HELP & ADVICE", [
-            "🗣️ Ask Advisor",
+        ("ℹ️ HELP", [
             "🏛️ Government Schemes"
         ])
     ]
@@ -644,9 +658,17 @@ elif menu == "🔔 Notifications & Alerts":
 # --- FOOTER ---
 # ----------------------------------------
 st.markdown(f"""
-<hr style='border-top: 2px solid #3CB371; margin-top: 30px;'>
-<div style='text-align:center;color:#696969;padding:10px;'>
-    <small>© 2025 {t("Smart Farmer Marketplace")} | {t("Prototype by Team AgroLink")}</small>
+<hr style='border-top: 2px solid #1976D2; margin-top: 30px;'>
+<div style='text-align:center; padding:15px; background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); border-radius: 10px;'>
+    <p style='color: #0D47A1; margin: 0 0 5px 0; font-weight: 600; font-size: 15px;'>
+        🌍 AI Climate-Smart Agriculture Platform
+    </p>
+    <p style='color: #1565C0; margin: 0; font-size: 13px;'>
+        🎯 SDG 13: Climate Action | 🤖 Multi-Modal AI | 🛰️ Satellite Integration
+    </p>
+    <small style='color: #1976D2; font-size: 12px;'>
+        © 2025 {t("Prototype by Team AgroLink")} | Helping farmers adapt to climate change
+    </small>
 </div>
 """, unsafe_allow_html=True)
 
