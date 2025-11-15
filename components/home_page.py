@@ -182,7 +182,7 @@ def render_home_page():
     <div class="ai-hero-section">
         <h1 class="hero-heading">🌍 AI Climate-Smart Farming Platform</h1>
         <p class="hero-subheading">
-            🤖 Multi-Modal AI • 🛰️ Satellite Analysis • 🌡️ Climate Risk Detection • 🎤 Voice Intelligence
+            Intelligent farming solutions powered by AI to help you adapt to climate change
         </p>
         <div class="chat-input-box">
     """, unsafe_allow_html=True)

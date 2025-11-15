@@ -286,10 +286,7 @@ st.markdown("""
 <div style='background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
             padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 20px; 
             border: 2px solid #1976D2; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
-    <h4 style='color: #0D47A1; margin: 0 0 8px 0; font-weight: 700;'>
-        🤖 Multi-Modal AI • 🌡️ Climate Risk Detection • 🛰️ Satellite Integration • SDG 13 Aligned
-    </h4>
-    <p style='color: #1565C0; margin: 0; font-size: 14px;'>
+    <p style='color: #0D47A1; margin: 0; font-size: 16px; font-weight: 600;'>
         Helping farmers adapt to climate change through intelligent agriculture technology
     </p>
 </div>
