@@ -203,14 +203,8 @@ def render_home_page():
         farmer_profile = st.session_state.get("farmer_profile", {})
         location = farmer_profile.get('location', 'India')
         
-        # All in one row: Text input + Mic + Language + Send
-        col_text, col_mic, col_lang = st.columns([6, 1, 1])
-        
-        with col_text:
-            user_input = st.text_input("", 
-                                       placeholder="💬 Ask about your crops...", 
-                                       key="hero_input",
-                                       label_visibility="collapsed")
+        # Chat interface row
+        col_mic, col_lang = st.columns([1, 1])
         
         with col_mic:
             audio = mic_recorder(
@@ -226,6 +220,9 @@ def render_home_page():
                               format_func=lambda x: {"en":"🇬🇧","hi":"🇮🇳","mr":"🇮🇳"}[x],
                               key="hero_lang", 
                               label_visibility="collapsed")
+        
+        # Text input for chat
+        user_input = st.chat_input("💬 Ask about your crops...")
         
         # Process voice if recorded
         if audio:
@@ -263,21 +260,20 @@ def render_home_page():
         if user_input:
             st.session_state.chat_messages.append({"role": "user", "content": user_input})
             
-            with st.spinner("🤖 AI is thinking..."):
-                try:
-                    system_prompt = f"You are a helpful farming advisor. Farmer: {farmer_name}, Location: {location}. Be concise (3-5 sentences)."
-                    messages = [system_prompt] + [f"{m['role']}: {m['content']}" for m in st.session_state.chat_messages]
-                    
-                    response = client.models.generate_content(
-                        model="gemini-2.5-flash",
-                        contents="\n".join(messages)
-                    )
-                    
-                    if response and response.text:
-                        st.session_state.chat_messages.append({"role": "assistant", "content": response.text})
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Error: {str(e)}")
+            try:
+                system_prompt = f"You are a helpful farming advisor. Farmer: {farmer_name}, Location: {location}. Be concise (3-5 sentences)."
+                messages = [system_prompt] + [f"{m['role']}: {m['content']}" for m in st.session_state.chat_messages]
+                
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents="\n".join(messages)
+                )
+                
+                if response and response.text:
+                    st.session_state.chat_messages.append({"role": "assistant", "content": response.text})
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Error: {str(e)}")
         
         # Clear button
         if st.session_state.chat_messages:
