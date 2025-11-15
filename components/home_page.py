@@ -420,9 +420,10 @@ def render_home_page():
     
     st.markdown("<div style='margin: 12px 0;'></div>", unsafe_allow_html=True)
     
-    col1, col2 = st.columns(2, gap="medium")
+    # Single card for Water & Carbon Tracker - centered
+    col1, col2, col3 = st.columns([1, 2, 1])
     
-    with col1:
+    with col2:
         st.markdown("""
         <div style='background: white; padding: 18px; border-radius: 10px; 
                     border-left: 4px solid #0288D1; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
@@ -438,109 +439,6 @@ def render_home_page():
         if st.button("📊 Track My Impact", key="sustainability_btn", use_container_width=True):
             st.session_state.selected_menu = "💧 Water & Carbon Tracker"
             st.rerun()
-    
-    with col2:
-        st.markdown("""
-        <div style='background: white; padding: 18px; border-radius: 10px; 
-                    border-left: 4px solid #7B1FA2; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
-            <div style='font-size: 32px; margin-bottom: 8px;'>📸</div>
-            <div style='font-size: 16px; font-weight: 600; color: #7B1FA2; margin-bottom: 4px;'>
-                AI Crop Vision
-            </div>
-            <div style='font-size: 13px; color: #666;'>
-                Upload leaf photo - AI detects disease & stress instantly
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("📷 Analyze Crop Photo", key="vision_btn", use_container_width=True):
-            if 'show_vision_demo' not in st.session_state:
-                st.session_state.show_vision_demo = True
-            st.rerun()
-    
-    # Computer Vision Demo Section
-    if st.session_state.get('show_vision_demo', False):
-        st.markdown("<div style='margin: 20px 0;'></div>", unsafe_allow_html=True)
-        st.markdown("""
-        <div style='background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%); 
-                    padding: 20px; border-radius: 12px; border-left: 5px solid #7B1FA2;'>
-            <h3 style='color: #4A148C; margin: 0 0 10px 0;'>📸 AI Computer Vision - Crop Doctor</h3>
-            <p style='color: #6A1B9A; font-size: 14px; margin: 0;'>
-                Upload a photo of your crop leaf. AI will analyze health, detect diseases, pests, or nutrient deficiencies.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("<div style='margin: 12px 0;'></div>", unsafe_allow_html=True)
-        
-        uploaded_image = st.file_uploader(
-            "📷 Upload crop/leaf image (JPG, PNG)",
-            type=['jpg', 'jpeg', 'png'],
-            key="vision_uploader",
-            help="Take a clear photo of the leaf or crop"
-        )
-        
-        if uploaded_image:
-            col1, col2 = st.columns([1, 1])
-            
-            with col1:
-                st.image(uploaded_image, caption="Your Image", use_container_width=True)
-            
-            with col2:
-                with st.spinner("🔍 AI analyzing image..."):
-                    try:
-                        from google import genai
-                        import PIL.Image
-                        
-                        api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-                        if api_key:
-                            client = genai.Client(api_key=api_key)
-                            
-                            # Open image
-                            image = PIL.Image.open(uploaded_image)
-                            
-                            # AI Vision Analysis
-                            prompt = """You are an expert agricultural scientist and plant pathologist. 
-Analyze this crop/plant image and provide:
-
-1. **Plant/Crop Identified**: What plant is this?
-2. **Health Status**: Healthy / Stressed / Diseased (with confidence %)
-3. **Issues Detected**: Any diseases, pests, nutrient deficiency, or stress
-4. **Severity**: Low / Medium / High / Critical
-5. **Recommendations**: 2-3 specific actions farmer should take
-6. **Climate Connection**: How climate conditions (drought, heat, excess rain) might be affecting this
-
-Be specific, practical, and use simple language. If it's not a plant, say so."""
-
-                            response = client.models.generate_content(
-                                model="gemini-2.0-flash-exp",
-                                contents=[prompt, image]
-                            )
-                            
-                            if response and response.text:
-                                st.markdown(f"""
-                                <div style='background: white; padding: 16px; border-radius: 8px; 
-                                            border: 2px solid #7B1FA2; margin-top: 10px;'>
-                                    <h4 style='color: #7B1FA2; margin: 0 0 10px 0;'>🤖 AI Analysis Result</h4>
-                                    <div style='color: #333; font-size: 14px; line-height: 1.6;'>
-                                        {response.text.replace('\n', '<br>')}
-                                    </div>
-                                </div>
-                                """, unsafe_allow_html=True)
-                                
-                                st.success("✅ Analysis complete! This is multi-modal AI in action.")
-                            else:
-                                st.warning("No response from AI. Please try again.")
-                        else:
-                            st.error("⚠️ AI API key not configured")
-                    except Exception as e:
-                        st.error(f"❌ Error: {str(e)}")
-                        st.info("💡 This feature uses Gemini Vision API for real-time crop disease detection")
-        
-        if st.button("❌ Close Vision Demo", use_container_width=True):
-            st.session_state.show_vision_demo = False
-            st.rerun()
-        
-        st.markdown("<div style='margin: 20px 0;'><hr style='border: none; border-top: 2px solid #e0e0e0;'></div>", unsafe_allow_html=True)
     
     st.markdown(f"""
     <div style='margin: 24px 0 16px 0;'>
