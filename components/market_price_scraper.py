@@ -153,7 +153,7 @@ Keep advice practical, specific to Indian agricultural markets, and focused on m
 """
         
         response = ai_client.models.generate_content(
-            model='gemini-2.0-flash',
+            model='gemini-2.5-flash',
             contents=prompt
         )
         return response.text
@@ -190,7 +190,7 @@ You are an expert agricultural market advisor for Indian farmers.
         
         # Enable Google Search for real-time price data
         response = ai_client.models.generate_content(
-            model='gemini-2.0-flash',
+            model='gemini-2.5-flash',
             contents=prompt,
             config={
                 'tools': [{'google_search': {}}],  # Enable Google Search
@@ -219,7 +219,7 @@ Keep response concise and factual.
 """
         
         response = ai_client.models.generate_content(
-            model='gemini-2.0-flash',
+            model='gemini-2.5-flash',
             contents=query,
             config={
                 'tools': [{'google_search': {}}],

@@ -21,7 +21,7 @@ def transcribe_voice(audio_bytes, language='en'):
         audio_file = client.files.upload(path_or_bytes=audio_bytes, mime_type="audio/wav")
         
         # Transcribe
-        model_name = "gemini-2.0-flash-exp"
+        model_name = "gemini-2.5-flash"
         prompt = f"Transcribe this audio accurately. Language: {language}"
         
         response = client.models.generate_content(
@@ -176,7 +176,7 @@ Be concise (3-5 sentences), practical, and provide actionable advice."""
                         contents.append(f"{msg['role']}: {msg['content']}")
                     
                     response = client.models.generate_content(
-                        model="gemini-2.0-flash-exp",
+                        model="gemini-2.5-flash",
                         contents="\n".join(contents)
                     )
                     

@@ -96,7 +96,7 @@ GUIDELINES:
 - Use emojis sparingly but effectively
 - Total response: 6-8 concise points{language_instruction}"""
         
-        models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
+        models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash"]
         
         for model in models_to_try:
             try:

@@ -233,7 +233,7 @@ def render_home_page():
                 try:
                     audio_file = client.files.upload(path_or_bytes=audio['bytes'], mime_type="audio/wav")
                     response = client.models.generate_content(
-                        model="gemini-2.0-flash-exp",
+                        model="gemini-2.5-flash",
                         contents=[f"Transcribe this {lang} audio accurately:", audio_file]
                     )
                     if response and response.text:
@@ -249,7 +249,7 @@ def render_home_page():
                             messages = [system_prompt] + [f"{m['role']}: {m['content']}" for m in st.session_state.chat_messages]
                             
                             ai_response = client.models.generate_content(
-                                model="gemini-2.0-flash-exp",
+                                model="gemini-2.5-flash",
                                 contents="\n".join(messages)
                             )
                             
@@ -269,7 +269,7 @@ def render_home_page():
                     messages = [system_prompt] + [f"{m['role']}: {m['content']}" for m in st.session_state.chat_messages]
                     
                     response = client.models.generate_content(
-                        model="gemini-2.0-flash-exp",
+                        model="gemini-2.5-flash",
                         contents="\n".join(messages)
                     )
                     
