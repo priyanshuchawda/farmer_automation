@@ -1,5 +1,7 @@
 # Smart Farmer Marketplace 🌾
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://farmerp.streamlit.app/)
+
 A Streamlit web application that empowers farmers with a marketplace for tools and crops, AI-powered insights, and smart weather integration.
 
 ## 🚀 Features
