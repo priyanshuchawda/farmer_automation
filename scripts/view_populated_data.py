@@ -6,7 +6,7 @@ Shows farmers, tools, crops, and calendar events in a readable format
 import sqlite3
 import pandas as pd
 
-DB_NAME = 'farmermarket.db'
+import os; DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'farmermarket.db')
 
 def view_all_data():
     """Display all populated data"""

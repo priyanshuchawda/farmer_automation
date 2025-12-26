@@ -6,7 +6,7 @@ This script adds the password column to existing farmers table if it doesn't exi
 import sqlite3
 import os
 
-DB_NAME = 'farmermarket.db'
+import os; DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'farmermarket.db')
 
 def migrate_database():
     """Add password column to farmers table if it doesn't exist"""

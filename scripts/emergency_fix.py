@@ -7,7 +7,7 @@ import sqlite3
 import os
 import time
 
-DB_NAME = 'farmermarket.db'
+import os; DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'farmermarket.db')
 
 print("🚨 EMERGENCY DATABASE FIX\n")
 print("=" * 70)
@@ -105,7 +105,7 @@ failsafe_code = """
 import sqlite3
 from contextlib import contextmanager
 
-DB_NAME = 'farmermarket.db'
+import os; DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'farmermarket.db')
 
 @contextmanager
 def safe_db_connection():

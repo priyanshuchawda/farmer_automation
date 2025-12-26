@@ -6,7 +6,7 @@ Fix all database lock issues by updating all connections
 import sqlite3
 import os
 
-DB_NAME = 'farmermarket.db'
+import os; DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'farmermarket.db')
 
 print("🔧 Fixing Database Lock Issues...\n")
 
@@ -59,7 +59,7 @@ import sqlite3
 import time
 from contextlib import contextmanager
 
-DB_NAME = 'farmermarket.db'
+import os; DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'farmermarket.db')
 
 def get_db_connection(timeout=30.0):
     """

@@ -3,7 +3,7 @@
 
 import sqlite3
 
-DB_NAME = 'farmermarket.db'
+import os; DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'farmermarket.db')
 
 def add_rating_columns():
     """Add total_ratings and avg_rating columns to farmers table if they don't exist."""

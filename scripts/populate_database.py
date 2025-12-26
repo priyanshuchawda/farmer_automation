@@ -7,7 +7,7 @@ import sqlite3
 from datetime import datetime, timedelta
 import random
 
-DB_NAME = 'farmermarket.db'
+import os; DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'farmermarket.db')
 
 # Maharashtra districts and villages/cities
 MAHARASHTRA_LOCATIONS = [

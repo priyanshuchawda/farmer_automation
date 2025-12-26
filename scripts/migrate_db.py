@@ -2,7 +2,7 @@
 
 import sqlite3
 
-DB_NAME = 'farmermarket.db'
+import os; DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'farmermarket.db')
 
 def migrate_database():
     """Add new columns to existing farmers table and create calendar_events table"""
