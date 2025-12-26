@@ -584,7 +584,7 @@ You built a lot! Good coding, many features, clean design.
 
 ## 📋 PRIORITY CHECKLIST FOR YOU
 
-### **Before Hackathon/Demo - MUST DO:**
+### **Before Demo - MUST DO:**
 
 **Week 1 (This Week):**
 - [ ] Add "Contact Seller" button with phone/WhatsApp on listings
@@ -686,7 +686,7 @@ That's it. If these 5 work perfectly with VOICE and OFFLINE, every farmer in my 
 
 If it works for me, it works for 10 crore farmers like me.
 
-Best wishes for your hackathon! 🙏
+Best wishes for your project! 🙏
 
 Come to my village after you win. I will give you chai and tell all my farmer friends to download your app! ☕🌾
 

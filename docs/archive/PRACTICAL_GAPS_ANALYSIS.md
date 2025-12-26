@@ -1,5 +1,5 @@
 # 🌾 PRACTICAL GAPS ANALYSIS - Smart Farmer Marketplace
-## From the Eyes of a Poor Indian Farmer & Hackathon Judge
+## From the Eyes of a Poor Indian Farmer
 
 ---
 
@@ -299,7 +299,7 @@ But real poor farmers need:
 
 ---
 
-## 🏆 HACKATHON JUDGE PERSPECTIVE
+## 🏆 JUDGE/INVESTOR PERSPECTIVE
 
 ### What Judges Will Ask:
 
@@ -550,7 +550,7 @@ Shows you understand target audience.
 - Too much typing/reading required
 - No SMS/WhatsApp integration
 
-### **Hackathon Score Potential:** ⭐⭐⭐⭐ (4/5 if you fix Tier 1 issues)
+### **Project Score Potential:** ⭐⭐⭐⭐ (4/5 if you fix Tier 1 issues)
 
 ---
 
@@ -599,7 +599,7 @@ Shows you understand target audience.
 ### Timeline:
 - **This Week:** Fix Tier 1 (critical showstoppers)
 - **Next Week:** Add killer features (voice, QR, SMS mockup)
-- **Before Hackathon:** Polish demo flow, prepare Hindi presentation
+- **Before Demo:** Polish demo flow, prepare Hindi presentation
 
 ---
 

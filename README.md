@@ -77,6 +77,3 @@ Utility scripts are located in `scripts/`. To run them, ensure you are in the ro
 ## 🤝 Contributing
 
 Contributions are welcome! Please check the `docs/` folder for architectural details.
-
----
-*Built for the Smart India Hackathon 2024*

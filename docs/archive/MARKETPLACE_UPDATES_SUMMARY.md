@@ -262,7 +262,7 @@ CREATE TABLE farmers (
 
 ---
 
-## 💡 DEMO TALKING POINTS (For Hackathon)
+## 💡 DEMO TALKING POINTS
 
 ### **Problem:**
 > "Farmers see listings but can't contact easily. They have to copy phone numbers manually. No way to know if seller is trustworthy."
@@ -353,7 +353,7 @@ CREATE TABLE farmers (
 
 **Status:** ✅ COMPLETE & READY FOR DEMO! 🚀
 
-**Next Step:** Test it thoroughly, then show it off at hackathon! 💪
+**Next Step:** Test it thoroughly! 💪
 
 ---
 
